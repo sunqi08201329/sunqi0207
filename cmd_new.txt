@@ -1,5 +1,12 @@
 --------------------
-evince filename
+evince filename.pdf
 
 bg
 --------------------
+ssh-keygen -t dsa -C "sq08201329@gamil.com"
+--------------------------------------------
+cat .gitignore
+.gitignore's content like this:
+*.[ao]
+*~
+---------------
