@@ -10,3 +10,10 @@ cat .gitignore
 *.[ao]
 *~
 ---------------
+git diff
+-------------
+git rm ..
+git mv ..
+------------
+http://www.linuxsir.org/main/doc/gnumake/GNUmake_v3.80-zh_CN_html/index.html
+------------------------------------------------------------------------------
