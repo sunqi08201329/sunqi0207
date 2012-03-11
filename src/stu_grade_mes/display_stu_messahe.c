@@ -11,7 +11,7 @@
 #define BUFF_MAX  1024
 #define PERSON_NUM_MAX 100
 
-typedef void *(delete_By *)(void *);
+//typedef void *(delete_By *)(void *);
 struct message{
 	int ID;
 	char NAME[NAME_LEN];
@@ -117,7 +117,7 @@ void show_stu_message(stu_link head)
 		return;
 	}
 	printf("%-4s%-8s%-8s%-8s%-8s%-8s\n", "seq", "ID", "NAME", "CHINESE", "MATH", "AVERAGE");
-	printf("------------------------------------------------------\n");
+	printf("--------------------------------------------------\n");
 	while(move != NULL){
 		printf("%-4d%-8d%-8s%-8.1lf%-8.1lf%-8.1lf\n", seq, (move->stu_mes).ID, 
 		(move->stu_mes).NAME,(move->stu_mes).CHGRADE, (move->stu_mes).MATHGRADE, 
@@ -125,7 +125,7 @@ void show_stu_message(stu_link head)
 		seq++;
 		move = move->next;
 	}
-	printf("------------------------------------------------------\n");
+	printf("--------------------------------------------------\n");
 }
 void insert_stu_message(stu_link head, const char *filename)
 {
@@ -206,16 +206,18 @@ stu_link sort_by_average(stu_link head)
 stu_link delete_stu_mes_by_id(stu_link head,int id)
 {	
 	stu_link move = head, post;
-	
+	int flag = 0;
 
 	while(move != NULL){
 		if((head->stu_mes).ID == id){
+			flag = 1;
 			head = head->next;
 			free(move);
 			move = head;
 			break;
 		}else if(move->next != NULL){
 			if((move->next->stu_mes).ID == id){
+				flag = 2;
 				post = move->next->next;
 				free(move->next);
 				move->next = post;
@@ -224,22 +226,35 @@ stu_link delete_stu_mes_by_id(stu_link head,int id)
 		}
 		move = move->next;
 	}
-	printf("No such ID\m");
+	if(flag == 0){
+		printf("No such ID\n");
+		return  head;
+	}
+	
+	while(move != NULL && flag){
+		if(flag == 1)
+			(move->stu_mes).ID--;
+		else if((flag == 2) && (move->next != NULL))
+			(move->next->stu_mes).ID--;
+		move = move->next;
+	}
 	return head;
 }
 stu_link delete_stu_mes_by_name(stu_link head,char *name)
 {	
 	stu_link move = head, post;
-	
+	int flag = 0;
 
 	while(move != NULL){
-		if(!strcmp(head->stu_mes).NAME, name){
+		if(!strcmp((head->stu_mes).NAME, name)){
+			flag = 1;
 			head = head->next;
 			free(move);
 			move = head;
 			break;
 		}else if(move->next != NULL){
 			if(!strcmp((move->next->stu_mes).NAME, name)){
+				flag = 2;
 				post = move->next->next;
 				free(move->next);
 				move->next = post;
@@ -248,60 +263,112 @@ stu_link delete_stu_mes_by_name(stu_link head,char *name)
 		}
 		move = move->next;
 	}
-	printf("No such NAME\m");
+	if(move == NULL){
+		printf("No such name\n");
+		return  head;
+	}
+	while(move != NULL && flag){
+		if(flag == 1)
+			(move->stu_mes).ID--;
+		else if((flag == 2) && (move->next != NULL))
+			(move->next->stu_mes).ID--;
+		move = move->next;
+	}
 	return head;
 }
-void manu()
+void updata_to_file(stu_link head, const char *filename)
 {
-	printf("Please select the option:\n1.Display all student's info\n2.Sort by average\n
-	3.Insert a nre info\n4.Delete a record\n5.Quit\n");
+	FILE *stu_mes_file = fopen(filename, "w");
+	stu_link move = head;
+	while(move != NULL){
+		fprintf(stu_mes_file, "%d %s %.1lf %.1lf\n", (move->stu_mes).ID, 
+		(move->stu_mes).NAME, (move->stu_mes).CHGRADE, (move->stu_mes).MATHGRADE);
+		move = move->next;
+	}
+	fclose(stu_mes_file);
 }
-void del_manu()
+void destroy_link(stu_link head)
+{
+	stu_link move = head;
+	while(move != NULL){
+		head = move->next;
+		free(move);
+		move = head;
+		}
+}
+void show_manu()
+{
+	printf("Please select the option:\n1.Display all student's info\n2.Sort by average\n3.Insert a nre info\n4.Delete a record\n5.Quit\n");
+	printf("Please input your choice:");
+}
+void show_del_manu()
 {
 	printf("1.Delete by ID\n2.Delete by name\n3.Exit\n");
+	printf("Please input your choice:");
 }
 int main(int argc, const char *argv[])
 {
 	stu_link head = NULL;
 	stu_link sort_head = NULL;
 	head = load_stu_message(argv[1], head);
-	show_stu_message(head);
-	sort_head = sort_by_average(head);
-	show_stu_message(sort_head);
-	insert_stu_message(head, argv[1]);
-	show_stu_message(head);
+	//show_stu_message(head);
+	//sort_head = sort_by_average(head);
+	//show_stu_message(sort_head);
+	//insert_stu_message(head, argv[1]);
+	//show_stu_message(head);
 	int no, del_id;
 	char del_name[NAME_LEN];
 	while(1){
+		show_manu();
 		scanf("%d", &no);
 		switch(no){
 			case 1:
 				show_stu_message(head);
-				break;
+				continue;
 			case 2:
-				sort_by_average(
-			scanf("%d", &no);
-			switch(no){
-				case 1: {
+				sort_head = sort_by_average(head);
+				show_stu_message(sort_head);
+				continue;
+			case 3:
+				insert_stu_message(head, argv[1]);
+				continue;
+			case 4:{
+			    while(no != 3){
+				show_del_manu();
+				scanf("%d", &no);
+				switch(no){
+				case 1: 
 					printf("Your should choice the id exist:");
 					scanf("%d", &del_id);
 					head = delete_stu_mes_by_id(head,del_id); 
-					break;
-				}
-				case 2:{
+					show_stu_message(head);
+					updata_to_file(head, argv[1]);
+					continue;
+				case 2:
 					printf("Your should choice the name exist:");
 					scanf("%s", del_name);
 					head = delete_stu_mes_by_name(head,del_name); 
-					break;
-				}
+					show_stu_message(head);
+					updata_to_file(head, argv[1]);
+					continue;
 				case 3:
 					break;
-				default:{
+				default:
 					printf("please input 1-3\n");
 					continue;
-			       }
-
-
+				}
+			}
+				continue;
+			}
+			case 5:
+				break;
+			       //exit(EXIT_SUCCESS);
+			default:
+				printf("please input 1-5\n");
+				continue;
 	}
+	destroy_link(head);
+	head = NULL;
 	return 0;
+	}
 }

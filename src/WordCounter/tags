@@ -1,0 +1,46 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+FILE_LIST	main.c	10;"	d	file:
+Queue	queue.h	/^} Queue;$/;"	t	typeref:struct:queue
+_DEBUG_H_	debug.h	2;"	d
+_IO_H_	IO.h	2;"	d
+_MEMORY_H_	memory.h	2;"	d
+_QUEUE_H_	queue.h	2;"	d
+__DEBUG__	debug.h	4;"	d
+__DEBUG__	debug.h	5;"	d
+counter	main.c	/^	int counter;$/;"	m	struct:word_node	file:
+data	queue.h	/^	void *data;$/;"	m	struct:node
+dequeue	queue.c	/^void * dequeue(Queue *queue)$/;"	f
+fclose_r	IO.h	/^static inline int fclose_r(FILE *fp)$/;"	f
+file_list_node	main.c	/^typedef struct file_list_node$/;"	s	file:
+file_list_node	main.c	/^} file_list_node;$/;"	t	typeref:struct:file_list_node	file:
+fopen_r	IO.h	/^static inline FILE *fopen_r(const char *path, const char *mode)$/;"	f
+get_file_name	main.c	/^void get_file_name(Queue *queue, const char *file)$/;"	f
+get_random_file_name	main.c	/^void get_random_file_name(char *str, int size)$/;"	f
+head	queue.h	/^	struct node *head;$/;"	m	struct:queue	typeref:struct:queue::node
+inqueue	queue.c	/^void inqueue(Queue *queue, void *user_node)$/;"	f
+is_empty	queue.c	/^bool is_empty(Queue *queue)$/;"	f
+main	main.c	/^int main(int argc, char *argv[]) $/;"	f
+make_file_list_node	main.c	/^file_list_node *make_file_list_node(const char *str)$/;"	f
+make_word_node	main.c	/^word_node * make_word_node(const char *str)$/;"	f
+malloc_r	memory.h	/^static inline void *malloc_r(size_t size)$/;"	f
+next	queue.h	/^	struct node *next;$/;"	m	struct:node	typeref:struct:node::node
+node	queue.h	/^typedef struct node$/;"	s
+node	queue.h	/^} node;$/;"	t	typeref:struct:node
+parser_file	main.c	/^void parser_file(Queue *queue, const char *file)$/;"	f
+queue	queue.h	/^typedef struct queue$/;"	s
+queue_destroy	queue.c	/^void queue_destroy(Queue *queue)$/;"	f
+queue_find	queue.c	/^void *queue_find(Queue *queue, void *data, $/;"	f
+queue_init	queue.c	/^void queue_init(Queue *queue)$/;"	f
+show_result	main.c	/^static void show_result(Queue *word_queue)$/;"	f	file:
+str	main.c	/^	char *str;$/;"	m	struct:file_list_node	file:
+str	main.c	/^	char *str;$/;"	m	struct:word_node	file:
+string_filter	main.c	/^static void string_filter(char *str)$/;"	f	file:
+tail	queue.h	/^	struct node *tail;$/;"	m	struct:queue	typeref:struct:queue::node
+word_node	main.c	/^typedef struct word_node$/;"	s	file:
+word_node	main.c	/^} word_node;$/;"	t	typeref:struct:word_node	file:
+word_node_compare	main.c	/^bool word_node_compare(const void *first, const void *second)$/;"	f

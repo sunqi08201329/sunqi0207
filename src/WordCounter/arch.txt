@@ -1,0 +1,18 @@
+// 1. get a file name.
+//		a. open the file list file.
+//		b. read a line.
+// 2. parser this file.
+//		a. open this file.
+//		b. read a line
+//		c. filter
+//		d. split 
+//		e. if the word exist, counter ++
+//		    else inqueue.
+// 3. show result.
+//		a. print
+// 4. store it to a file.
+//		a. get a random file name. 
+//			word_counter_result_xxxxxx.txt
+//		b. open
+//		c. write
+//		d. close.
