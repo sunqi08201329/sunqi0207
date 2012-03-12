@@ -8,3 +8,4 @@ static partern rule:
 make will extend wildcard when it read Makefile,but shell extexd wildcard when it excute.
 
 
+整理cllssnote
