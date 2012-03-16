@@ -165,6 +165,8 @@ void insert_stu_message(stu_link head, const char *filename)
 	(new->stu_mes).AVG = ((new->stu_mes).CHGRADE + (new->stu_mes).MATHGRADE) / 2;
 	fprintf(stu_mes_file, "%d %s %.1lf %.1lf\n", id_num, (new->stu_mes).NAME,(new->stu_mes).CHGRADE, (new->stu_mes).MATHGRADE);
 
+	fprintf(stu_mes_file,"\n\n\n");
+	fprintf(stu_mes_file,"asdasd\n");
 	new->next = NULL;
 	move->next = new;
 
