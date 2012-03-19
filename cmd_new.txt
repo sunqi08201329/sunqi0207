@@ -17,3 +17,27 @@ git mv ..
 ------------
 http://www.linuxsir.org/main/doc/gnumake/GNUmake_v3.80-zh_CN_html/index.html
 ------------------------------------------------------------------------------
+meld filename1 filename2
+----------------------------------------------
+ga -- show letter ASCII code 
+gu -- to little
+gU -- to UPPER
+daw --delete a word ,wherever the curse on(mid, start, end)
+xp -- exchange current lenter an later one
+J  -- let current line and later one to a line
+ctrl + p(ctrl+n) 
+ctrl + x + l line whole
+ctrl + x + f path whole
+abbr p printf 
+gf -- when curse on like "stdio" include file ,press gf,then go into stdio.h file, press ctrl + o return .
+vim filename1 filenmae2 filename3 --press tab to turn,or :n or :e filename t find a file,:ls can scan all opened file,:b num ,
+:sp :vsp spit windows
+command line ctags -R * -- ctrl + ] to define,ctrl + t to back
+! extern order
+------------------------------------------------
+summer :
+comand :d,v,q,x,y,c,r,s,gu,ga
+move   :h,j,k,l,g,G,,1,2,3,4,5,6,7,8,9,0,$,w,e
+line cmd:/, :
+--------------------------------------------
+
