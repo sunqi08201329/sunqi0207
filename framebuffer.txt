@@ -1,0 +1,163 @@
+usr/include/linux/fb.h
+1）fb_var_screeninfo
+这个结构描述了显示卡的特性
+2) fb_fix_screeninfon
+这个结构在显卡被设定模式后创建，它描述显示卡的属性，并且系统运行时不能被修改；比如FrameBuffer内存的起始地址。它依赖于被设定的模式，当一个模 式被设定后，内存信息由显示卡硬件给出，内存的位置等信息就不可以修改。
+3) fb_cmap
+描述设备无关的颜色映射信息。可以通过FBIOGETCMAP 和 FBIOPUTCMAP 对应的ioctl操作设定或获取颜色映射信息.
+4) fb_info
+定义当显卡的当前状态；fb_info结构仅在内核中可见，在这个结构中有一个fb_ops指针， 指向驱动设备工作所需的函数集。
+ struct fb_ops
+用户应用可以使用ioctl()系统调用来操作设备，这个结构就是用一支持ioctl()的这些操作的。
+6) structure map    
+    
+	Linux是工作在保护模式下，所以用户态进程是无法象DOS那样使用显卡BIOS里提供的中断调用来实现直接写屏，Linux抽象出FrameBuffer这个设备来供用户态进程实现直接写屏。Framebuffer机制模仿显卡的功能，将显卡硬件结构抽象掉，可以通过Framebuffer的读写直接对显存进行操作。用户可以将Framebuffer看成是显示内存的一个映像，将其映射到进程地址空间之后，就可以直接进行读写操作，而写操作可以立即反应在屏幕上。这种操作是抽象的，统一的。用户不必关心物理显存的位置、换页机制等等具体细节，这些都是由Framebuffer设备驱动来完成的。
+　　但Framebuffer本身不具备任何运算数据的能力,就只好比是一个暂时存放水的水池.CPU将运算后的结果放到这个水池,水池再将结果流到显示器.中间不会对数据做处理. 应用程序也可以直接读写这个水池的内容.在这种机制下，尽管Framebuffer需要真正的显卡驱动的支持，但所有显示任务都有CPU完成,因此CPU负担很重
+    大家都知道Unix/Linux系统是由命令驱动的。那么最基本的系统是命令行的（就是想DOS一样的界面）。X－Window－System是Unix/Linux上的图形系统，它是通过X－Server来控制硬件的。但有一些Linux的发行版在引导的时候就会在屏幕上出现图形，这时的图形是不可能由X来完成的，那是什么机制呢？答案是FrameBuffer。
+FrameBuffer不是一个图形系统，更不是窗口系统。它比X要低级，简单来说FrameBuffer就是一种机制的实现。这种机制是把屏幕上的每个点映射成一段线性内存空间，程序可以简单的改变这段内存的值来改变屏幕上某一点的颜色。X的高度可移植性就是来自于这种机制，不管是在那种图形环境下，只要有这种机制的实现就可以运行X。所以在几乎所有的平台上都有相应的X版本的移植。
+好了，闲话少说，下面我们来看看可以利用FrameBuffer来干点什么。首先看看你是否有了相应的驱动：找一下在/dev/下是否有fb*这个设备文件，这是个字符类的特殊文件。
+Java代码 
+ls -l /dev/fb0  (Enter)                    
+rw-rw----  1 root video 29, 0 Jan 27 15:32 /dev/fb0  
+
+如果没有这个文件也可以找找其他的比如：/dev/fb1,/dev/fb2...如果找不到这些文件，那就得重新编译内核了。下面假设存在这个文件/dev/fb0，这就是FrameBuffer的设备文件。
+有了这个我们可以play with FrameBuffer了。（一下的操作不一定要在X下，可以在启动了FrameBuffer的虚拟控制台下）
+Java代码 
+cat /dev/fb0 > sreensnap   
+  
+ls -l sreensnap  
+  
+-rw-r--r--  1 wsw wsw 6291456 Jan 27 21:30 sreensnap  
+
+我们得到了一个恰好6M的文件，再做下面的操作：
+Java代码 
+clear                   /*清楚屏幕的输出*/  
+cat sreensnap > /dev/fb0  
+
+是不是奇怪的事情发生了？好像是中了病毒一般？屏幕又恢复了以前的状态？不用着急，
+Java代码 
+clear  
+
+这样屏幕就正常了。
+
+通过以上的操作，我想你也猜到了。文件/dev/fb0就是控制屏幕上的每一点的颜色的文件。我们可以写程序来改变这个文件的内容，就可以方便的在屏幕上画图了:-)
+
+我下面就来写一个小程序，探测一下屏幕的属性。
+
+Java代码 
+#include <unistd.h>  
+#include <stdio.h>  
+#include <fcntl.h>  
+#include <linux/fb.h>  
+#include <sys/mman.h>  
+  
+int main () {  
+    int fp=0;  
+    struct fb_var_screeninfo vinfo;  
+    struct fb_fix_screeninfo finfo;  
+    fp = open ("/dev/fb0",O_RDWR);  
+  
+    if (fp < 0){  
+        printf("Error : Can not open framebuffer device\n");  
+        exit(1);  
+    }  
+  
+    if (ioctl(fp,FBIOGET_FSCREENINFO,&finfo)){  
+        printf("Error reading fixed information\n");  
+        exit(2);  
+    }  
+      
+    if (ioctl(fp,FBIOGET_VSCREENINFO,&vinfo)){  
+        printf("Error reading variable information\n");  
+        exit(3);  
+    }  
+  
+    printf("The mem is :%d\n",finfo.smem_len);  
+    printf("The line_length is :%d\n",finfo.line_length);  
+    printf("The xres is :%d\n",vinfo.xres);  
+    printf("The yres is :%d\n",vinfo.yres);  
+    printf("bits_per_pixel is :%d\n",vinfo.bits_per_pixel);  
+    close (fp);  
+}  
+
+struct fb_var_screeninfo 和 struct fb_fix_screeninfo 两个数据结构是在/usr/include/linux/fb.h中定义的，里面有些有趣的值：（都是无符号32位的整数）
+在fb_fix_screeninfo中有
+__u32 smem_len 是这个/dev/fb0的大小，也就是内存大小。
+__u32 line_length 是屏幕上一行的点在内存中占有的空间，不是一行上的点数。
+在fb_var_screeninfo 中有
+__u32 xres ，__u32 yres 是x和y方向的分辨率，就是两个方向上的点数。
+__u32 bits_per_pixel 是每一点占有的内存空间。
+
+把上面的程序编译以后运行，在我的机器上的结果如下：
+Java代码 
+The mem is :6291456  
+The line_length is :4096  
+The xres is :1024  
+The yres is :768  
+bits_per_pixel is :32  
+
+内存长度恰好是6M，每行占有4M的空间，分辨率是1024x768，色彩深度是32位。细心的你可能已经发现有些不对。屏幕上的点有1024x768＝786432个，每个点占有32比特。屏幕一共的占有内存数为32x786432＝25165824 就是3145728字节，恰好是3M但是上面的程序告诉我们有6M的存储空间。这是因为在现代的图形系统中大多有缓冲技术，显存中存有两页屏幕数据，这是方便快速的改变屏幕内容实现动画之类比较高的要求。关于这种缓冲技术有点复杂，我们目前先不讨论。对于我们来说只有这3M内存来存放这一个屏幕的颜色数据。
+好了，现在你应该对FrameBuffer有一个大概的了解了吧。那么接下来你一定会想在屏幕上画一些东西，让我们先从画一个点开始吧。先说说我的想法：在类Unix系统中，一切东西都是文件。我们对屏幕的读写就可以转换成对/dev/fb0的读写。那么就把/dev/fb0用open打开，再用lseek定位要读写的位置，最后调用read或者write来操作。通过这么一大段的操作我们才完成了对一个点的读或者写。这种方法开销太大了。还有一种方法，我们把/dev/fb0映射到程序进程的内存空间中来，然后得到一个指向这段存储空间的指针，这样就可以方便的读写了。但是我们要知道能映射多少和该映射多少，这能很方便的从上面一个程序得出的参数来决定。
+下面是程序代码：
+Java代码 
+#include <unistd.h>  
+#include <stdio.h>  
+#include <fcntl.h>  
+#include <linux/fb.h>  
+#include <sys/mman.h>  
+  
+int main () {  
+    int fp=0;  
+    struct fb_var_screeninfo vinfo;  
+    struct fb_fix_screeninfo finfo;  
+    long screensize=0;  
+    char *fbp = 0;  
+    int x = 0, y = 0;  
+    long location = 0;  
+    fp = open ("/dev/fb0",O_RDWR);  
+  
+    if (fp < 0){  
+        printf("Error : Can not open framebuffer device\n");  
+        exit(1);  
+    }  
+  
+    if (ioctl(fp,FBIOGET_FSCREENINFO,&finfo)){  
+        printf("Error reading fixed information\n");  
+        exit(2);  
+    }  
+      
+    if (ioctl(fp,FBIOGET_VSCREENINFO,&vinfo)){  
+        printf("Error reading variable information\n");  
+        exit(3);  
+    }  
+  
+        screensize = vinfo.xres * vinfo.yres * vinfo.bits_per_pixel / 8;  
+    /*这就是把fp所指的文件中从开始到screensize大小的内容给映射出来，得到一个指向这块空间的指针*/  
+    fbp =(char *) mmap (0, screensize, PROT_READ | PROT_WRITE, MAP_SHARED, fp,0);  
+    if ((int) fbp == -1)  
+        {  
+            printf ("Error: failed to map framebuffer device to memory.\n");  
+            exit (4);  
+        }  
+/*这是你想画的点的位置坐标,(0，0)点在屏幕左上角*/  
+     x = 100;  
+     y = 100;  
+    location = x * (vinfo.bits_per_pixel / 8) + y  *  finfo.line_length;  
+  
+  *(fbp + location) = 100;      /* 蓝色的色深 */     /*直接赋值来改变屏幕上某点的颜色*/  
+  *(fbp + location + 1) = 15;   /* 绿色的色深*/         
+  *(fbp + location + 2) = 200;  /* 红色的色深*/         
+  *(fbp + location + 3) = 0;        /* 是否透明*/         
+  munmap (fbp, screensize); /*解除映射*/  
+  close (fp);               /*关闭文件*/  
+  return 0;  
+  
+}  
+
+因为这是对线性存储空间的读写，所以代码有点不清晰，不易理解。但是有了这个基本的代码实现，我们可以很容易写一些DrawPoint之类的函数去包装一下低层的对线性存储空间的读写。但是有了画点的程序，再写出画线画圆的函数就不是非常困难了。
+
+这些就是我对FrameBuffer的初步研究，匆忙之间写些东西不成文章,以后要写些更高级一点的函数的实现。
+在未上大学时，我一直以为自己是个天才。
+正在上大学时，我以为自己将是个天才。
+读完大学后，我才发现自己是并且从来就是一个彻头彻尾的傻瓜，
+自大。。。浮躁。。。终究一无是处。
