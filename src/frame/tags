@@ -1,0 +1,18 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+BLACK	func.h	14;"	d
+BLUE	func.h	12;"	d
+GREEN	func.h	11;"	d
+RED	func.h	10;"	d
+WHITE	func.h	13;"	d
+_FUNC_H	func.h	2;"	d
+init_data	init.c	/^int init_data(void)$/;"	f
+main	main.c	/^int main(int argc, const char *argv[])$/;"	f
+mmap_r	func.h	/^static inline void* mmap_r(void *p, size_t t,int port, int flags, int fd, off_t f)$/;"	f
+open_r	func.h	/^static inline int open_r(char *filepath, int flags)$/;"	f
+para	Makefile	/^para = -o main -Wall $/;"	m
+src	Makefile	/^src = main.c init.c func.h$/;"	m
