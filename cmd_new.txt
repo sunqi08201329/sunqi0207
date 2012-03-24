@@ -34,10 +34,14 @@ vim filename1 filenmae2 filename3 --press tab to turn,or :n or :e filename t fin
 :sp :vsp spit windows
 command line ctags -R * -- ctrl + ] to define,ctrl + t to back
 ! extern order
+zf -- creat fold
+zo zc -- open and close fold
+zm zr -- close and open all fold
+za -- open or close one fold on focus(automatic open/close
 ------------------------------------------------
 summer :
 comand :d,v,q,x,y,c,r,s,gu,ga
-move   :h,j,k,l,g,G,,1,2,3,4,5,6,7,8,9,0,$,w,e
+move   :h,j,k,l,g,G,,1,2,3,4,5,6,7,8,9,0,$,w,b,e,^,$
 line cmd:/, :
 --------------------------------------------
 as hello.s
