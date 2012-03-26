@@ -52,4 +52,9 @@ umask
 uname -r -- check linux kernel vesion	
 ----------------------------------------
 cp -- copy all file
-dd if=/dev/zero of=fs count=256 bs=4k -- copy a part of a file
+*dd if=/dev/zero of=fs count=256 bs=4k -- copy a part of a file
+-------------------------------------------------------------------
+find . -name file* -- serch file* in . by name
+----------------------------------------------
+df
+du
