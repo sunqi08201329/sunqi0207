@@ -61,4 +61,4 @@ du
 ------------------------------
 killall -9 processname
 -----------------------
-
+ctrl + d --equal EOF

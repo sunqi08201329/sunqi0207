@@ -179,4 +179,23 @@ static inline void QU_MSG_send()
     msgsnd_r(msg_id, (void *)&msg_q_s, sizeof(struct m_msg_t), 0);
 	
 }
+/*
+ * PIPE
+ */
+static inline void pipe_r(int *fd)
+{
+	if(pipe(fd) < 0){
+		perror("pipe"):
+		exit(1);
+	}
+}
+static inline int fork_r(void)
+{	
+	int pid;
+	if((pid = fork()) < 0){
+		perror("fork");
+		exit(1);
+	}
+	return pid;
+}
 #endif //_APUE_H_
