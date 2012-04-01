@@ -20,9 +20,9 @@ cpback_github:
 	cp ./Makefile ~/github/sunqi0207/Unix_envirement_programming/Makefile
 	cp ./apue.h ~/github/sunqi0207/Unix_envirement_programming/apue.h
 update_github:
+	git status
 	git add .
 	git commit -a -m "master"
-	git push
 ping_github:
 	ssh -T git@github.com
 search_macro:
