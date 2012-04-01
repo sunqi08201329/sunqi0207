@@ -69,3 +69,10 @@ man -f
 -------------------
 grep -i keyword -nr /usr/include
 who
+--------------------------
+tty
+stty
+stty -a ----man 7 signal 
+---------------------------------------
+kill -l
+----------
