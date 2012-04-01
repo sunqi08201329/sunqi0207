@@ -4,6 +4,7 @@ target = $(patsubst %.c, %, $(src))
 CFLAGS = -Wall -g
 CC = gcc
 CLEAN_FLAGS = -rm -rf
+MACRO = 
 
 all:$(target) tags
 
@@ -24,4 +25,6 @@ update_github:
 	git push
 ping_github:
 	ssh -T git@github.com
+search_macro:
+	grep -i $(MACRO) -nr /usr/include
 .PHONY:all clean

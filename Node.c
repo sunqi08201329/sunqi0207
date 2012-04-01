@@ -32,3 +32,7 @@ tools:
 	version control- git
 	单元测试 cppunit
 	自动化 make ant
+
+system programming:
+	:wq
+

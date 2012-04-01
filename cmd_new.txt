@@ -67,3 +67,5 @@ man -k string | grep strcmp
 apropos
 man -f
 -------------------
+grep -i keyword -nr /usr/include
+who
