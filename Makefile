@@ -22,4 +22,6 @@ update_github:
 	git add .
 	git commit -a -m "master"
 	git push
+ping_github:
+	ssh -T git@github.com
 .PHONY:all clean
