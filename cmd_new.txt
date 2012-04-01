@@ -62,3 +62,8 @@ du
 killall -9 processname
 -----------------------
 ctrl + d --equal EOF
+-----------------------------------------
+man -k string | grep strcmp
+apropos
+man -f
+-------------------

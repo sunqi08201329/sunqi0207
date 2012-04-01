@@ -14,3 +14,20 @@ make will extend wildcard when it read Makefile,but shell extexd wildcard when i
 
 嵌入式系统软件设计中的常用算法
 经典算法大全
+
+jolt
+
+refcard
+cheat
+datasheet
+
+流程图 和 数据流图
+
+UML－－
+tools:
+	dia
+	bouml
+	UML精粹
+
+	version control- git
+	单元测试 cppunit

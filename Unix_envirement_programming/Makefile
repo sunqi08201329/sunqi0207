@@ -18,4 +18,8 @@ cp:
 cpback_github:
 	cp ./Makefile ~/github/sunqi0207/Unix_envirement_programming/Makefile
 	cp ./apue.h ~/github/sunqi0207/Unix_envirement_programming/apue.h
+update_github:
+	git add .
+	git commit -a -m "master"
+	git push
 .PHONY:all clean
