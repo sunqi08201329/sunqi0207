@@ -76,3 +76,6 @@ stty -a ----man 7 signal
 ---------------------------------------
 kill -l
 ----------
+time execute-programming
+size file1.sh ... show data/bss/text section
+dig --ctrl+k cotinue input
