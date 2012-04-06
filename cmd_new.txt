@@ -72,10 +72,20 @@ who
 --------------------------
 tty
 stty
-stty -a ----man 7 signal 
+stty -a ----man 7 signal --signal detai;
 ---------------------------------------
-kill -l
+kill -l -- all signals
 ----------
+<<<<<<< HEAD
 time execute-programming
 size file1.sh ... show data/bss/text section
 dig --ctrl+k cotinue input
+=======
+SIG_IGN --ignor
+SIG_DFL --屏蔽
+handle --
+-----------------------------------------
+/proc/pid/maps --layout memory 
+-----------------------------------------------
+ulimit -c sizeof core(unlimited)
+>>>>>>> 0e223cb6a9abd0215a603bdd2d1f7459f66f2cef
