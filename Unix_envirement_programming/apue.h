@@ -1,43 +1,113 @@
-#ifndef _APUE_H_
-#define _APUE_H_
-#include <stdio.h>
-#include <sys/stat.h>
-#include <stdlib.h>
-#include <errno.h>
+#include <errno.h>		/* for definition of errno */
+#include <stdarg.h>		/* ISO C variable aruments */
 
-#define WRITE_SIZE 30
+static inline void err_doit(int, int, const char *, va_list);
 
-#define MSG_DATA_MAX 1024
-#define MSG_KEY      1234
-
-struct m_msg_t
-{  
-   int msg_type;
-   char msg_data[MSG_DATA_MAX];  
-};
-
-extern void stat_r(const char * pathname, struct stat *buf);
-extern void chmod_r(const char * pathname, mode_t mode);
-extern int open_r(const char * pathname, int flags);
-extern int write_r(int filedes, char *data, size_t bytes);
-extern int read_r(int filedes, char *data, size_t bytes);
 /*
- *FIFO INTERPROCESS COMUNICATION
+ * Nonfatal error related to a system call.
+ * Print a message and return.
  */
-extern void mkfifo_r(const char *pathname, mode_t mode, int flag);
-extern void FIFO_send_commands(const char *pathname, char *commands);
-extern void FIFO_get_commands(const char *pathname);
+static inline void 
+err_ret(const char *fmt, ...)
+{
+	va_list		ap;
+
+	va_start(ap, fmt);
+	err_doit(1, errno, fmt, ap);
+	va_end(ap);
+}
+
 /*
- * QUEUE_MESSAGE COMUNIOCATION
+ * Fatal error related to a system call.
+ * Print a message and terminate.
  */
-extern int msgget_r(key_t key, int msgflag);
-extern int msgrcv_r(int msg_id, void *msgp, size_t msg_size,long msg_type, int msgflag);
-extern void msgsnd_r(int msg_id, const void *msgp, size_t msg_size, int msgflag);
-extern int QU_MSG_recivice();
-extern void QU_MSG_send();
+static inline void 
+err_sys(const char *fmt, ...)
+{
+	va_list		ap;
+
+	va_start(ap, fmt);
+	err_doit(1, errno, fmt, ap);
+	va_end(ap);
+	exit(1);
+}
+
 /*
- * PIPE
+ * Fatal error unrelated to a system call.
+ * Error code passed as explict parameter.
+ * Print a message and terminate.
  */
-extern void pipe_r(int *fd);
-extern int fork_r(void);
-#endif //_APUE_H_
+static inline void 
+err_exit(int error, const char *fmt, ...)
+{
+	va_list		ap;
+
+	va_start(ap, fmt);
+	err_doit(1, error, fmt, ap);
+	va_end(ap);
+	exit(1);
+}
+
+/*
+ * Fatal error related to a system call.
+ * Print a message, dump core, and terminate.
+ */
+static inline void 
+err_dump(const char *fmt, ...)
+{
+	va_list		ap;
+
+	va_start(ap, fmt);
+	err_doit(1, errno, fmt, ap);
+	va_end(ap);
+	abort();		/* dump core and terminate */
+	exit(1);		/* shouldn't get here */
+}
+
+/*
+ * Nonfatal error unrelated to a system call.
+ * Print a message and return.
+ */
+static inline void 
+err_msg(const char *fmt, ...)
+{
+	va_list		ap;
+
+	va_start(ap, fmt);
+	err_doit(0, 0, fmt, ap);
+	va_end(ap);
+}
+
+/*
+ * Fatal error unrelated to a system call.
+ * Print a message and terminate.
+ */
+static inline void 
+err_quit(const char *fmt, ...)
+{
+	va_list		ap;
+
+	va_start(ap, fmt);
+	err_doit(0, 0, fmt, ap);
+	va_end(ap);
+	exit(1);
+}
+
+/*
+ * Print a message and return to caller.
+ * Caller specifies "errnoflag".
+ */
+static inline void 
+err_doit(int errnoflag, int error, const char *fmt, va_list ap)
+{
+	char	buf[MAXLINE];
+
+	vsnprintf(buf, MAXLINE, fmt, ap);
+	if (errnoflag)
+		snprintf(buf+strlen(buf), MAXLINE-strlen(buf), ": %s",
+		  strerror(error));
+	strcat(buf, "\n");
+	fflush(stdout);		/* in case stdout and stderr are the same */
+	fputs(buf, stderr);
+	fflush(NULL);		/* flushes all stdio output streams */
+}

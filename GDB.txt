@@ -30,3 +30,11 @@ watch 在程序中设置一个监测点（即数据断点）
 whatis 显示变量或函数类型 
 set follow-fork-mode child/parent
 /* code */
+shell
+ctrl + d--exit  back to gdb
+
+段错误
+
+死循环
+
+二分法

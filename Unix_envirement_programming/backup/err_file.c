@@ -41,5 +41,4 @@ int read_r(int filedes, char *data, size_t bytes)
 		return read_num;
 	}
 	return read_num;
-		
 }
