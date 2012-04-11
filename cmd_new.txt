@@ -19,7 +19,7 @@ http://www.linuxsir.org/main/doc/gnumake/GNUmake_v3.80-zh_CN_html/index.html
 ------------------------------------------------------------------------------
 meld filename1 filename2
 ----------------------------------------------
-ga -- show letter ASCII code 
+ga -- show letter ascii code 
 gu -- to little
 gU -- to UPPER
 daw --delete a word ,wherever the curse on(mid, start, end)
@@ -68,6 +68,7 @@ apropos
 man -f
 -------------------
 grep -i keyword -nr /usr/include
+find /usr/include -name *.h | xargs grep
 who
 --------------------------
 tty
@@ -83,3 +84,20 @@ handle --
 /proc/pid/maps --layout memory 
 -----------------------------------------------
 ulimit -c sizeof core(unlimited)
+--------------------------------------------
+man -k keywords | awk '{prinst $1}'
+-----------------------------------------
+wget -m http://192.168.204.6/examples/2012.04.07/
+sudo apt-get install manpages-posix-dev
+---------------------------------------------------
+lsof |
+
+-------------------
+route [options] -n
+ifconfig
+netstat
+arp
+sudo tcpdump -nnvvvXS icmp -i eth0 -c 10 -s 1024
+sudo tcpdump -nnvvvXS icmp -i eth0 -c 10 -s 1024 -w 1 -- write to file 1
+nc
+telnet
