@@ -1,0 +1,49 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+BACKUP_PATH	Makelibs.mk	/^BACKUP_PATH = \/home\/akaedu\/project\/backup$/;"	m
+BACKUP_PATH	Makeobjs.mk	/^BACKUP_PATH = \/home\/akaedu\/project\/backup$/;"	m
+CC	Make_lib_inc_main.mk	/^CC = gcc$/;"	m
+CC	Makefile	/^CC = gcc$/;"	m
+CC	Makelibs.mk	/^CC = gcc$/;"	m
+CC	Makeobjs.mk	/^CC = gcc$/;"	m
+CC	Maketarget.mk	/^CC = gcc$/;"	m
+CFLAGS	Makefile	/^CFLAGS = -Wall -g$/;"	m
+CFLAGS	Makelibs.mk	/^CFLAGS = -Wall -g$/;"	m
+CFLAGS	Makeobjs.mk	/^CFLAGS = -Wall -g$/;"	m
+CFLAGS	Maketarget.mk	/^CFLAGS = -Wall -g$/;"	m
+CLEAN_FLAGS	Makefile	/^CLEAN_FLAGS = -rm -rf$/;"	m
+CLEAN_FLAGS	Makelibs.mk	/^CLEAN_FLAGS = -rm -rf$/;"	m
+CLEAN_FLAGS	Makeobjs.mk	/^CLEAN_FLAGS = -rm -rf$/;"	m
+CLEAN_FLAGS	Maketarget.mk	/^CLEAN_FLAGS = -rm -rf$/;"	m
+INCLUDE_PATH	Make_lib_inc_main.mk	/^INCLUDE_PATH = \/home\/akaedu\/project\/include$/;"	m
+INCLUDE_PATH	Makelibs.mk	/^INCLUDE_PATH = \/home\/akaedu\/project\/include$/;"	m
+INCLUDE_PATH	Makeobjs.mk	/^INCLUDE_PATH = \/home\/akaedu\/project\/include$/;"	m
+INC_PATH	Makefile	/^INC_PATH = \/home\/akaedu\/github\/sunqi0207\/Unix_envirement_programming\/include\/$/;"	m
+LIBRARY_PATH	Make_lib_inc_main.mk	/^LIBRARY_PATH = \/home\/akaedu\/project\/library$/;"	m
+LIBRARY_PATH	Makelibs.mk	/^LIBRARY_PATH = \/home\/akaedu\/project\/library$/;"	m
+LIBRARY_PATH	Makeobjs.mk	/^LIBRARY_PATH = \/home\/akaedu\/project\/library$/;"	m
+LIB_PATH	Makefile	/^LIB_PATH = \/home\/akaedu\/github\/sunqi0207\/Unix_envirement_programming\/libs\/$/;"	m
+MACRO	Makefile	/^MACRO = $/;"	m
+OBJS_PATH	Makeobjs.mk	/^OBJS_PATH = \/home\/akaedu\/project\/objs$/;"	m
+SRC_PATH	Makeobjs.mk	/^SRC_PATH = \/home\/akaedu\/project\/src$/;"	m
+STATIC_LINK	Makelibs.mk	/^STATIC_LINK = ar rcs$/;"	m
+STATIC_LINK	Makeobjs.mk	/^STATIC_LINK = ar rcs$/;"	m
+lib_name	Make_lib_inc_main.mk	/^lib_name = math$/;"	m
+lib_name	Makefile	/^lib_name = apue$/;"	m
+lib_name	Makelibs.mk	/^lib_name = math$/;"	m
+lib_name	Makeobjs.mk	/^lib_name = math$/;"	m
+main_name	Make_lib_inc_main.mk	/^main_name = main$/;"	m
+obj_dir	Makeobjs.mk	/^obj_dir = 1$/;"	m
+objs	Makelibs.mk	/^objs = $(wildcard *.o)$/;"	m
+objs	Makeobjs.mk	/^objs = $(wildcard *.o)$/;"	m
+src	Makefile	/^src = $(wildcard *.c)$/;"	m
+src	Makelibs.mk	/^src = $(wildcard *.c)$/;"	m
+src	Makeobjs.mk	/^src = $(wildcard *.c)$/;"	m
+src	Maketarget.mk	/^src = $(wildcard *.c)$/;"	m
+src_dir	Makeobjs.mk	/^src_dir = 1$/;"	m
+target	Makefile	/^target = $(patsubst %.c, %, $(src))$/;"	m
+target	Maketarget.mk	/^target = $(patsubst %.c, %, $(src))$/;"	m
