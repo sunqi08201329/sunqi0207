@@ -1,13 +1,14 @@
+#include "apue.h"
 #include <errno.h>		/* for definition of errno */
 #include <stdarg.h>		/* ISO C variable aruments */
 
-static inline void err_doit(int, int, const char *, va_list);
+static void	err_doit(int, int, const char *, va_list);
 
 /*
  * Nonfatal error related to a system call.
  * Print a message and return.
  */
-static inline void 
+void
 err_ret(const char *fmt, ...)
 {
 	va_list		ap;
@@ -21,7 +22,7 @@ err_ret(const char *fmt, ...)
  * Fatal error related to a system call.
  * Print a message and terminate.
  */
-static inline void 
+void
 err_sys(const char *fmt, ...)
 {
 	va_list		ap;
@@ -37,7 +38,7 @@ err_sys(const char *fmt, ...)
  * Error code passed as explict parameter.
  * Print a message and terminate.
  */
-static inline void 
+void
 err_exit(int error, const char *fmt, ...)
 {
 	va_list		ap;
@@ -52,7 +53,7 @@ err_exit(int error, const char *fmt, ...)
  * Fatal error related to a system call.
  * Print a message, dump core, and terminate.
  */
-static inline void 
+void
 err_dump(const char *fmt, ...)
 {
 	va_list		ap;
@@ -68,7 +69,7 @@ err_dump(const char *fmt, ...)
  * Nonfatal error unrelated to a system call.
  * Print a message and return.
  */
-static inline void 
+void
 err_msg(const char *fmt, ...)
 {
 	va_list		ap;
@@ -82,7 +83,7 @@ err_msg(const char *fmt, ...)
  * Fatal error unrelated to a system call.
  * Print a message and terminate.
  */
-static inline void 
+void
 err_quit(const char *fmt, ...)
 {
 	va_list		ap;
@@ -97,7 +98,7 @@ err_quit(const char *fmt, ...)
  * Print a message and return to caller.
  * Caller specifies "errnoflag".
  */
-static inline void 
+static void
 err_doit(int errnoflag, int error, const char *fmt, va_list ap)
 {
 	char	buf[MAXLINE];

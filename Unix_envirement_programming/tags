@@ -1,0 +1,131 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+BACKUP_PATH	libs/Makeobjs.mk	/^BACKUP_PATH = \/home\/akaedu\/project\/backup$/;"	m
+BACKUP_PATH	makes/Makefile	/^BACKUP_PATH = \/home\/akaedu\/project\/backup$/;"	m
+BACKUP_PATH	makes/Makelibs.mk	/^BACKUP_PATH = \/home\/akaedu\/project\/backup$/;"	m
+BACKUP_PATH	makes/Makeobjs.mk	/^BACKUP_PATH = \/home\/akaedu\/project\/backup$/;"	m
+CC	Makefile	/^CC = gcc$/;"	m
+CC	libs/Makefile	/^CC = gcc$/;"	m
+CC	libs/Makeobjs.mk	/^CC = gcc$/;"	m
+CC	makes/Make_lib_inc_main.mk	/^CC = gcc$/;"	m
+CC	makes/Makelibs.mk	/^CC = gcc$/;"	m
+CC	makes/Makeobjs.mk	/^CC = gcc$/;"	m
+CC	makes/Maketarget.mk	/^CC = gcc$/;"	m
+CFLAGS	Makefile	/^CFLAGS = -Wall -g$/;"	m
+CFLAGS	libs/Makefile	/^CFLAGS = -Wall -g$/;"	m
+CFLAGS	libs/Makeobjs.mk	/^CFLAGS = -Wall -g$/;"	m
+CFLAGS	makes/Makelibs.mk	/^CFLAGS = -Wall -g$/;"	m
+CFLAGS	makes/Makeobjs.mk	/^CFLAGS = -Wall -g$/;"	m
+CFLAGS	makes/Maketarget.mk	/^CFLAGS = -Wall -g$/;"	m
+CLEAN_FLAGS	Makefile	/^CLEAN_FLAGS = -rm -rf$/;"	m
+CLEAN_FLAGS	libs/Makefile	/^CLEAN_FLAGS = -rm -rf$/;"	m
+CLEAN_FLAGS	libs/Makeobjs.mk	/^CLEAN_FLAGS = -rm -rf$/;"	m
+CLEAN_FLAGS	makes/Makelibs.mk	/^CLEAN_FLAGS = -rm -rf$/;"	m
+CLEAN_FLAGS	makes/Makeobjs.mk	/^CLEAN_FLAGS = -rm -rf$/;"	m
+CLEAN_FLAGS	makes/Maketarget.mk	/^CLEAN_FLAGS = -rm -rf$/;"	m
+CMSG_LEN	include/apue.h	8;"	d
+DIR_MODE	include/apue.h	36;"	d
+FIFO_get_commands	backup/err_process.c	/^void FIFO_get_commands(const char *pathname)$/;"	f
+FIFO_send_commands	backup/err_process.c	/^void FIFO_send_commands(const char *pathname, char *commands)$/;"	f
+FILE_MODE	include/apue.h	31;"	d
+INCLUDE_PATH	libs/Makeobjs.mk	/^INCLUDE_PATH = \/home\/akaedu\/project\/include$/;"	m
+INCLUDE_PATH	makes/Make_lib_inc_main.mk	/^INCLUDE_PATH = \/home\/akaedu\/project\/include$/;"	m
+INCLUDE_PATH	makes/Makefile	/^INCLUDE_PATH = \/home\/akaedu\/project\/include$/;"	m
+INCLUDE_PATH	makes/Makelibs.mk	/^INCLUDE_PATH = \/home\/akaedu\/project\/include$/;"	m
+INCLUDE_PATH	makes/Makeobjs.mk	/^INCLUDE_PATH = \/home\/akaedu\/project\/include$/;"	m
+INC_PATH	Makefile	/^INC_PATH = \/home\/akaedu\/github\/sunqi0207\/Unix_envirement_programming\/include\/$/;"	m
+INC_PATH	libs/Makefile	/^INC_PATH = \/home\/akaedu\/github\/sunqi0207\/Unix_envirement_programming\/include\/$/;"	m
+LIBRARY_PATH	libs/Makeobjs.mk	/^LIBRARY_PATH = \/home\/akaedu\/project\/library$/;"	m
+LIBRARY_PATH	makes/Make_lib_inc_main.mk	/^LIBRARY_PATH = \/home\/akaedu\/project\/library$/;"	m
+LIBRARY_PATH	makes/Makefile	/^LIBRARY_PATH = \/home\/akaedu\/project\/library$/;"	m
+LIBRARY_PATH	makes/Makelibs.mk	/^LIBRARY_PATH = \/home\/akaedu\/project\/library$/;"	m
+LIBRARY_PATH	makes/Makeobjs.mk	/^LIBRARY_PATH = \/home\/akaedu\/project\/library$/;"	m
+LIB_PATH	Makefile	/^LIB_PATH = \/home\/akaedu\/github\/sunqi0207\/Unix_envirement_programming\/libs\/$/;"	m
+LIB_PATH	libs/Makefile	/^LIB_PATH = \/home\/akaedu\/github\/sunqi0207\/Unix_envirement_programming\/libs\/$/;"	m
+MACRO	Makefile	/^MACRO = $/;"	m
+MAXLINE	include/apue.h	26;"	d
+MSG_DATA_MAX	backup/apue.h	10;"	d
+MSG_KEY	backup/apue.h	11;"	d
+OBJS_PATH	libs/Makeobjs.mk	/^OBJS_PATH = \/home\/akaedu\/project\/objs$/;"	m
+OBJS_PATH	makes/Makefile	/^OBJS_PATH = \/home\/akaedu\/project\/objs$/;"	m
+OBJS_PATH	makes/Makeobjs.mk	/^OBJS_PATH = \/home\/akaedu\/project\/objs$/;"	m
+QU_MSG_recivice	backup/err_process.c	/^int QU_MSG_recivice()$/;"	f
+QU_MSG_send	backup/err_process.c	/^void QU_MSG_send()$/;"	f
+SIG_ERR	include/apue.h	41;"	d
+SRC_PATH	libs/Makeobjs.mk	/^SRC_PATH = \/home\/akaedu\/project\/src$/;"	m
+SRC_PATH	makes/Makefile	/^SRC_PATH = \/home\/akaedu\/project\/src$/;"	m
+SRC_PATH	makes/Makeobjs.mk	/^SRC_PATH = \/home\/akaedu\/project\/src$/;"	m
+STATIC_LINK	libs/Makefile	/^STATIC_LINK = ar rcs$/;"	m
+STATIC_LINK	libs/Makeobjs.mk	/^STATIC_LINK = ar rcs$/;"	m
+STATIC_LINK	makes/Makelibs.mk	/^STATIC_LINK = ar rcs$/;"	m
+STATIC_LINK	makes/Makeobjs.mk	/^STATIC_LINK = ar rcs$/;"	m
+Sigfunc	include/apue.h	/^typedef	void	Sigfunc(int);	\/* for signal handlers *\/$/;"	t
+WRITE_SIZE	backup/apue.h	8;"	d
+_APUE_H	include/apue.h	4;"	d
+_APUE_H_	backup/apue.h	2;"	d
+_XOPEN_SOURCE	include/apue.h	10;"	d
+_XOPEN_SOURCE	include/apue.h	7;"	d
+chmod_r	backup/err_file.c	/^void chmod_r(const char * pathname, mode_t mode)$/;"	f
+err_doit	libs/error.c	/^err_doit(int errnoflag, int error, const char *fmt, va_list ap)$/;"	f	file:
+err_dump	libs/error.c	/^err_dump(const char *fmt, ...)$/;"	f
+err_exit	libs/error.c	/^err_exit(int error, const char *fmt, ...)$/;"	f
+err_msg	libs/error.c	/^err_msg(const char *fmt, ...)$/;"	f
+err_quit	libs/error.c	/^err_quit(const char *fmt, ...)$/;"	f
+err_ret	libs/error.c	/^err_ret(const char *fmt, ...)$/;"	f
+err_sys	libs/error.c	/^err_sys(const char *fmt, ...)$/;"	f
+error	test.c	/^void error(char *format, ...)$/;"	f
+fork_r	backup/err_process.c	/^int fork_r(void)$/;"	f
+inc_name	makes/Makefile	/^inc_name = head.h$/;"	m
+is_read_lockable	include/apue.h	104;"	d
+is_write_lockable	include/apue.h	106;"	d
+lib_name	Makefile	/^lib_name = apue$/;"	m
+lib_name	libs/Makefile	/^lib_name = apue$/;"	m
+lib_name	libs/Makeobjs.mk	/^lib_name = math$/;"	m
+lib_name	makes/Make_lib_inc_main.mk	/^lib_name = math$/;"	m
+lib_name	makes/Makelibs.mk	/^lib_name = math$/;"	m
+lib_name	makes/Makeobjs.mk	/^lib_name = math$/;"	m
+m_msg_t	backup/apue.h	/^struct m_msg_t$/;"	s
+main	main.c	/^int main(int argc, const char *argv[])$/;"	f
+main	test.c	/^int main(int argc, const char *argv[])$/;"	f
+main_name	makes/Make_lib_inc_main.mk	/^main_name = main$/;"	m
+main_name	makes/Makefile	/^main_name = main.c$/;"	m
+max	include/apue.h	45;"	d
+min	include/apue.h	44;"	d
+mkfifo_r	backup/err_process.c	/^void mkfifo_r(const char *pathname, mode_t mode, int flag)$/;"	f
+msg_data	backup/apue.h	/^   char msg_data[MSG_DATA_MAX];  $/;"	m	struct:m_msg_t
+msg_type	backup/apue.h	/^   int msg_type;$/;"	m	struct:m_msg_t
+msgget_r	backup/err_process.c	/^int msgget_r(key_t key, int msgflag)$/;"	f
+msgrcv_r	backup/err_process.c	/^int msgrcv_r(int msg_id, void *msgp, size_t msg_size,long msg_type, int msgflag)$/;"	f
+msgsnd_r	backup/err_process.c	/^void msgsnd_r(int msg_id, const void *msgp, size_t msg_size, int msgflag)$/;"	f
+obj_dir	libs/Makeobjs.mk	/^obj_dir = 1$/;"	m
+obj_dir	makes/Makeobjs.mk	/^obj_dir = 1$/;"	m
+objs	libs/Makefile	/^objs = $(patsubst %.c, %.o, $(src))$/;"	m
+objs	libs/Makeobjs.mk	/^objs = $(wildcard *.o)$/;"	m
+objs	makes/Makefile	/^objs = $(wildcard *.o)$/;"	m
+objs	makes/Makelibs.mk	/^objs = $(wildcard *.o)$/;"	m
+objs	makes/Makeobjs.mk	/^objs = $(wildcard *.o)$/;"	m
+open_r	backup/err_file.c	/^int open_r(const char * pathname, int flags)$/;"	f
+pipe_r	backup/err_process.c	/^void pipe_r(int *fd)$/;"	f
+read_lock	include/apue.h	91;"	d
+read_r	backup/err_file.c	/^int read_r(int filedes, char *data, size_t bytes)$/;"	f
+readw_lock	include/apue.h	93;"	d
+src	Makefile	/^src = $(wildcard *.c)$/;"	m
+src	libs/Makefile	/^src = $(wildcard *.c)$/;"	m
+src	libs/Makeobjs.mk	/^src = $(wildcard *.c)$/;"	m
+src	makes/Makefile	/^src = $(wildcard *.c)$/;"	m
+src	makes/Makelibs.mk	/^src = $(wildcard *.c)$/;"	m
+src	makes/Makeobjs.mk	/^src = $(wildcard *.c)$/;"	m
+src	makes/Maketarget.mk	/^src = $(wildcard *.c)$/;"	m
+src_dir	libs/Makeobjs.mk	/^src_dir = 1$/;"	m
+src_dir	makes/Makeobjs.mk	/^src_dir = 1$/;"	m
+stat_r	backup/err_file.c	/^void stat_r(const char * pathname, struct stat *buf)$/;"	f
+target	Makefile	/^target = $(patsubst %.c, %, $(src))$/;"	m
+target	makes/Maketarget.mk	/^target = $(patsubst %.c, %, $(src))$/;"	m
+un_lock	include/apue.h	99;"	d
+write_lock	include/apue.h	95;"	d
+write_r	backup/err_file.c	/^int write_r(int filedes, char *data, size_t bytes)$/;"	f
+writew_lock	include/apue.h	97;"	d

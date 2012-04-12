@@ -1,19 +1,31 @@
 src = $(wildcard *.c)
-objs = $(wildcard *.o)
+target = $(patsubst %.c, %, $(src))
 
-INCLUDE_PATH = /home/akaedu/project/include
-LIBRARY_PATH = /home/akaedu/project/library
-BACKUP_PATH = /home/akaedu/project/backup
-OBJS_PATH = /home/akaedu/project/objs
-SRC_PATH = /home/akaedu/project/src
+CFLAGS = -Wall -g
+CC = gcc
+CLEAN_FLAGS = -rm -rf
+MACRO = 
 
-main_name = main.c
-inc_name = head.h
+INC_PATH = /home/akaedu/github/sunqi0207/Unix_envirement_programming/include/
+LIB_PATH = /home/akaedu/github/sunqi0207/Unix_envirement_programming/libs/
 
-open_inc:
-	vim $(INCLUDE_PATH)/$(inc_name)
-backup:
-	mv $(main_name) $(BACKUP_PATH)
+lib_name = apue
 
-make_app:
-	make -f Make_lib_inc_main
+all:$(target) tags
+
+$(target):%:%.c
+	$(CC) -L$(LIB_PATH) -l$(lib_name) $(CFLAGS) $< -o $@ -I$(INC_PATH)
+tags:
+	ctags -R *
+clean:
+	$(CLEAN_FLAGS) $(target)
+
+makelib:
+	make -C $(LIB_PATH)
+
+vimlib:
+	vim $(LIB_PATH)*.c
+
+viminc:
+	vim $(INC_PATH)*.h
+.PHONY:all clean makelib
