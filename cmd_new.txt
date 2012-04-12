@@ -77,6 +77,11 @@ stty -a ----man 7 signal --signal detai;
 ---------------------------------------
 kill -l -- all signals
 ----------
+<<<<<<< HEAD
+time execute-programming
+size file1.sh ... show data/bss/text section
+dig --ctrl+k cotinue input
+=======
 SIG_IGN --ignor
 SIG_DFL --屏蔽
 handle --
@@ -84,6 +89,7 @@ handle --
 /proc/pid/maps --layout memory 
 -----------------------------------------------
 ulimit -c sizeof core(unlimited)
+<<<<<<< HEAD
 --------------------------------------------
 man -k keywords | awk '{prinst $1}'
 -----------------------------------------
@@ -101,3 +107,6 @@ sudo tcpdump -nnvvvXS icmp -i eth0 -c 10 -s 1024
 sudo tcpdump -nnvvvXS icmp -i eth0 -c 10 -s 1024 -w 1 -- write to file 1
 nc
 telnet
+=======
+>>>>>>> 0e223cb6a9abd0215a603bdd2d1f7459f66f2cef
+>>>>>>> 914742b5988094b879da7e44831d54f7e09a92bf
