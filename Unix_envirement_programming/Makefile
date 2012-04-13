@@ -14,7 +14,7 @@ lib_name = apue
 all:$(target) tags
 
 $(target):%:%.c
-	$(CC) -L$(LIB_PATH) -l$(lib_name) $(CFLAGS) $< -o $@ -I$(INC_PATH)
+	$(CC) $(CFLAGS) $< -L$(LIB_PATH) -l$(lib_name) -o $@ -I$(INC_PATH)
 tags:
 	ctags -R *
 clean:

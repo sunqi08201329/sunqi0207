@@ -108,5 +108,9 @@ sudo tcpdump -nnvvvXS icmp -i eth0 -c 10 -s 1024 -w 1 -- write to file 1
 nc
 telnet
 =======
+sysctl
+-------------------------------------
+
 >>>>>>> 0e223cb6a9abd0215a603bdd2d1f7459f66f2cef
 >>>>>>> 914742b5988094b879da7e44831d54f7e09a92bf
+>
