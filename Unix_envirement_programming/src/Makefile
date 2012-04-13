@@ -8,6 +8,7 @@ MACRO =
 
 INC_PATH = /home/akaedu/github/sunqi0207/Unix_envirement_programming/include/
 LIB_PATH = /home/akaedu/github/sunqi0207/Unix_envirement_programming/libs/
+MAN_PATH = /home/akaedu/github/sunqi0207/Unix_envirement_programming/src/man
 
 lib_name = apue
 
@@ -28,4 +29,6 @@ vimlib:
 
 viminc:
 	vim $(INC_PATH)*.h
+movetxt:
+	mv *.txt $(MAN_PATH)
 .PHONY:all clean makelib
