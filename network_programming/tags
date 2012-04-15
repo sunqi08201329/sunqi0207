@@ -1,0 +1,21 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+CC	Makefile	/^CC = gcc$/;"	m
+CFLAGS	Makefile	/^CFLAGS = -Wall -g$/;"	m
+CLEAN_FLAGS	Makefile	/^CLEAN_FLAGS = -rm -rf$/;"	m
+INC_PATH	Makefile	/^INC_PATH = \/home\/akaedu\/github\/sunqi0207\/Unix_envirement_programming\/include\/$/;"	m
+LIB_PATH	Makefile	/^LIB_PATH = \/home\/akaedu\/github\/sunqi0207\/Unix_envirement_programming\/libs\/$/;"	m
+MACRO	Makefile	/^MACRO = $/;"	m
+MAXLINE	client.c	6;"	d	file:
+MAXLINE	server.c	7;"	d	file:
+SERVER_BACKLOG	server.c	9;"	d	file:
+SERVER_PORT	server.c	8;"	d	file:
+lib_name	Makefile	/^lib_name = apue$/;"	m
+main	client.c	/^int main(int argc, const char *argv[])$/;"	f
+main	server.c	/^int main(int argc, const char *argv[])$/;"	f
+src	Makefile	/^src = $(wildcard *.c)$/;"	m
+target	Makefile	/^target = $(patsubst %.c, %, $(src))$/;"	m
