@@ -14,4 +14,10 @@ void close_r(int fd);
 ssize_t read_r(int fd, void *ptr, size_t nbytes);
 ssize_t write_r(int fd, const void *ptr, size_t nbytes);
 
+//-----------------------------------------------------------------------------------------------
+//			convert_func_err
+//-----------------------------------------------------------------------------------------------
+int inet_pton_r(int af, const char *src, void *dst);
+const char *inet_ntop_r(int af, const void *src, char *dst, socklen_t cnt);
+
 #endif // __SOCKET__H__

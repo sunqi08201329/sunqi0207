@@ -38,39 +38,43 @@ int main(int argc, const char *argv[])
 	//void listen_r(int sockfd, int backlog, void *arg);
 	listen_r(listen_sock, SERVER_BACKLOG, (void *)bindmsg);
 	fprintf(stdout, "accepting connections ...\n");
-	//int accept_r(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
+	
 	pid_t pid;
 	while(1){
 		client_addr_len = sizeof(client_addr);
+		//int accept_r(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
 		connection_sock = accept_r(listen_sock, (struct sockaddr *)&client_addr, &client_addr_len);
 		if(connection_sock < 0){
 			if(errno == EINTR)
 				continue;
 			err_ret("accept() failed");
 		}
+
 		pid = fork();
 		if(pid < 0)
 			err_sys("call to fork");
-		else if( n == 0){
+		else if(pid == 0){
 			close_r(listen_sock);
-		}
 		//ssize_t read_r(int fd, void *ptr, size_t nbytes);
-		while(1){
-			n = read_r(connection_sock, buf, MAXLINE);
-			if(n == 0) {
-				fprintf(stdout, "peer side has been closed.\n");
-				break;
-			}
+			while(1){
+				n = read_r(connection_sock, buf, MAXLINE);
+				if(n == 0) {
+					fprintf(stdout, "peer side has been closed.\n");
+					close_r(connection_sock);	
+					exit(0);
+				}
 
-			fprintf(stdout, "reciveed from %s at port %d\n", inet_ntop(AF_INET, &client_addr.sin_addr, str, sizeof(str)), ntohs(client_addr.sin_port));
-			for (i = 0; i < n; i++) 
-			{
-				buf[i] = toupper(buf[i]);
+				fprintf(stdout, "reciveed from %s at port %d\n", inet_ntop(AF_INET, &client_addr.sin_addr, str, sizeof(str)), ntohs(client_addr.sin_port));
+				for (i = 0; i < n; i++) 
+				{
+					buf[i] = toupper(buf[i]);
+				}
+				//ssize_t write_r(int fd, const void *ptr, size_t nbytes);
+				write_r(connection_sock, buf, n);
 			}
-			//ssize_t write_r(int fd, const void *ptr, size_t nbytes);
-			write_r(connection_sock, buf, n);
+		} else 
+			close_r(connection_sock);	
 			//void close_r(int fd);
-		}
 		close_r(connection_sock);
 	}
 	return 0;
