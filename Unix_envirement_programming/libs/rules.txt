@@ -1,0 +1,2 @@
+1. class:common functions and specified functions
+2. named:specified function write in a single file and named as function name, common functions class in a file named as the working of functions

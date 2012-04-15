@@ -7,6 +7,5 @@ int main(int argc, const char *argv[])
 	while((c = getc(stdin)) != EOF){
 		putc(c, stdout);
 	}
-	ferror
 	return 0;
 }
