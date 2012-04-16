@@ -35,7 +35,7 @@ int main(int argc, const char *argv[])
 		//ssize_t read_r(int fd, void *ptr, size_t nbytes);
 		n = read(sock_fd, buf, MAXLINE);
 		if(n == 0)
-			fprintf(stdout, "peer side has been closed.\n");
+			fprintf(stdout, "peer side(%s port %d) has been closed.\n", argv[1], ntohs(server_addr.sin_port));
 		else {
 
 			fprintf(stdout, "responsed from server:\n");

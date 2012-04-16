@@ -20,4 +20,10 @@ ssize_t write_r(int fd, const void *ptr, size_t nbytes);
 int inet_pton_r(int af, const char *src, void *dst);
 const char *inet_ntop_r(int af, const void *src, char *dst, socklen_t cnt);
 
+//-----------------------------------------------------------------------------------------------
+//			sock option	
+//-----------------------------------------------------------------------------------------------
+int setsockopt_r(int sockfd, int level, int optname, const void *optval, socklen_t optlen);
+int getsockopt_r(int sockfd, int level, int optname, void *optval, socklen_t *optlen);
+
 #endif // __SOCKET__H__

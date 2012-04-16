@@ -27,6 +27,12 @@ typedef struct
 {
   buf_t *rbuf;
   buf_t *sbuf;
+
+  //struct sockaddr_in ipv4_address;
+  //char ip[] = "ddd.ddd.ddd.ddd";
+  char *ip;
+  unsigned short port;
+
   // define other member here.
 } conn_t;
 
@@ -72,6 +78,7 @@ void sigterm_handler(int sig);
 
 int buffered_send(int fd, const void *buf, size_t count);
 int parse_data(int fd);
+int exchange_data(int fd);
 
 //--------------------------------------------------------------------
 // Main function
@@ -562,6 +569,10 @@ int net_accept(int listening_socket)
     }
     else
     {
+      //char *strdup(const char *s);
+      new_conn->ip = strdup(peer_ipv4_address_string);
+      new_conn->port = ntohs(peer_ipv4_address.sin_port);
+
       // Attach new_conn object to global_conn_list
       global_conn_list[new_connected_socket] = new_conn;
 
@@ -657,7 +668,8 @@ read_again:
     }
   }
 
-  parse_data(fd);
+  //parse_data(fd);
+  exchange_data(fd);
 
   return 0;
 }
@@ -831,7 +843,24 @@ int buffered_send(int fd, const void *buf, size_t count)
 int parse_data(int fd)
 {
   // TODO: Implement data parser according to protocol
+  return 0;
+}
+
+int exchange_data(int fd)
+{
   int i;
+  char buffer[128];
+
+  if (!global_conn_list[fd])
+  {
+    return -1;
+  }
+
+  memset(buffer, 0, sizeof(buffer));
+
+  snprintf(buffer, sizeof(buffer) - 1, "[%s:%d, %lu bytes]: ", global_conn_list[fd]->ip, global_conn_list[fd]->port, global_conn_list[fd]->rbuf->payload_length);
+
+  fprintf(stdout, "%s\n", buffer);
 
   for (i = 0; i < global_conn_list_count; i++)
   {
@@ -839,6 +868,7 @@ int parse_data(int fd)
     {
       if (global_conn_list[i])
       {
+	buffered_send(i, buffer, strlen(buffer));
 	buffered_send(i, global_conn_list[fd]->rbuf->data, global_conn_list[fd]->rbuf->payload_length);
       }
     }

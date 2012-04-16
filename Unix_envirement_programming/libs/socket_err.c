@@ -1,7 +1,7 @@
 #include "apue.h"
 #include "socket.h"
 #include <errno.h>
-#include <sys/socket.h>
+//#include <sys/socket.h>
 //int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
 int accept_r(int sockfd, struct sockaddr *addr, socklen_t *addrlen)
 {
@@ -107,4 +107,14 @@ again:
 			return -1;
 	}
 	return n;
+}
+int getsockopt_r(int sockfd, int level, int optname, void *optval, socklen_t *optlen)
+{
+	if(getsockopt(sockfd, level, optname, optval, optlen) == -1)
+		err_ret("getsockopt() error");
+}
+int setsockopt_r(int sockfd, int level, int optname, const void *optval, socklen_t optlen)
+{
+	if(setsockopt(sockfd, level, optname, optval, optlen) == -1)
+		err_ret("setsockopt() error");
 }

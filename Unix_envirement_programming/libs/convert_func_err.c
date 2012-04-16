@@ -1,5 +1,6 @@
 #include "apue.h"
 #include "socket.h"
+//#include <sys/socket.h>
 
 int inet_pton_r(int af, const char *src, void *dst)
 {
@@ -18,7 +19,7 @@ int inet_pton_r(int af, const char *src, void *dst)
 const char *inet_ntop_r(int af, const void *src, char *dst, socklen_t cnt)
 {
 	char *str_addr ;
-	if ((str_addr = inet_ntop(af, src, dst, cnt)) == NULL)
+	if ((str_addr = (char *)inet_ntop(af, src, dst, cnt)) == NULL)
 	{
 		err_ret("inet_ntop() convert IPv4 address from binary format to string failed");
 	}

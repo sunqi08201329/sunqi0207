@@ -30,5 +30,5 @@ vimlib:
 viminc:
 	vim $(INC_PATH)*.h
 movetxt:
-	mv *.txt $(MAN_PATH)
+	mv man_* $(MAN_PATH)
 .PHONY:all clean makelib
