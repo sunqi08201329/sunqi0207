@@ -1,0 +1,8 @@
+#!/bin/csh -f
+echo -n  "Who wrote \"War and Peace\"?" 
+set answer = $<
+while ("$answer" != "Tolstoy")
+	echo "Wrong, try again\!"
+	set answer = $<
+end
+echo Yeah!

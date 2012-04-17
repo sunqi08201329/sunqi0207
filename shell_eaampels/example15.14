@@ -1,0 +1,13 @@
+#!/bin/csh
+echo -n "Please enter your age "
+set age = $<
+
+if ( $age > 12 && $age < 19 ) then
+	echo A teenager            # What if you enter 20?
+else if ( $age > 20 && $age < 30) then
+	echo A young adult
+else if ( $age >= 30 ) then    # What if the user enters 125?
+	echo Moving on in years
+else
+	echo "Invalid input"
+endif

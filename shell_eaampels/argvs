@@ -1,0 +1,7 @@
+# This script is called argvs
+BEGIN{
+	for ( i=0; i < ARGC; i++ ){
+		printf("argv[%d] is %s\n", i, ARGV[i])
+		}
+	printf("The number of arguments, ARGC=%d\n", ARGC)
+}

@@ -1,0 +1,6 @@
+for file in *.c 
+do
+	if [[ -f $file ]] ; then
+		cc $file -o ${file%.c}
+	fi
+done

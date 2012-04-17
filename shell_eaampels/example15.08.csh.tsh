@@ -1,0 +1,4 @@
+set n = 5; set name = "Tom"
+if ( $n =< 5 ) then          # Should be: if ( $n <= 5 ) then 
+if ( $n == 5 && <  6 ) then  # Should be: if ( $n == 5 && $n < 6)
+if ( $name == [Tt]om ) then  # Should be: if ($name =~ [Tt]om ) 

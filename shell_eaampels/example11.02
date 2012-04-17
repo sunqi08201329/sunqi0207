@@ -1,0 +1,14 @@
+set -o allexport
+TERM=vt102
+HOSTNAME=$(uname -n)
+HISTSIZE=50
+EDITOR=/usr/ucb/vi
+ENV=$HOME/.kshrc
+PATH=$HOME/bin:/usr/ucb:/usr/bin:\
+/usr/local:/etc:/bin:/usr/bin:/usr/local\ 
+/bin:/usr/hosts:/usr/5bin:/usr/etc:/usr/bin:.
+PS1="$HOSTNAME ! $ "
+set +o allexport
+alias openwin=/usr/openwin/bin/openwin
+trap '$HOME/.logout' EXIT
+clear

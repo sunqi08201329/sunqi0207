@@ -1,0 +1,5 @@
+if ( $answer =~ [Yy]* ) then
+	mail bob < message
+else
+	mail john < datafil	e
+endif

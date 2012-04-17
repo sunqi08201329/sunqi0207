@@ -1,0 +1,16 @@
+#!/bin/sh
+# Script: renames a file -- Bourne shell
+
+if [ $# -lt 2 ]     # Argument checking
+then
+	echo "Usage: $0 file1 file2 " 1>&2
+	exit 1
+fi
+if [ -f $1 ]        # Check for file existence
+then
+	mv $1 $2        # Rename file1
+	echo $1 has been renamed to $2
+else
+	echo "$1 doesn't exist"
+	exit 2
+fi

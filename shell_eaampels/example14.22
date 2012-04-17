@@ -1,0 +1,13 @@
+if [ "$name" = "" ]     # Alternative to  [ ! "$name" ]
+                        # or [ -z "$name" ]
+then
+	echo The name variable is null
+fi
+
+# (From System showmount program, which displays all remotely mounted systems)
+remotes=$(/usr/sbin/showmount)
+if [ "X${remotes}" != "X" ] 
+then
+	/usr/sbin/wall ${remotes}
+	             # ...
+fi

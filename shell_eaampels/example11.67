@@ -1,0 +1,7 @@
+print "Select a terminal type"
+cat << EOF
+  [1] sun
+  [2] ansi
+  [3] wyse50
+EOF
+read TERM

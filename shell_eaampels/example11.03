@@ -1,0 +1,12 @@
+# The .kshrc file
+set -o trackall
+set -o vi
+alias l='ls -laF'
+alias ls='ls -aF'
+alias hi='fc -l'
+alias c=clear
+function pushd { pwd > $HOME/.lastdir.$$ ; }
+function popd { cd $(< $HOME/.lastdir.$$) ; 
+		rm $HOME/.lastdir.$$; pwd; }
+function psg { ps -ef | egrep $1 | egrep -v egrep; }
+function vg { vgrind -s11 -t $* | lpr -t ; }

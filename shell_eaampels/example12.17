@@ -1,0 +1,4 @@
+if ypmatch $name passwd > /dev/null 2>&1
+then
+      echo Found $name!
+fi

@@ -1,0 +1,9 @@
+#!/bin/sh
+# Scriptname: num
+num=0			 # Initialize num
+while  [ $num -lt 10 ]	          # Test num with test command 
+do 
+	echo  -n $num
+	num=`expr  $num + 1`	        # Increment num 
+done
+echo "\nAfter loop exits, continue running here"

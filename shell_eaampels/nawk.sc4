@@ -1,0 +1,9 @@
+# Awk script illustrating arrays
+BEGIN{OFS="\t"}
+{ list[NR] = $1 }   # The array is called list. The index in the
+                    # number of the current record. The value of the 
+                    # first field is assigned to the array element.
+END{ for( n = 1; n <= NR; n++){
+         print list[n]} # for loop is used to loop 
+                        # through the array.
+}

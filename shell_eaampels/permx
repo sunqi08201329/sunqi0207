@@ -1,0 +1,10 @@
+#!/bin/sh
+# Scriptname:permx
+for file         # Empty wordlist
+do
+	if [ -f $file -a ! -x $file ]
+	then
+		     chmod +x $file
+		     echo $file now has execute permission
+	fi
+done

@@ -1,0 +1,5 @@
+#!/bin/csh -f
+if ( $#argv != 1 ) then
+	    echo "$0 requires an argument"
+	    exit 2
+endif

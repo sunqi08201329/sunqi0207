@@ -1,0 +1,23 @@
+echo  "Are you o.k. (y/n) ?"
+read answer
+if [ "$answer" = Y -o "$answer" = y ] 
+then                 
+       echo  "Glad to hear it."
+fi
+
+if [ $answer = Y -o "$answer" = y ] 
+[: too many arguments
+
+if [[ $answer == [Yy]* || $answer == Maybe ]]
+then
+      echo  "Glad to hear it."
+fi
+
+shopt -s extglob
+
+answer="not really"
+
+if [[ $answer = [Nn]o?( way|t really) ]]
+then
+       echo "So sorry. "
+fi    

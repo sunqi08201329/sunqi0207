@@ -1,0 +1,11 @@
+#!/bin/bash
+# filename: name_grep
+
+name=Tom
+if grep "$name" databasefile >& /dev/null 
+then
+	:
+else
+	echo "$1 not found in databasefile"
+	exit 1
+fi

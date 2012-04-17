@@ -1,0 +1,3 @@
+foreach file (*.c)
+	cc $file -o $file:r
+end 

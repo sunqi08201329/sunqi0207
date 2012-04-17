@@ -1,0 +1,10 @@
+TERM=vt102
+HOSTNAME=`uname -n`
+EDITOR=/usr/ucb/vi
+PATH=/bin:/usr/ucb:/usr/bin:/usr/local:/etc:/bin:/usr/bin:. 
+PS1="$HOSTNAME $ > "
+export TERM HOSTNAME EDITOR PATH PS1
+stty erase ^h 
+go () { cd $1; PS1=`pwd`; PS1=`basename $PS1`; }
+trap '$HOME/.logout' EXIT
+clear

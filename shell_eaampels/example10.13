@@ -1,0 +1,5 @@
+echo -n "What is your name? "
+set name = $<
+if ( "$name" != "" ) then
+	grep "$name" datafile
+endif

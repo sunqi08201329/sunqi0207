@@ -1,0 +1,6 @@
+#!/bin/sh
+until who | grep linda
+do
+	sleep 5
+done
+talk linda@dragonwings

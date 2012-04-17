@@ -1,0 +1,6 @@
+go() {   # This file contains two functions
+	cd $HOME/bin/prog 
+      PS1='`pwd` > ' 
+	ls 
+}
+greetings() { echo "Hi $1! Welcome to my world." ; }

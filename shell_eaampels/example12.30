@@ -1,0 +1,6 @@
+for person in $(< mylist)   #same as for person in `cat mylist`
+do 
+      mail $person < letter
+      print $person was sent a letter.
+done
+print "The letter has been sent."

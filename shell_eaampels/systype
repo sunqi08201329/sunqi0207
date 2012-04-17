@@ -1,0 +1,24 @@
+#!/bin/csh -f
+# This script is called systype
+# Program to determine the type of system you are on.
+echo "Your system type is: "
+set release = (`uname -r`)
+switch (`uname -s`)
+case SunOS:
+	switch ("$release")
+	case 4.*:
+			echo "SunOS $release"
+			breaksw
+	case [56].*:
+			echo "Solaris $release"
+			breaksw
+	endsw
+	breaksw
+case HP*:
+	echo HP-UX
+	breaksw
+
+case Linux:
+	echo Linux
+	breaksw
+endsw

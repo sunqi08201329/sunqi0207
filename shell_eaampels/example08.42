@@ -1,0 +1,12 @@
+#!/bin/sh
+# This program demonstrates the scope of variables when 
+# assigned within loops where the looping command uses 
+# redirection. A subshell is started when the loop uses 
+# redirection, making all variables created within the loop 
+# local to the shell where the loop is being executed.
+while read line
+do
+	echo $line    # This line will be redirected to outfile
+	name=JOE
+done < testing > outfile  # Redirection of input and output
+echo Hi there $name

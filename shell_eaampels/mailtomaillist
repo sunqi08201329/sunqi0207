@@ -1,0 +1,11 @@
+#!/bin/csh -f
+# This script is called mailtomaillist
+foreach person (`cat maillist`)
+	mail $person <<EOF
+	Hi $person, 
+	How are you?  I've missed you. Come on over
+	to my place. 
+	Your pal,
+		 	$LOGNAME@`uname -n`
+EOF
+end

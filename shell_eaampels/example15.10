@@ -1,0 +1,5 @@
+#!/bin/sh
+now=`date`
+echo Today is $now
+echo "You have `ls|wc -l` files in this directory"
+echo 'You have `ls|wc -l` files in this directory'

@@ -1,0 +1,15 @@
+# Second awk script-- awk.sc2
+BEGIN{ FS=":"
+   print "  NAME\t\tDISTRICT\tQUANTITY"
+   print "___________________________________________\n" 
+}
+
+   {print $1"\t  " $3"\t\t" $7}
+   {total+=$7}
+   /north/{count++}
+
+END{
+   print "---------------------------------------------"
+   print "The total quantity is " total
+   print "The number of northern salespersons is " count "."
+}

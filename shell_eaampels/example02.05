@@ -1,0 +1,20 @@
+#!/bin/sh 
+if [ -a file ]
+then
+	echo file exists
+fi
+ 
+if [ -d file ] 
+then
+ 	 echo file is a directory
+fi
+
+if [ -s file ] 
+then
+	 echo file is not of zero length 
+fi
+
+if [ -r file -a -w file ]
+then
+	 echo file is readable and writeable
+fi

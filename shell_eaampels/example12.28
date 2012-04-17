@@ -1,0 +1,19 @@
+print "Select a terminal type "
+cat << EOF
+	1) vt120
+	2) wyse50
+	3) ansi
+	4) sun
+EOF
+read TERM
+case "$TERM" in
+1) 	export TERM=vt120
+	;;
+2) 	export TERM=wyse50
+	;;
+3) 	export TERM=ansi
+	;;
+*)	export TERM=sun
+	;;
+esac
+print "TERM is $TERM"

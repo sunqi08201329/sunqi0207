@@ -1,0 +1,19 @@
+#!/bin/ksh
+# Program name: goodboys
+PS3="Please choose one of the three boys : "
+select choice in tom dan guy
+do 
+	case $choice in
+	tom)
+		print Tom is a cool dude!
+		break;;		         # break out of the select loop
+
+	 dan | guy )
+		print Dan and Guy are both sweethearts.
+		break;;
+	 *) 
+		print " $REPLY is not one of your choices" 1>&2
+		print "Try again."
+		;;
+	esac
+done

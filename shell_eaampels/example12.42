@@ -1,0 +1,9 @@
+while true; do
+	read answer? Are you ready to move on\?
+	if [[ $answer = [Yy]* ]]; then
+	   	break
+	else
+	   	# ....commands...
+	fi
+done
+print "Here we are"

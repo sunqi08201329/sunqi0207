@@ -1,0 +1,19 @@
+#!/bin/ksh 
+# Scriptname: xtermcolor
+# Sets the xterm foreground color (the color of the prompt and 
+# input typed for interactive windows. 
+read color?"Choose a foreground color for your terminal?" 
+case "$color" in 
+*[Bb]l??) 
+	xterm -fg blue -fn terminal &
+		;; 
+*[Gg]reen)
+	 xterm -fg darkgreen -fn terminal &
+		;;
+red | orange)                   # The vertical bar means "or" 
+ 	xterm -fg "$color" -fn terminal &
+		;;
+*)  xterm -fn terminal &        # default
+		;;
+esac
+print "Out of case..."

@@ -1,0 +1,15 @@
+#!/bin/ksh
+function trapper { 
+	print "In trapper"
+	trap 'print "Caught in a trap!"' INT
+ 	print "Got here."
+	sleep 25
+}
+while :
+do
+	print "In the main script"
+	trapper   # Call the function
+	print "Still in main"
+	sleep 5
+	print "Bye"
+done

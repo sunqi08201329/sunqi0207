@@ -1,0 +1,13 @@
+# This script demonstrates the use of curly braces to nest addresses
+# and commands. Comments are preceded by a pound sign (#) and must
+# be on a line by themselves. Commands are terminated with a newline
+# or semicolon.  If there is any text after a command, even one
+# space, you receive an error message:
+#      sed: Extra text at end of command: 
+
+/western/, /southeast/{
+   /^ *$/d
+   /Suan/{ h; d; }
+}
+ /Ann/g
+ s/TB \(Savage\)/Thomas \1/

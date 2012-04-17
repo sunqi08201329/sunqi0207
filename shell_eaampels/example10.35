@@ -1,0 +1,27 @@
+#! /bin/tcsh
+echo "Select from the following menu:"
+cat << EOF
+   1) Red
+   2) Green
+   3) Blue
+   4) Exit
+EOF
+set choice = $<
+switch ("$choice")
+
+case 1:
+        echo Red is stop.
+        breaksw
+case 2:
+        echo Green is go\!
+        breaksw
+case 3:
+        echo Blue is a feeling...
+        breaksw
+case 4:
+        exit
+        breaksw
+default:
+        echo Not a choice\!\!
+endsw
+echo Good-bye

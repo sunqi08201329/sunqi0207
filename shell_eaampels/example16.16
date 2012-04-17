@@ -1,0 +1,38 @@
+#! /bin/sh
+rm $HOME/df_output $HOME/message 2> /dev/null
+uname_out=`uname` 
+case "$uname_out" in
+	HP-UX)  
+		bdf | awk  '{print $5,$6}' | awk -F% '$1>90 {print $0}' \ 
+                                         > $HOME/df_output
+	;;
+	SunOS)
+		df -k | awk '{print $5,$6}' | awk -F% '$1>90 {print $0}' \
+                                         > $HOME/df_output
+	;;
+	Linux)
+		df | awk '{print $5,$6}' | awk -F% '$1>90 {print $0}' \
+                                         > $HOME/df_output
+	;;
+	Darwin)
+		df | awk '{print $5,$6}' | awk -F% '$1>90 {print $0}' \
+                                         > $HOME/df_output
+	;;
+	*)      
+	echo "Sorry, $uname_out UNIX not supported by this script"
+
+	;;
+esac
+
+if [ -s $HOME/df_output ]
+then
+echo "** WARNING **" > $HOME/message
+echo "The following file systems are filling up." >> $HOME/message
+echo "You may want to look into the situation." >> $HOME/message
+cat $HOME/df_output >> $HOME/message
+cat $HOME/message
+echo "This warning message is stored in the file $HOME/message"
+echo "You should create a copy of the file now if you would"
+echo "like to save this message."
+fi
+rm $HOME/df_output 

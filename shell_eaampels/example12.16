@@ -1,0 +1,5 @@
+file=/etc/passwd
+if [[ -f $file && (-r $file || -w $file) ]]
+then
+  print $file is a plain file and is either readable or writeable
+fi

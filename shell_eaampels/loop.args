@@ -1,0 +1,6 @@
+#!/bin/csh -f
+# Script is called loop.args
+while ($#argv)
+	echo $argv
+	shift
+end

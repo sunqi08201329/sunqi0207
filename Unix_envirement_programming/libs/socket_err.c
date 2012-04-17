@@ -61,8 +61,8 @@ ssize_t send_r(int new_connected_socket, const void *buf, size_t len, int flags)
 	ssize_t n;
 again:
 	if ((n = send(new_connected_socket, buf, len, flags)) < 0){ // failed
-		err_ret("Send data to client failed");
 		goto again;
+		err_ret("Send() error");
 		return -1;
 	}
 	return n;
@@ -72,11 +72,12 @@ ssize_t recv_r(int new_connected_socket, void *buf, size_t len, int flags)
 {
 	ssize_t n;
 again:
-	if ((n = recv(new_connected_socket, buf, sizeof(buf) - 1, 0)) < 0)
+	if ((n = recv(new_connected_socket, buf, sizeof(buf) - 1, 0)) < 0){
 		// failed
-		err_ret("Receive data on socket %d failed", new_connected_socket);
 		goto again;
+		err_ret("Receive data on socket %d failed", new_connected_socket);
 		return -1;
+	}
 	return n;
 }
 void close_r(int fd)
@@ -91,8 +92,10 @@ again:
 	if(( n = read(fd, ptr, nbytes)) < 0){
 		if(errno = EINTR)
 			goto again;
-		else
+		else {
+			err_ret("read() error");
 			return -1;
+		}
 	}
 	return n;
 }
@@ -103,8 +106,10 @@ again:
 	if(( n = write(fd, ptr, nbytes)) < 0){
 		if(errno = EINTR)
 			goto again;
-		else
+		else {
+			err_ret("write() error");
 			return -1;
+		}
 	}
 	return n;
 }

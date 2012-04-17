@@ -1,0 +1,7 @@
+# Awk and the special for loop
+{region[$1]++}   # The index is the first field of each record
+
+END{for(item in region){
+        print region[item], item
+    }
+}

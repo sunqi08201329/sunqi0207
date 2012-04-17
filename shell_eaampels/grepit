@@ -1,0 +1,8 @@
+#!/bin/bash
+# Scriptname: grepit 
+if grep "$name" /etc/passwd >& /dev/null; then
+   	echo Found $name!
+else
+   	echo "Can't find $name."
+   	exit 1
+fi

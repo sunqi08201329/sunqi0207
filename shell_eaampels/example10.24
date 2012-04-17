@@ -1,0 +1,13 @@
+#!/bin/csh -f
+startover:
+echo "What was your grade? "
+set grade = $<
+if ( "$grade" < 0 || "$grade" > 100 ) then
+	echo "Illegal grade"
+	goto startover
+endif
+if ( $grade >= 89 ) then
+	echo "A for the genius\!"
+else if ( $grade >= 79 ) then
+	# .. < Program continues >
+endif

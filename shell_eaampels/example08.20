@@ -1,0 +1,8 @@
+name=Tom
+if grep "$name" databasefile > /dev/null 2>&1 
+then
+	:
+else
+	echo  "$1 not found in databasefile"
+	exit 1
+fi

@@ -1,0 +1,6 @@
+onintr  finish
+	# < Script continues here >
+finish:				     
+onintr -				 # Disable further interrupts
+echo Cleaning temp files
+rm $$tmp* ; exit 1

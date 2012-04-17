@@ -1,0 +1,11 @@
+#!/bin/sh
+# Scriptname: are_you_ok
+
+echo "Are you ok (y/n) ?"
+#print "Are you ok (y/n) ?"
+read answer
+if [ "$answer" = Y -o "$answer" = y ]     # Old-style test
+then
+	echo "Glad to hear it."
+	#print "Glad to hear it."
+fi	

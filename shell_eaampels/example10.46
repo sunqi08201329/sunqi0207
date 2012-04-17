@@ -1,0 +1,12 @@
+#!/bin/csh -f
+while (1)
+	echo "Hello, in 1st loop"
+	while (1)
+	         echo "In 2nd loop"
+               while (1)
+                  echo "In 3rd loop"
+                  repeat 3 break
+               end
+	end
+end
+echo "Out of all loops"

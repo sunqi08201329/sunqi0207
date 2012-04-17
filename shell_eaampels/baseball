@@ -1,0 +1,10 @@
+#!/bin/csh -f
+# This script is called baseball
+echo -n "What baseball hero died in August 1995? "
+set answer = $<
+while ("$answer" !~ [Mm]*) 
+		echo "Wrong\! Try again."
+		set answer = $<
+		if ( "$answer" =~  [Mm]* ) break 
+end
+echo "You are a scholar."

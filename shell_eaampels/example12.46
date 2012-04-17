@@ -1,0 +1,4 @@
+for i in 7 9 2 3 4 5
+do
+	print $i
+done | sort -n

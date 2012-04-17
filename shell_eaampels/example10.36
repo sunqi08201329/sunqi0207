@@ -1,0 +1,3 @@
+foreach person (bob sam sue fred)  
+	mail $person < letter
+end

@@ -1,0 +1,3 @@
+if ( $?prompt ) then
+	set history = 32
+endif

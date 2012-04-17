@@ -1,0 +1,4 @@
+set -o allexport
+set +o allexport
+set -a
+set +a

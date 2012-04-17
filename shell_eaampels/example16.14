@@ -1,0 +1,38 @@
+#! /bin/bash
+# crond Start/Stop the cron clock daemon.
+#
+# chkconfig: 2345 90 60
+# description: cron is a standard UNIX program that runs 
+# user-specified programs at periodic scheduled times.
+# config: /etc/crontab
+# pidfile: /var/run/crond.pid
+
+# Source function library.
+. /etc/init.d/functions
+
+RETVAL=0 ; prog="crond"
+
+start() {
+	echo -n $"Starting $prog: "
+	daemon crond
+	RETVAL=$?
+	echo
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/crond
+	return RETVAL
+}
+stop() {
+	echo -n $"Stopping $prog: "
+	killproc crond
+	RETVAL=$?
+	echo
+	[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/crond
+		return RETVAL
+}
+restart() {  stop ; start }
+case "$1" in
+	start)   start           ;;
+	stop)    stop            ;;
+	restart) restart         ;;
+	*)       echo $"Usage: $0 {start|stop|restart}"
+exit 1          ;;
+esac

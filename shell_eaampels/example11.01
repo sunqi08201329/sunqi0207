@@ -1,0 +1,37 @@
+# The profile that all logins get before using their own .profile
+trap " " 2 3
+export LOGNAME PATH  # Initially set by /bin/login
+if [ "$TERM" = " " ]
+then
+	if /bin/i386
+	then     # Set the terminal type
+		TERM=AT386
+	else
+		TERM=sun
+	fi
+	export TERM
+fi
+# Login and -su shells get /etc/profile services.
+# -rsh is given its environment in the .profile.
+case "$0" in
+-sh | -ksh | -jsh )
+	if [ ! -f .hushlogin ]
+	then
+		/usr/sbin/quota
+	# Allow the user to break the Message-Of-The-Day only.
+		trap "trap ' ' 2" 2
+		/bin/cat -s /etc/motd     
+		# Display the message of the day
+		trap " " 2
+		/bin/mail -E
+		case $? in
+		0)	# Check for new mail
+			echo "You have new mail. "
+				;;
+		2)	echo "You have mail. "
+				;;
+		esac
+	fi
+esac
+umask 022
+trap 2 3

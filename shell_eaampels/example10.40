@@ -1,0 +1,7 @@
+#!/bin/csh -f
+set num = 0
+while ($num < 10)
+	echo $num
+	@ num++        # See arithmetic. 
+end
+echo "Program continues here"

@@ -1,0 +1,5 @@
+#!/bin/csh -f
+ypmatch  $1  passwd >& /dev/null
+if ( $status == 0 ) then
+	 echo Found $1 in the NIS database
+endif

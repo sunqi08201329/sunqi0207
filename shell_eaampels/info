@@ -1,0 +1,6 @@
+# My first awk script by Jack Sprat
+# Script name: info; Date: February 28, 2001
+/Tom/{print  "Tom's birthday is "$3}
+/Mary/{print NR, $0}
+/^Sally/{print "Hi Sally. "  $1 " has a salary of  $" $4 "."} 
+# End of info script

@@ -1,0 +1,24 @@
+#! /bin/ksh
+print "Do you want to see the menu?"
+read answer
+if [[ $answer = y ]]
+then
+	cat << EOF           <-- No space after user defined terminator
+	1) Steak and eggs
+	2) Fruit and yogurt
+	3) Pie and icecream
+	EOF                  <-- User-defined terminator cannot 
+	                         have spaces surrounding it 
+	print "Pick one "
+	read choice
+	case "$choice" in
+		1) print "Cholesterol"
+			;;
+		2) print "Dieter"
+			;;
+		3) print "Sweet tooth"
+			;;
+	esac 
+else
+	print "Later alligator!"
+fi

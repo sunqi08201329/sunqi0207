@@ -1,0 +1,4 @@
+# NOTE: This script cannot be invoked with #!/bin/ksh 
+print "In other script "
+sayit Dan
+print "Returning to calling script"

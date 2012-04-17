@@ -1,0 +1,5 @@
+alias cd=_cd
+function _cd {
+\cd $1
+print $(basename $PWD)
+}

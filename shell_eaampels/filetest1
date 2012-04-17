@@ -1,0 +1,21 @@
+#!/bin/tcsh -f
+# Scriptname: filetest1
+if ( -e file ) then
+   echo file exists
+endif
+
+if ( -d file ) then
+   echo file is a directory
+endif
+
+if ( ! -z file ) then
+   echo file is not of zero length
+endif
+
+if ( -r file && -w file && -x file) then
+   echo  file is readable and writable and executable.
+endif
+
+if ( -rwx file ) then
+   echo file is readable and writable and executable.
+endif

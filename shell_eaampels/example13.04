@@ -1,0 +1,30 @@
+# /etc/profile
+# Systemwide environment and startup programs
+# Functions and aliases go in /etc/bashrc
+
+PATH="$PATH:/usr/X11R6/bin"
+PS1="[\u@\h \W]\\$ "
+
+ulimit -c 1000000
+if [ `id -gn` = `id -un` -a `id -u` -gt 14 ]; then
+	umask 002
+else
+	umask 022
+fi
+
+USER=`id -un`
+LOGNAME=$USER
+MAIL="/var/spool/mail/$USER"
+
+HOSTNAME=`/bin/hostname`
+HISTSIZE=1000
+HISTFILESIZE=1000
+export PATH PS1 HOSTNAME HISTSIZE HISTFILESIZE USER LOGNAME MAIL
+
+for i in /etc/profile.d/*.sh ; do
+	if [ -x $i ]; then
+		. $i
+	fi
+done
+
+unset i # 

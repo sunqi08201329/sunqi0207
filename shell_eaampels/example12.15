@@ -1,0 +1,10 @@
+read answer
+if [[ $answer = [Yy]* ]]     # Test for Yes or yes or Y or y, etc.
+then
+  # ...
+fi
+guess=Noone
+if [[ $guess != [Nn]o@(one|body) ]]        # Test for Noone, noone
+then                                  # or Nobody, nobody...
+  # ...
+fi

@@ -1,0 +1,16 @@
+uname_out=`uname`
+case "$uname_out" in
+HP-UX)  echo "You are running HP-UX"
+	;;
+SunOS) echo "You are running Solaris"
+	;;
+FreeBSD) echo "You are running FreeBSD"
+	;;
+Linux) echo "You are running Linux"
+	;;
+Darwin) echo "You are running Mac OS X"
+	;;
+	*)  echo "Sorry, $uname_out UNIX "
+    echo "is not supported by this script"
+	;;
+esac

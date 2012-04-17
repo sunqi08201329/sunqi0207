@@ -1,0 +1,9 @@
+set ch = "c"
+if ( $ch == "a" ) then
+	echo $ch
+	if ( $ch == "b" ) then       # This "if" is never evaluated
+		echo $ch
+else
+	echo $ch
+endif
+endif

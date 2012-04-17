@@ -1,0 +1,9 @@
+#!/bin/ksh
+# Scriptname: todebug2
+trap 'print "num=$num on line $LINENO"' DEBUG
+num=1
+while (( num < 5 ))
+do
+	(( num=num+1 ))
+done
+print The grand total is $num

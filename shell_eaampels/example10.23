@@ -1,0 +1,4 @@
+if  !  { ( ypmatch $user passwd >& /dev/null ) } then
+	echo $user is not a user here.
+	exit 1
+endif

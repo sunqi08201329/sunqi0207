@@ -1,0 +1,8 @@
+#!/bin/csh
+echo -n "Enter -n your grade: "
+set grade = $<
+if ( $grade < 0 && $grade > 100 ) then
+	echo Illegal grade.    # This line will never be executed
+exit 1
+endif
+echo "This line will always be executed."

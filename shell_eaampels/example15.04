@@ -1,0 +1,3 @@
+#!/bin/csh
+setenv MYVAR 18
+echo "The value of MYVAR is $MYVAR

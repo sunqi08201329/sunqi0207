@@ -1,0 +1,22 @@
+#!/bin/ksh
+# This trap checks for any command that exits with a non-zero 	
+# status and then prints the message.
+trap 'print "You gave me a non-integer. Try again. "' ERR
+typeset -i number     # Assignment to number must be integer
+while true
+do
+    print -n "Enter an integer. " 
+    read -r number 2> /dev/null
+    if (( $? == 0 ))     # Was an integer read in? 
+    then                 # Was the exit status zero?
+        break 
+    fi
+done
+trap - ERR           # Unset pseudo trap for ERR
+n=$number
+if grep ZOMBIE /etc/passwd > /dev/null 2>&1
+then
+ 	:  
+else
+    print "\$n is $n. So long"
+fi

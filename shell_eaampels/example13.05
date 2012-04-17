@@ -1,0 +1,19 @@
+# .bash_profile
+# The file is sourced by bash only when the user logs on.
+	
+# Get the aliases and functions
+if [ -f ~/.bashrc ]; then
+	. ~/.bashrc
+fi
+	
+# User-specific environment and startup programs
+	
+PATH=$PATH:$HOME/bin
+ENV=$HOME/.bashrc     # or BASH_ENV=$HOME/.bashrc
+USERNAME="root"
+export USERNAME ENV PATH
+mesg n
+if [ $TERM = linux ]
+then
+	startx    # Start the X Window system
+fi

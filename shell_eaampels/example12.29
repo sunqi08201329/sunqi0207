@@ -1,0 +1,5 @@
+for pal in Tom Dick Harry Joe
+do
+	print "Hi $pal"
+done
+print "Out of loop"

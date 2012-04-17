@@ -1,0 +1,27 @@
+# If the .bashrc file exists, it is in the user's home directory. 
+# It contains aliases (nicknames for commands) and user-defined
+# functions.
+
+# .bashrc
+# User-specific aliases and functions
+
+set -o vi
+set -o noclobber
+set -o ignoreeof
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+stty erase ^h
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+	. /etc/bashrc
+fi
+case "$-" in
+	*i*) echo This is an interactive bash shell
+		;;
+	*)   echo This shell is noninteractive
+		 ;;
+esac
+history_control=ignoredups
+
+function cd { builtin cd $1; echo $PWD; }	

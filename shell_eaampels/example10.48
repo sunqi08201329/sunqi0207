@@ -1,0 +1,9 @@
+#!/bin/csh -f
+if ( ! -e memo ) then
+	echo  "memo file non existent"
+	exit 1
+endif
+foreach person (anish bob don karl jaye)
+	if ("$person" =~ [Kk]arl) continue
+	mail -s "Party time"  $person < memo
+end

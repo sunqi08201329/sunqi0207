@@ -1,0 +1,20 @@
+#!/bin/sh
+# Scriptname: speller
+# Purpose: Check and fix spelling errors in a file
+exec < tmp                   # Opens the tmp file 
+while read line              # Read from the tmp file
+do
+	echo $line
+	echo  -n  "Is this word correct? [Y/N] "
+	read answer < /dev/tty   # Read from the terminal
+	case  "$answer" in
+	[Yy]*) 
+	     continue;;
+	*) 
+	     echo  "What is the correct spelling? "
+	     read word < /dev/tty
+	     sed  "s/$line/$word/g" tmp > error
+	     mv error tmp
+	     echo $line has been changed to $word.
+	esac
+done

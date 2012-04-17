@@ -1,0 +1,7 @@
+num=0                   # Initialize num
+while (( num < 10 ))    # Test num with the let 
+do 
+   print -n $num
+   (( num=num + 1 ))      # Increment num 
+done
+print "\nAfter loop exits, continue running here"

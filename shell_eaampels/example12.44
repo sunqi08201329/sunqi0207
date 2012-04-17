@@ -1,0 +1,18 @@
+#!/bin/ksh
+while true ; do
+		# < Commands here>
+	for user in tom dick harry joe
+	do
+		if [[ $user = [Dd]* ]] 
+		then
+			continue 2
+				# < Commands here >
+				while true
+				do
+				    # < Commands here>
+				    break 3
+			   done
+	   fi
+	done
+done
+print Out of loop

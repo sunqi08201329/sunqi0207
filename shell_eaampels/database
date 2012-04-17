@@ -1,0 +1,28 @@
+#!/bin/csh -f
+# This script is called database
+while (1)
+	echo "Select a menu item"
+	cat << EOF
+	1) Append
+	2) Delete
+	3) Update
+	4) Exit
+EOF
+	set choice = $<
+	switch ($choice)
+	case 1:
+			echo "Appending"
+			break           # Break out of loop; not a breaksw
+	case 2:
+			echo "Deleting"
+			break
+	case 3:
+			echo "Updating"
+			break
+	case 4:
+			exit 0
+	default:
+			echo "Invalid choice. Try again.
+	endsw
+end
+echo "Program continues here"

@@ -1,0 +1,10 @@
+#!/bin/ksh
+# Scriptname: doit0
+set joe mary tom sam
+shift 
+print $*
+set $(date)
+print $*
+shift 5
+print $*
+shift 2

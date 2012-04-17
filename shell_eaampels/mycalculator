@@ -1,0 +1,52 @@
+#!/bin/ksh
+# Scriptname: mycalculator
+# A simple calculator -- uses the bc command to perform the 
+# calculations
+# Since the shell performs operations on integers only, 
+# this program allows
+# you to use floating point numbers by writing to and reading 
+# from the bcprogram.
+
+cat << EOF
+**************************************************
+     WELCOME TO THE CALCULATOR PROGRAM
+*************************************************
+EOF
+
+bc |&  			          # Open coprocess
+
+while true
+do
+	print "Select the letter for one of the operators below "
+	cat <<- EOF
+	 	a) +
+	 	s) -
+	 	m) *
+	 	d) /
+	 	e) ^
+	EOF
+	read op
+	case $op in
+   		a) op="+";;
+   		s) op="-";;
+   		m) op="*";;
+   		d) op="/";;
+   		e) op="^";;
+   		*) print "Bad operator"
+		       continue;;
+	esac
+	print -p scale=3                    # write to the coprocess
+	print "Please enter two numbers: "  # write to standard out
+	read num1 num2                      # read from standard in
+	print -p "$num1" "$op" "$num2"      # write to the coprocess
+	read -p result                      # read from the coprocess
+	print $result
+	print -n "Continue (y/n)? "
+	read answer
+	case $answer in
+	[Nn]* )
+
+   		break;;
+	esac
+done
+print Good-bye

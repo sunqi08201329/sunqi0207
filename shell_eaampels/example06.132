@@ -1,0 +1,9 @@
+{for ( x = 3; x <= NF; x++ )
+	if ( $x < 0 ){ print "Bottomed out!"; break}
+	# breaks out of for loop
+}
+
+{for ( x = 3; x <= NF; x++ )
+	if ( $x == 0 ) { print "Get next item"; continue}
+	# starts next iteration of  the for loop
+}

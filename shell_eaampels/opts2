@@ -1,0 +1,11 @@
+#!/bin/sh
+# Program opts2
+# Using getopts -- Second try --
+while getopts xy options 2> /dev/null
+do
+	case $options in
+	x) echo "you entered -x as an option";;
+	y) echo "you entered -y as an option";;
+	\?) echo "Only -x and -y are valid options"  1>&2;;
+	esac
+done

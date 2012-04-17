@@ -1,0 +1,15 @@
+#!/bin/csh -f
+if ( -e file ) then
+	echo file exists
+endif
+ 
+if ( -d file ) then
+ 	 echo file is a directory
+endif
+
+if ( ! -z file ) then
+	 echo file is not of zero length 
+endif
+if ( -r file && -w file ) then
+	 echo file is readable and writeable
+endif

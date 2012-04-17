@@ -1,0 +1,9 @@
+#!/bin/csh 
+# Program should check for null input -- T and TC shells
+
+echo -n "Enter your name: "
+	set name = $<       # If user enters nothing, program will hang
+
+if { grep "$name" db >& /dev/null } then
+	echo Found name
+endif
