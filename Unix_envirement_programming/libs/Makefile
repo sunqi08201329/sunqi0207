@@ -8,6 +8,7 @@ STATIC_LINK = ar rcs
 
 INC_PATH = /home/akaedu/github/sunqi0207/Unix_envirement_programming/include/
 LIB_PATH = /home/akaedu/github/sunqi0207/Unix_envirement_programming/libs/
+MAN_PATH = /home/akaedu/github/sunqi0207/Unix_envirement_programming/src/man/
 
 lib_name = apue
 
@@ -19,5 +20,7 @@ link:
 	$(STATIC_LINK) lib$(lib_name).a $(objs)
 	#$(CC) main.c -L$(LIBRARY_PATH) -l $(lib_name) -o main -I$(INCLUDE_PATH)
 
+moveman:
+	mv man* $(MAN_PATH)	
 clean:
 	-rm -rf *.o
