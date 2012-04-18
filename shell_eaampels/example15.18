@@ -1,16 +1,21 @@
 #!/bin/sh
-# Script: renames a file -- Bourne shell
-
-if [ $# -lt 2 ]     # Argument checking
+name="Fred Fardbuckle"
+if grep "$name" db > /dev/null 2>&1
 then
-	echo "Usage: $0 file1 file2 " 1>&2
-	exit 1
-fi
-if [ -f $1 ]        # Check for file existence
-then
-	mv $1 $2        # Rename file1
-	echo $1 has been renamed to $2
+	echo Found $name
 else
-	echo "$1 doesn't exist"
-	exit 2
+	echo "Didn't find $name"        # Fred is not in the db file
+fi
+
+if awk "/$name/" db > /dev/null 2>&1
+then
+	echo Found $name
+else
+	echo "Didn't find $name"
+fi
+if sed -n "/$name/p" db > /dev/null 2>&1
+then
+	echo Found $name
+else
+	echo "Didn't find $name"
 fi
