@@ -34,4 +34,11 @@ int lchown_r(const char *path, uid_t owner, gid_t group);
 int truncate_r(const char *path, off_t length);
 int ftruncate_r(int fd, off_t length);
 
+//-----------------------------------------------------------------------------------------
+//	standard library function error process
+//-----------------------------------------------------------------------------------------
+FILE *fopen_r(const char *path, const char *mode);
+FILE *fdopen_r(int fd, const char *mode);
+FILE *freopen_r(const char *path, const char *mode, FILE *stream);
+
 #endif  //__FILE_ERR__

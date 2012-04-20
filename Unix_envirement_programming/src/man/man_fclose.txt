@@ -1,0 +1,47 @@
+FCLOSE(3)                                        Linux Programmer's Manual                                        FCLOSE(3)
+
+
+
+NAME
+       fclose - close a stream
+
+SYNOPSIS
+       #include <stdio.h>
+
+       int fclose(FILE *fp);
+
+DESCRIPTION
+       The  fclose()  function  flushes  the stream pointed to by fp (writing any buffered output data using fflush(3)) and
+       closes the underlying file descriptor.
+
+       The behaviour of fclose() is undefined if the stream parameter is an illegal pointer, or  is  a  descriptor  already
+       passed to a previous invocation of fclose().
+
+RETURN VALUE
+       Upon  successful completion 0 is returned.  Otherwise, EOF is returned and the global variable errno is set to indi‐
+       cate the error.  In either case any further access (including another call to fclose()) to  the  stream  results  in
+       undefined behavior.
+
+ERRORS
+       EBADF  The file descriptor underlying fp is not valid.
+
+       The  fclose()  function  may  also  fail  and  set  errno for any of the errors specified for the routines close(2),
+       write(2) or fflush(3).
+
+CONFORMING TO
+       C89, C99.
+
+NOTES
+       Note that fclose() only flushes the user space buffers provided by the C library.  To ensure that the data is physi‐
+       cally stored on disk the kernel buffers must be flushed too, for example, with sync(2) or fsync(2).
+
+SEE ALSO
+       close(2), fcloseall(3), fflush(3), fopen(3), setbuf(3)
+
+COLOPHON
+       This  page  is  part  of release 3.23 of the Linux man-pages project.  A description of the project, and information
+       about reporting bugs, can be found at http://www.kernel.org/doc/man-pages/.
+
+
+
+GNU                                                      2009-02-23                                               FCLOSE(3)
