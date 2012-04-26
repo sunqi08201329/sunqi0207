@@ -122,3 +122,5 @@ NFS:
 	/home/akaedu/NFS/ *(rw,no_root_squash,subtree_check,sync)
 	/home/xwp/nfs *(rw,sync,no_root_squash)
 	mount -t nfs -o nolock -o tcp IP:/home/xwp/nfs /mnt
+posix man:
+	sudo apt-get install manpages-posix manpages-posix-dev

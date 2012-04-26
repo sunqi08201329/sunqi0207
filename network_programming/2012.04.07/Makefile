@@ -1,15 +1,34 @@
-CC	= $(CROSS_COMPILE)gcc
-CFLAGS	= -Wall -g
-LDFLAGS	= -pthread
+src = $(wildcard *.c)
+target = $(patsubst %.c, %, $(src))
 
-TARGETS	= test1 incorrect correct correct2 test2 test3 test4 test5 test6 test7 \
-	  test8
+CFLAGS = -Wall -g
+CC = gcc
+CLEAN_FLAGS = -rm -rf
+MACRO = 
 
-.PHONY: all clean
+INC_PATH = /home/akaedu/github/sunqi0207/Unix_envirement_programming/include/
+LIB_PATH = /home/akaedu/github/sunqi0207/Unix_envirement_programming/libs/
+MAN_PATH = /home/akaedu/github/sunqi0207/Unix_envirement_programming/src/man
 
-all: $(TARGETS)
+lib_name = apue
 
+all:$(target) tags
+
+$(target):%:%.c
+	$(CC) $(CFLAGS) $< -L$(LIB_PATH) -l$(lib_name) -o $@ -I$(INC_PATH)
+tags:
+	ctags -R *
 clean:
-	$(RM) *.o *~ a.out $(TARGETS)
+	$(CLEAN_FLAGS) $(target)
 
-# vim:tabstop=8
+makelib:
+	make -C $(LIB_PATH)
+
+vimlib:
+	vim $(LIB_PATH)*.c
+
+viminc:
+	vim $(INC_PATH)*.h
+movetxt:
+	mv man_* $(MAN_PATH)
+.PHONY:all clean makelib
