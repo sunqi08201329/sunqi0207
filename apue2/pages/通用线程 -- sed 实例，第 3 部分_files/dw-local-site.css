@@ -1,0 +1,34 @@
+/* dW Top level pages local site unique coding */
+
+
+p.ibm-ind-link a,
+ul.ibm-link-list a {
+display:block;
+margin:0px;
+padding:5px 5px 5px 21px;
+}
+.ibm-container-body.ibm-two-column p.ibm-ind-link {clear:both;}
+
+div.ibm-hideable.dw-show-hide-spacer p {font-size:1.0em !important;}
+
+/* Submit content template: unordered list font fix for China only*/
+#ibm-content-main ul.dw-submit-list{
+font-size: 0.76em;
+}
+
+.ibm-input-group fieldset, 
+.ibm-input-group p fieldset {
+	border: 0 none;
+	font-family: arial,sans-serif;
+    font-size: 0.76em;
+	margin: 0;
+	padding: 0;
+}
+
+/* noscript button font changes */
+.dw-noscript-buttons-br,
+.dw-noscript-buttons-kr,
+.dw-noscript-buttons-ru
+{
+font-size: 0.76em !important;   
+}

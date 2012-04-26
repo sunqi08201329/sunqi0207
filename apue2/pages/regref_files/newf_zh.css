@@ -1,0 +1,31 @@
+p, a, td, .ps,
+li, h4, h5   { font-family: Verdana, Arial, Helvetica, Sans-serif, SimSun, MS Gothic, New Gulim }
+p, li, .ps   { font-size:75%; line-height:140% }
+li li        { font-size:100% }
+ul           { list-style-image: url('dot.gif'); }
+
+td.high      { border: 1px solid #FFFFFF; cursor: hand }
+
+a            { color: #000080; text-decoration:none }
+a:hover      { color: #800000; text-decoration:underline }
+a:visited    { color: #800000 }
+
+a.bb,
+a:visited.bb { border: 1px solid #FFFFFF; text-decoration:none; color:#000000; font-family: SimSun }
+a:hover.bb   { border: 1px solid #000000; text-decoration:none; color:#000000 }
+
+a.w          { color: #FFFFFF; text-decoration:none }
+a:visited.w  { color: #FFFFFF }
+a:hover.w    { color: #FFFFFF; text-decoration:underline }
+
+a.wh         { color: #FFFFFF; text-decoration:none; font-size:80% }
+a:visited.wh { color: #FFFFFF }
+a:hover.wh   { color: #FFFFFF; text-decoration:none }
+
+a.h          { color: #000000; text-decoration:none }
+a:visited.h  { color: #000000 }
+a:hover.h    { color: #000000; text-decoration:underline }
+
+h1, h2       { font-family: Trebuchet MS; margin-top: 5; margin-bottom: 1; color:#FF0000; font-weight: 400 }
+
+.tlc         {table-layout:fixed;empty-cells:show;width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}

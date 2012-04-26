@@ -1,0 +1,5505 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>基于 libmad 的简单 MP3 流媒体播放器的实现</title>
+<meta http-equiv="PICS-Label" content="(PICS-1.1 &quot;http://www.icra.org/ratingsv02.html&quot; l gen true r (cz 1 lz 1 nz 1 oz 1 vz 1) &quot;http://www.rsac.org/ratingsv01.html&quot; l gen true r (n 0 s 0 v 0 l 0) &quot;http://www.classify.org/safesurf/&quot; l gen true r (SS~~000 1))">
+<link rel="schema.DC" href="http://purl.org/DC/elements/1.0/">
+<link rel="SHORTCUT ICON" href="http://www.ibm.com/favicon.ico">
+  <meta name="Owner" content="dw@cn.ibm.com">
+  <meta name="DC.Language" scheme="rfc1766" content="zh-CN">
+  <meta name="IBM.Country" content="CN">
+<meta name="Security" content="Public">
+<meta name="IBM.SpecialPurpose" content="SP001">
+<meta name="IBM.PageAttributes" content="sid=1003,1004">
+<meta name="Source" content="v16 Template Generator">
+<meta name="Robots" content="index,follow">
+<meta name="Abstract" content="本文在 Fedora 5 Linux 下实现了一个基于 libmad 的 MP3 流媒体播放器。此流媒体播放器可以播放基于 HTTP 1.1 协议传输的 MP3 流媒体数据。">
+<meta name="Description" content="本文在 Fedora 5 Linux 下实现了一个基于 libmad 的 MP3 流媒体播放器。此流媒体播放器可以播放基于 HTTP 1.1 协议传输的 MP3 流媒体数据。">
+<meta name="Keywords" content="Fedora 5 Linux, Linux, libmad, MP3, stream player, mp3 player, HTTP 1.1,, tttlca">
+<meta name="DC.Date" scheme="iso8601" content="2007-02-02">
+<meta name="DC.Type" scheme="IBM_ContentClassTaxonomy" content="CT316">
+<meta name="DC.Subject" scheme="IBM_SubjectTaxonomy" content="SWGC0">
+<meta scheme="IBM_WTMCategory" name="IBM.WTMCategory" content="SOFDCLNXCN">
+<meta name="DC.Rights" content="© Copyright&nbsp;IBM Corporation&nbsp;2007">
+<meta name="IBM.Effective" scheme="W3CDTF" content="2007-02-02">
+<meta name="title" content="基于 libmad 的简单 MP3 流媒体播放器的实现">
+
+<!-- HEADER_SCRIPTS_AND_CSS_INCLUDE -->
+<link href="flow_libmad_files/all.css" media="all" rel="stylesheet" title="www" type="text/css">
+<link href="flow_libmad_files/screen.css" media="screen,projection" rel="stylesheet" title="www" type="text/css">
+<link href="flow_libmad_files/screen-uas.css" media="screen,projection" rel="stylesheet" title="www" type="text/css">
+<link href="flow_libmad_files/screen-fonts.css" media="screen,projection" rel="stylesheet" title="www" type="text/css">
+<link href="flow_libmad_files/handheld.css" media="handheld" rel="stylesheet" title="www" type="text/css">
+<link href="flow_libmad_files/print.css" media="print" rel="stylesheet" title="www" type="text/css">
+<link href="flow_libmad_files/overlay.css" media="screen,projection" rel="stylesheet" title="www" type="text/css">
+
+<!-- dW-specific CSS -->
+<link href="flow_libmad_files/dw-screen.css" media="screen,projection" rel="stylesheet" title="www" type="text/css">
+<link href="flow_libmad_files/dw-local-site.css" media="screen,projection" rel="stylesheet" title="www" type="text/css">
+<link href="flow_libmad_files/dw-screen-comments-ratings-signin.css" media="screen,projection" rel="stylesheet" title="www" type="text/css">
+<link href="flow_libmad_files/jquery.css" media="screen,projection" rel="stylesheet" title="www" type="text/css">
+
+<!-- JPP: LOCAL URL FOR TESTING V16 DEFIANT MASTHEAD/FOOTER -->
+<link href="flow_libmad_files/dw-mf2012-01.css" rel="stylesheet" title="www" type="text/css">
+<link href="flow_libmad_files/dw-mf-cn.css" rel="stylesheet" title="www" type="text/css">
+<script src="flow_libmad_files/ibmcommon.js" type="text/javascript">//</script><link title="IBM Search" href="http://www.ibm.com/search/opensearch/description.xml" type="application/opensearchdescription+xml" rel="search">
+<script src="flow_libmad_files/dynamicnav.js" type="text/javascript">//</script>
+<script language="JavaScript" src="flow_libmad_files/urltactic.js" type="text/javascript"></script>
+<!-- Rating_START -->
+<script language="JavaScript" type="text/javascript">
+  // <![CDATA[
+
+ dwr = {};
+  dwr.clickhere = '点击评分';
+  dwr.starIntro = ''; 
+  dwr.stars = '星';
+  dwr.star = '星'; 
+  dwr.avgRatingOf = '平均分';
+  dwr.youRated = '您的评分是';
+  dwr.avgRating = '平均分';
+  dwr.basedOnVote = '共 {1} 个评分'; // {1} to be substitue by code
+  dwr.basedOnVotes = '共 {1} 个评分';
+  dwr.leftParen = '（'; 
+  dwr.rightParen = ' ）'; 
+  dwr.space = ' '; 
+  dwr.yourRating = '您的评分';
+dwr.avgRating2 = '总共 {1} 评分的平均分';
+dwr.avgRating3 = '平均分{1} 星';
+dwr.rateThisArticle = '为本文评分';
+dwr.votes = '{1}个评分';
+dwr.vote = '{1}个评分';
+dwr.submitErr = '错误：提交失败，请重试。';
+dwr.noRatingErr = '错误：请选择一个评分并重新提交。';
+dwr.submit = '提交';
+// ]]>
+</script>
+
+<!-- Rating_START -->
+<script language="JavaScript" src="flow_libmad_files/showrating.js" type="text/javascript"></script>
+<style type="text/css">
+  .metavalue {
+  display: none;
+  }
+</style>
+<!-- Rating_END --><!-- RESERVED_HEADER_INCLUDE -->
+<script language="javascript" src="flow_libmad_files/ajax1.js" type="text/javascript"></script>
+<script language="javascript" src="flow_libmad_files/search_counter-maverick.js" type="text/javascript"></script>
+<script language="javascript" src="flow_libmad_files/request_referer_capture-maverick.js" type="text/javascript"></script>
+<script language="JavaScript" type="text/javascript">
+ <!--
+ setDefaultQuery('defaultHere');
+ //-->
+</script>
+<script language="JavaScript" type="text/javascript">
+ <!--
+ function openNewWindow(url,tar,arg){window.open(url,tar,arg);}
+ //-->
+</script>
+  <!-- Include file support -->
+  <script language="JavaScript" type="text/javascript">
+    (function($) {
+    jQuery.extend({
+    getInc: function(u,d){
+    if(u==null)return;
+    jQuery.ajax({
+    type: "GET",
+    url: u,
+    dataType: "text",
+    success: function(t) {
+    jQuery(d).html(t);
+    ibmCommon.initShowHide(jQuery(d).children()[0]);	
+    },
+    async: true
+    });
+    }
+    });
+    })(jQuery);
+  </script>
+<script charset="UTF-8" src="flow_libmad_files/flash-detect.js" type="text/javascript" id="flashdetect"></script><script charset="UTF-8" src="flow_libmad_files/cnzh-utf8.js" type="text/javascript" id="mhMenu"></script><script charset="UTF-8" src="flow_libmad_files/Controller" type="text/javascript" id="wiBundle"></script></head>
+
+<body id="ibm-com">
+<div id="ibm-top" class="ibm-landing-page">
+
+<!-- MASTHEAD_BEGIN -->
+<!-- MASTHEAD_BEGIN -->
+<div class="ibm-access"><a href="#ibm-content">跳转到主要内容</a></div>
+<div id="ibm-masthead-dw">
+  
+    <!-- TOP ROW -->    
+    <div id="dw-masthead-top-row">
+    	<ul id="ibm-mast-options-dw" class="cn">
+    		<li id="dw-mast-top-0"> 	
+    			<a class="" href="http://www.ibm.com/developerworks/dwwi/DWAuthRouter?m=loginpage&amp;lang=zh&amp;d=http%3A%2F%2Fwww.ibm.com%2Fdeveloperworks%2Fcn%2Flinux%2Fl-cn-libmadmp3player%2Findex.html" title="">登录 (或注册)</a>
+    		</li>
+    		<li id="dw-mast-top-1" class="dw-mast-top-1-cn">
+    			<a href="#SELECTLANG">中文</a><img class="dw-preload" src="flow_libmad_files/arrow-down-active.gif" alt="" height="7" width="8">
+    		</li>
+    		<li id="dw-mast-top-2" class="dw-mf-hide">
+    			<a href="#"><img src="flow_libmad_files/photo.gif" alt="PHOTO" class="dw-mast-profimg" height="20" width="20"> [userid]</a>
+    		</li>
+    		<li id="dw-mast-top-3">
+    			<a href="#"><img src="flow_libmad_files/ibm-smlogo.gif" alt="IBM®" height="16" width="44"></a>
+    		</li>
+    	</ul>
+	</div>
+    
+    <!-- TOP ROW SLIDER -->
+    <div id="ibm-my-menu-dw">    
+        <div class="ibm-ribbon-pane-dw">
+            <div class="ibm-ribbon-section-dw">
+                <!-- Sign-in -->
+                <div class="dw-mast-columns">                
+					<div class="dw-mast-col-1-1">
+						<div id="dw-mast-sso">
+							<!--<div id="dw-mast-sso-reg">
+								<p class="dw-mast-sso-reg-cn">如果您还没有注册到 IBM 注册系统，我们为给您带来的不便表示道歉，并请您马上注册。 							
+									<a href="#" onclick="(function () {window.location='/developerworks/dwwi/DWAuthRouter?m=reg&amp;lang=zh&amp;d='+encodeURIComponent(location.href);})();">现在注册</a>。</p>
+							</div>-->
+							<div id="signin_error_mf" class="no-display"></div>
+							<div id="dw-mast-sso-form">
+								<form id="sForm_mf" action="" method="post" name="sForm_name_mf" onsubmit="return false;">
+									<div id="dw-mast-sso-id" class="dw-mast-sso-id-cn">
+										<label for="ibmid_mf">IBM ID：</label>
+										<input class="" id="ibmid_mf" name="ibmid_name_mf" maxlength="100" onkeypress="handleEP(event,this.form,'mf');" type="text">
+									</div>
+									<div id="dw-mast-sso-pw" class="dw-mast-sso-pw-cn">
+										<label for="pw_mf">密码：</label>
+										<input class="" id="pw_mf" value="" name="pw_name_mf" maxlength="100" onkeypress="handleEP(event,this.form,'mf');" type="password">
+									</div>
+									<div id="dw-mast-sso-target" class="dw-mast-sso-target-cn">
+										<p class="dw-mf-perm-box">
+											<input id="perm_mf" name="perm_name_mf" type="checkbox"><label for="perm_mf"> 保持登录。</label>
+										</p>
+									</div>
+									<div id="dw-mast-sso-terms">
+										<p class="dw-mast-sso-terms-cn">单击提交则表示您同意developerWorks 的条款和条件。 <a href="http://www.ibm.com/developerworks/mydeveloperworks/terms?lang=zh">查看条款和条件</a>.</p>
+									</div>
+									<div>
+										<input class="dw-mf-submit-btn-cn" name="ibm_submit_name_mf" value="提交" onclick="signin('mf');return false;" type="submit">
+									</div>
+								</form>
+							</div>
+							<div id="dw-mast-sso-update">
+								<div id="dw-mast-sso-update-id">
+									<ul>
+										<li><a class="ibm-forward-link" href="#" onclick="(function () {window.location='/developerworks/dwwi/DWAuthRouter?m=reg&amp;lang=zh_CN&amp;d='+encodeURIComponent(location.href);})();">需要一个 IBM ID？</a></li>
+										
+									<li><a class="ibm-forward-link" href="http://www.ibm.com/developerworks/dwwi/jsp/WSHelp.jsp?lang=zh_CN">忘记 IBM ID？</a></li>
+									</ul>
+								</div>
+								<div id="dw-mast-sso-update-pw">
+								<ul class="dw-mf-pwupdate">
+									<li><a class="ibm-forward-link" href="#" onclick="(function () {window.location='https://www.ibm.com/account/profile?page=forgot&amp;lang=zh_CN&amp;appname=ibm&amp;required=null&amp;d='+encodeURIComponent(getAuthUrl())+'%3Fm%3Dloginpage%26lang%3Dzh_CN%26d%3D'+encodeURIComponent(location.href);})();">忘记密码？</a></li>
+									<li><a class="ibm-forward-link" href="#" onclick="(function () {window.location='https://www.ibm.com/account/profile?page=chpw&amp;lang=zh_CN&amp;appname=ibm&amp;required=null&amp;d='+encodeURIComponent(location.href);})();">更改您的密码</a></li>
+								</ul>
+									</div>
+							</div>
+							<div id="dw-mast-sso-text">
+								<p>当您初次登录到 developerWorks 时，将会为您创建一份概要信息。<strong>您在 developerWorks 概要信息中选择公开的信息将公开显示给其他人，但您可以随时修改这些信息的显示状态。</strong>您的姓名（除非选择隐藏）和昵称将和您在 developerWorks 发布的内容一同显示。</p>
+								<p class="dw-mf-secure-cn">所有提交的信息确保安全。</p>
+							</div>
+							<div class="dw-mast-close">
+								<ul>
+									<li><div class="dw-mast-close-sign-cn"><a href="#"><img src="flow_libmad_files/c_002.gif" alt="关闭 [x]" border="0" height="10" width="20"></a></div></li>
+								</ul>
+							</div>	
+						</div>
+						
+						<div id="dw-mast-dname" class="dw-mf-hide">
+							<p>当您初次登录到 developerWorks 时，将会为您创建一份概要信息，您需要指定一个昵称。您的昵称将和您在 developerWorks 发布的内容显示在一起。</p><p><strong>昵称长度在 3 至 31 个字符之间</strong>。 您的昵称在 developerWorks 社区中必须是唯一的，并且出于隐私保护的原因，不能是您的电子邮件地址。</p>
+							<div id="signin_dname_error_mf" class="no-display"></div>
+							<div id="dw-mast-dname-form">
+								<form id="dForm_mf" action="" method="post" name="dForm_name_mf" onsubmit="return false;">
+									<div id="dw-mast-dname-mf">
+										<label for="dname_mf">昵称：</label>
+										<input id="dname_mf" name="dname_name_mf" maxlength="31" size="25" onkeypress="handleEP(event,this.form,'mf');" type="text">
+									</div>
+									<div id="dw-mast-dname-terms">
+										<p class="dw-mast-dname-terms-cn">单击<strong>提交</strong>则表示您同意developerWorks 的条款和条件。 <a href="http://www.ibm.com/developerworks/mydeveloperworks/terms?lang=zh">查看条款和条件</a>.</p>
+									</div>
+									<div>
+										<input class="dw-mf-submit-btn-cn" name="dname_submit_name_mf" value="提交" onclick="signin('mf');return false;" type="submit">
+									</div>
+								</form>								
+							</div>
+							<div id="dw-mast-dname-secure">
+								<p class="dw-mf-secure-cn">所有提交的信息确保安全。</p>
+							</div>
+							<div class="dw-mast-close">
+								<ul>
+									<li><div class="dw-mast-close-sign-cn"><a href="#"><img src="flow_libmad_files/c_002.gif" alt="关闭 [x]" border="0" height="10" width="20"></a></div></li>
+								</ul>
+							</div>	
+						</div>
+	
+						<div id="dw-mast-auth" class="dw-mf-hide">
+							<div>
+
+								<h2>My developerWorks:</h2>
+								<ul>
+									<li><a id="dw-mast-top-0-0" href="http://www.ibm.com/developerworks/mydeveloperworks/profiles/html/myProfileView.do?lang=zh">我的概要信息</a></li>
+									<li><a href="http://www.ibm.com/developerworks/mydeveloperworks/homepage?lang=zh">我的首页</a></li>
+									<li><a href="http://www.ibm.com/developerworks/mydeveloperworks/groups/service/html/mycommunities?lang=zh">我的群组</a></li>
+								</ul>     
+							</div>
+							<div id="dw-mast-notify" class="dw-mf-hide">
+								<h2>我的通知：</h2>
+								<ul>
+									<li><a id="new_notify" href="http://www.ibm.com/developerworks/mydeveloperworks/homepage?lang=zh">{[num_notify] 个新通知}([num_notify] 个新通知)</a></li>
+									<li><a id="new_invite" href="http://www.ibm.com/developerworks/mydeveloperworks/profiles/html/wc.do?action=in&amp;requireAuth=true&amp;widgetId=friends&amp;lang=[lang]">{[num_invite] 个网络请求}([num_invite] 个网络请求)</a></li>  
+								</ul>
+							</div>
+							<div class="dw-mast-more">
+								<ul class="ibm-link-list">
+									<li><a class="dw-more-link" href="#" onclick="signOut(); return false;"><strong>退出</strong></a></li>
+								</ul>
+							</div>
+							<div class="dw-mast-close">
+								<ul>
+									<li><div class="dw-mast-close-sign"><a href="#"><img src="flow_libmad_files/c_002.gif" alt="关闭 [x]" border="0" height="10" width="20"></a></div></li>
+								</ul>
+							</div>		
+						</div>
+						
+					</div>
+                	
+                </div>
+                <!-- Site selector --> 
+				<div class="dw-mast-columns">
+					<div class="dw-mast-col-2-1">
+						<h2>选择语言：</h2>
+						<ul>
+							<li><a id="dw-mast-top-1-0" href="http://www.ibm.com/developerworks/">English</a></li>
+							<li><a href="http://www.ibm.com/developerworks/cn/">中文</a></li>
+							<li><a href="http://www.ibm.com/developerworks/jp/">日本語</a></li>
+							<li><a href="http://www.ibm.com/developerworks/kr/">한국어</a></li>
+						</ul>
+					</div>
+					<div class="dw-mast-col-2-2">
+						<ul>
+							<li><a href="http://www.ibm.com/developerworks/ru/">Русский</a></li>
+							<li><a href="http://www.ibm.com/developerworks/br/">Português (Brasil)</a></li>
+							<li><a href="http://www.ibm.com/developerworks/ssa/">Español</a></li>
+							<li><a href="http://www.ibm.com/developerworks/vn/">Việt</a></li>
+						</ul>
+					</div>
+					<div class="dw-mast-close">
+						<ul>
+							<li><div class="dw-mast-close-lang"><a href="#"><img src="flow_libmad_files/c_002.gif" alt="关闭 [x]" border="0" height="10" width="20"></a></div></li>
+						</ul>
+                    </div>
+                </div>
+                <div class="dw-mast-columns"><!-- Authenticated --></div>
+                <!-- IBM -->
+				<div class="dw-mast-columns">
+					<div class="dw-mast-col-2-1">
+						<ul>
+							<li><a id="dw-mast-top-3-0" href="http://www.ibm.com/cn/zh/">IBM 主页</a></li>
+							<li><a href="http://www.ibm.com/solutions/cn/zh/">解决方案</a></li>
+							<li><a href="http://www.ibm.com/software/cn/">软件</a></li>
+						</ul>
+					</div>
+					<div class="dw-mast-col-2-2 dw-mast-ibm">
+						<ul>
+							<li><a href="http://www.ibm.com/support/cn/zh/">支持门户</a></li>
+							<li><a href="http://www.ibm.com/support/documentation/cn/zh/">产品文档</a></li>
+							<li><a href="http://www.ibm.com/redbooks/">Redbooks（英文）</a></li>
+						</ul>
+					</div>
+					<div class="dw-mast-close">
+						<ul>
+							<li><div class="dw-mast-close-ibm-cn"><a href="#"><img src="flow_libmad_files/c_002.gif" alt="关闭 [x]" border="0" height="10" width="20"></a></div></li>
+						</ul>
+                    </div> 
+				</div>
+			</div>
+        </div>
+    </div>
+
+    <!-- BOTTOM ROW -->
+    <div id="ibm-universal-nav-dw">
+        <ul id="ibm-unav-links-dw">
+        	<li id="ibm-unav-home-dwlogo">
+        		<a href="http://www.ibm.com/developerworks/cn/"><img src="flow_libmad_files/dw-wordmark.gif" alt="developerWorks®" height="32" width="218"></a>
+        	</li>
+        </ul>
+    	<ul id="ibm-menu-links-dw" class="ibm-menu-links-dw-cn">
+    		
+    		<li id="dw-mast-nav-0"><a href="http://www.ibm.com/developerworks/cn/topics">技术主题</a></li>
+    		<li id="dw-mast-nav-1"><a href="http://www.ibm.com/developerworks/cn/downloads/">软件下载</a></li>
+    		<li id="dw-mast-nav-2"><a href="https://www.ibm.com/developerworks/community/?lang=zh">社区</a></li>
+    		<li id="dw-mast-nav-3"><a href="https://www.ibm.com/developerworks/community/groups/service/html/communityview?communityUuid=6d7f9e5d-5f89-4767-a006-a81b8d186370&amp;lang=zh">技术讲座</a></li>
+    	</ul>   
+    	<form id="ibm-search-form" action="//www.ibm.com/search/csass/search/" method="get" name="form1">
+    		<input name="sn" value="dw" type="hidden">
+    		<input name="lang" value="zh" type="hidden">
+    		<input name="cc" value="CN" type="hidden">
+    		<input name="en" value="utf" type="hidden">
+    		<input name="hpp" value="20" type="hidden">
+    		<input name="dws" value="cndw" type="hidden">
+    		<input name="lo" value="zh" type="hidden">
+    		<p>
+    			<label for="q"><img alt="查询:" src="flow_libmad_files/c_002.gif" height="1" width="1"></label>
+    			<input value="搜索 developerWorks" name="q" maxlength="100" id="q" type="text">
+    			<input id="ibm-search" class="ibm-btn-search ibm-btn-search-cn" name="Search" value="搜索" type="submit">
+    		</p>
+    	</form>
+    </div>
+    
+    <!-- BOTTOM ROW SLIDER -->
+    <div id="ibm-common-menu-dw">
+        <div class="ibm-ribbon-pane-dw">
+            <div class="ibm-ribbon-section-dw">
+				<!-- Technical topics category -->
+  
+            	<div class="dw-mast-columns">
+            	<div class="dw-mast-col-4-1">
+            		<h2><a id="dw-mast-nav-0-0" href="http://www.ibm.com/developerworks/cn/topics/">技术主题</a></h2>
+            		
+            		<ul>
+            			<li><a href="http://www.ibm.com/developerworks/cn/aix/">AIX and UNIX</a></li>
+            			<li><a href="http://www.ibm.com/developerworks/cn/cloud/">Cloud computing</a></li>
+            			<li><a href="http://www.ibm.com/developerworks/cn/ibmi/">IBM i</a></li>
+            			<li><a href="http://www.ibm.com/developerworks/cn/data/">Information management</a></li>
+            			<li><a href="http://www.ibm.com/developerworks/cn/java/">Java technology</a></li>
+            			
+            		</ul>     
+            	</div>
+            	<div class="dw-mast-col-4-2">
+            		
+            		<ul>
+            			<li><a href="http://www.ibm.com/developerworks/cn/linux/">Linux</a></li>
+            			<li><a href="http://www.ibm.com/developerworks/cn/lotus/">Lotus</a></li>
+            			<li><a href="http://www.ibm.com/developerworks/cn/opensource/">Open source</a></li>
+            			<li><a href="http://www.ibm.com/developerworks/cn/rational/">Rational</a></li>
+            			<li><a href="http://www.ibm.com/developerworks/cn/webservices/">SOA and web services</a></li>
+            			
+            		</ul>
+            	</div>
+            	<div class="dw-mast-col-4-3">
+            		
+            		<ul>
+            			<li><a href="http://www.ibm.com/developerworks/cn/web/">Web development</a></li>  
+            			<li><a href="http://www.ibm.com/developerworks/cn/websphere/">WebSphere</a></li>     
+            			<li><a href="http://www.ibm.com/developerworks/cn/xml/">XML</a></li> 
+            		</ul>
+            		
+            	</div>
+            	<div class="dw-mast-col-4-4">
+            		<ul>
+            			<li><a href="http://www.ibm.com/developerworks/cn/library/"><strong>文档库</strong></a></li>
+            			<li><a href="http://www.ibm.com/developerworks/cn/products/"><strong>产品 A - Z</strong></a></li>				    
+            		</ul>        
+            	</div>
+            	<div class="dw-mast-close">
+            		<ul>
+            			<li><div class="dw-mast-close-tech-cn"><a href="#"><img src="flow_libmad_files/c_002.gif" alt="关闭 [x]" border="0" height="10" width="20"></a></div></li>
+            		</ul>
+            	</div>
+            </div>
+            	<!-- Evaluation software category -->
+            	<div class="dw-mast-columns">
+            		<div class="dw-mast-col-2-1">
+            			<h2><a id="dw-mast-nav-1-0" href="http://www.ibm.com/developerworks/cn/downloads">软件下载</a></h2>
+            			<ul>
+            				<li><a href="http://www.ibm.com/developerworks/cn/downloads/#data">Information management</a></li>
+            				<li><a href="http://www.ibm.com/developerworks/cn/downloads/#lotus">Lotus</a></li>
+            				<li><a href="http://www.ibm.com/developerworks/cn/downloads/#rational">Rational</a></li>
+            			</ul>            
+            		</div>
+            		<div class="dw-mast-col-2-2">
+            			<ul>
+            				<li><a href="http://www.ibm.com/developerworks/cn/downloads/#tivoli">Tivoli</a></li>
+            				<li><a href="http://www.ibm.com/developerworks/cn/downloads/#websphere">WebSphere</a></li>
+            				
+            			</ul>            
+            		</div>
+            		<div class="dw-mast-close">
+            			<ul>
+            				<li><div class="dw-mast-close-eval-cn"><a href="#"><img src="flow_libmad_files/c_002.gif" alt="关闭 [x]" border="0" height="10" width="20"></a></div></li>
+            			</ul>
+            		</div>
+            	</div>
+            	<!-- Community category -->
+            	<div class="dw-mast-columns">
+            		<div class="dw-mast-col-2-1">
+            			<h2><a id="dw-mast-nav-2-0" href="https://www.ibm.com/developerworks/community/?lang=zh">社区</a></h2>
+            			<ul>
+            				<li><a href="https://www.ibm.com/developerworks/community/homepage/?lang=zh">我的首页</a></li>
+            				<li><a href="https://www.ibm.com/developerworks/community/profiles/home.do?lang=zh">概要信息</a></li>
+            				<li><a href="https://www.ibm.com/developerworks/community/groups/service/html/allcommunities?lang=zh">群组</a></li>
+            				<li><a href="https://www.ibm.com/developerworks/mydeveloperworks/blogs/?lang=zh">博客</a></li>
+            				<li><a href="https://www.ibm.com/developerworks/community/bookmarks/html?lang=zh">书签</a></li>  
+            			</ul>     
+            		</div>
+            		<div class="dw-mast-col-2-2">
+            			<ul>
+            				<!--	<li><a href="">Forums</a></li> -->
+            				<li><a href="https://www.ibm.com/developerworks/mydeveloperworks/wikis/home?lang=zh">Wiki</a></li>
+            				<li><a href="https://www.ibm.com/developerworks/community/files/app?lang=zh">文件</a></li>
+            				<li><a href="https://www.ibm.com/developerworks/community/activities/service/html/mainpage?lang=zh#dashboard,myactivities">活动</a></li>
+            				<!--	<li><a href="">Podcasts</a></li> -->    
+            			</ul>
+            		</div>
+            		<div class="dw-mast-close">
+            			<ul>
+            				<li><div class="dw-mast-close-comm-cn"><a href="#"><img src="flow_libmad_files/c_002.gif" alt="关闭 [x]" border="0" height="10" width="20"></a></div></li>
+            			</ul>
+            		</div>
+            	</div>
+            	<!-- Events category -->
+            	<div class="dw-mast-columns">
+            		<div class="dw-mast-col-1-1">
+            			<h2><a id="dw-mast-nav-3-0" href="https://www.ibm.com/developerworks/community/groups/service/html/communityview?communityUuid=6d7f9e5d-5f89-4767-a006-a81b8d186370&amp;lang=zh">技术讲座</a></h2>
+            			<ul>
+            				<li><a href="https://www.ibm.com/developerworks/community/groups/service/html/communityview?communityUuid=6d7f9e5d-5f89-4767-a006-a81b8d186370&amp;lang=zh">技术讲座</a></li>
+            				<li><a href="http://www.ibm.com/developerworks/cn/swi/">多媒体课堂</a></li>
+            				<li><a href="http://www.ibm.com/developerworks/find/webcasts/">网络广播（英文）</a></li>
+            				<li><a href="http://www.ibm.com/developerworks/find/events/">查找活动（技术讲座，网络广播，会议等）（英文）</a></li> 
+            			</ul>            
+            		</div>
+            		<div class="dw-mast-close">
+            			<ul>
+            				<li><div class="dw-mast-close-event-cn"><a href="#"><img src="flow_libmad_files/c_002.gif" alt="关闭 [x]" border="0" height="10" width="20"></a></div></li>
+            			</ul>
+            		</div>
+            	</div>
+            </div>
+        </div>
+    </div>
+	
+</div>
+<div id="fdiv" class="ibm-access"><embed type="application/x-shockwave-flash" src="flow_libmad_files/connect.swf" id="sflash" name="sflash" quality="high" menu="false" wmode="window" movie="https://www.ibm.com/developerworks/js/dw-mf/connect.swf" swliveconnect="true" allowscriptaccess="always" height="1" width="1"></div>
+<!-- MASTHEAD_END --><!-- MASTHEAD_END -->
+
+<div id="ibm-pcon">
+
+<!-- CONTENT_BEGIN -->
+<div id="ibm-content">
+
+<!-- Navigation_Trail_BEGIN -->
+<!-- &nbsp; -->
+      <div id="ibm-content-head"><ul id="ibm-navigation-trail"><li class="ibm-first"><a href="http://www.ibm.com/developerworks/cn/">developerWorks 中国</a></li><li><a href="http://www.ibm.com/developerworks/cn/linux/">Linux</a></li><li><a href="http://www.ibm.com/developerworks/cn/views/linux/libraryview.jsp">文档库</a></li></ul></div>
+<!-- Navigation_Trail_END -->
+
+<!-- dW_Summary Area_START -->
+<div id="dw-summary-article">
+
+<div class="dw-content-head">
+<h1>基于 libmad 的简单 MP3 流媒体播放器的实现</h1><p>
+</p></div>
+
+<div class="ibm-container-body ibm-two-column">
+
+<div class="ibm-column ibm-first">
+<div class="author"><a class="dwauthor" rel="#authortip1" href="#author1">李 素科</a> (<a href="mailto:lisuke@infosec.pku.edu.cn?subject=%E5%9F%BA%E4%BA%8E%20libmad%20%E7%9A%84%E7%AE%80%E5%8D%95%20MP3%20%E6%B5%81%E5%AA%92%E4%BD%93%E6%92%AD%E6%94%BE%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0">lisuke@infosec.pku.edu.cn</a>), 讲师, 北京大学软件学院</div><div style="display: none;" id="authortip1" class="dwauthor-onload-state ibm-no-print">李素科，北京大学软件学院北大摩托罗拉嵌入式系统联合实验室讲师，主要研究方向是：网络与信息安全、嵌入式系统、分布式计算。现在主要从事 Linux 和 MPC860 嵌入式系统的一些教学和开发工作。可以通过电子邮件地址 <a href="mailto:lisuke@infosec.pku.edu.cn?cc=">lisuke@infosec.pku.edu.cn</a> 与他联系。</div>
+<p></p>
+  <p><strong>简介：</strong>&nbsp;本文在 Fedora 5 Linux 下实现了一个基于 libmad 的 MP3 流媒体播放器。此流媒体播放器可以播放基于 HTTP 1.1 协议传输的 MP3 流媒体数据。</p>
+
+  <!-- <p class="ibm-no-print"><div id="dw-tag-this" class="ibm-no-print"></div><div id="interestShow" class="ibm-no-print"></div></p> -->
+<div id="dw-tag-content" class="ibm-no-print"><p><b>本文的标签：</b>&nbsp; <a href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=mutimedia%253Amp3')">mutimedia:mp3</a></p></div><div id="dw-moretags-access" class="ibm-access"></div>
+<p class="ibm-no-print"></p><div id="dw-tag-this" class="ibm-no-print"><a class="ibm-external-link" onclick="jQuery.launchTagThisWindow(); return false;" href="#">标记本文！</a></div><div id="interestShow" class="ibm-no-print"></div><p></p>
+</div>
+
+<div class="ibm-column ibm-second">
+
+<p class="leading"><b>发布日期：</b>&nbsp;2007 年 2 月 02 日
+  
+<br><b>级别：</b>&nbsp;中级
+    
+
+<br><strong>访问情况 ：</strong>&nbsp;7230 次浏览
+  <br><strong>评论：</strong>&nbsp;<span id="nCmts">2&nbsp;(<a class="dw-view-comment" href="#icomments">查看</a>&nbsp;|&nbsp;<a onclick="showSignIn();return false;" href="#">添加评论</a> - 登录)</span>
+  <!-- Rating_Area_Begin -->
+  </p><div id="art-rating-summary"><img alt="平均分 5 星 共 15 个评分" src="flow_libmad_files/stars120x20-5b.jpg" class="dw-avg-rating"> 平均分 (15个评分)<br><a class="dw-view-comment" href="#iratings">为本文评分</a></div>
+  <!-- Rating_Area_End -->
+  <br>
+<p></p>
+</div>
+
+</div>
+</div>
+<!-- dW_Summary_Area_END -->
+
+<!-- CONTENT_BODY -->
+<div id="ibm-content-body">
+
+<!-- MAIN_COLUMN_BEGIN -->
+<div id="ibm-content-main">
+
+<!-- Related_Searches_Area_And_Overlays_Begin -->
+
+<!-- MAIN_COLUMN_CONTAINER_BEGIN -->
+<div class="ibm-container">
+
+<!-- MAIN_COLUMN_CONTENT_BEGIN -->
+<p><a name="N1003D"><span class="atitle">1．介绍</span></a></p>
+	
+	<p>本文在 Fedora 5 Linux 下实现了一个基于 libmad 的 MP3 流媒体播放器。此流媒体播放器可以播放基于 HTTP 1.1 协议传输的 MP3 流媒体数据。</p>
+	
+	<p>基本原理是：从 HTTP 服务器获得 MP3 媒体信息，然后通过网络传输把 MP3 数据以数据流的形式接收到 MP3 
+流媒体播放器客户端，由客户端通过 libmad 解码 MP3 数据流，得到 PCM 
+音频数据，写入音频设备，播放音乐。本文的流媒体播放器只是实现了必要的简单功能，没有考虑太多情况。比如，没有考虑实时播放控制，这样的话就不能随意选
+取播放点进行播放。</p>
+	
+	<p>本文的 MP3 流媒体播放器创建两个线程，使用两个缓冲区保存 MP3 数据，可以一边下载数据，一边播放音乐。编译运行此 MP3 流媒体播放器需要安装 libmad (<a href="http://www.underbit.com/products/mad/">www.underbit.com/products/mad/</a>) 以及 ALSA(Advanced Linux Sound Architecture) (<a href="http://www.alsa-project.org/">http://www.alsa-project.org</a>)相关的软件。ALSA包括4部分，分别是 sound driver, sound library , sound utilities 以及 tools。至少应该安装 sound driver, sound library 。编译程序时连接库的选项是：<code>-lmad -lasound -lpthread</code>。</p>
+	
+	<p>本文的 MP3 流媒体播放器使用双缓冲区，一个是数据接收缓冲区，另一个是数据解码缓冲区。主程序结构如下图所示，图中的蓝色线表示数据流向。</p>
+	
+	
+		<br><a name="N1005E"><b>图 1：MP3 流媒体播放器主程序结构图</b></a><br>
+		<img alt="MP3 流媒体播放器主程序结构图" src="flow_libmad_files/image001.gif" height="380" width="572">
+	<br>
+	
+	<div class="ibm-alternate-rule"><hr></div><p class="ibm-ind-link ibm-back-to-top"><a href="#ibm-pcon" class="ibm-anchor-up-link">回页首</a></p><p><a name="N1006A"><span class="atitle">2．libmad简介</span></a></p>
+	
+	<p>MAD（libmad）是一个开源的高精度 MPEG 音频解码库，支持 MPEG-1（Layer I, Layer II 和 
+LayerIII（也就是 MP3）。LIBMAD 提供 24-bit 的 PCM 输出，完全是定点计算，非常适合没有浮点支持的平台上使用。使用 
+libmad 提供的一系列 API，就可以非常简单地实现 MP3 数据解码工作。在 libmad 的源代码文件目录下的 mad.h 
+文件中，可以看到绝大部分该库的数据结构和 API 等。</p>
+	
+	<p>本文用到的 libmad 中的主要数据结构有：<code>struct mad_stream, struct mad_synth, struct mad_frame</code>。它们的定义如下：</p>
+	
+	<br><a name="N1007E"><b>清单 1：libmad 中的主要数据结构</b></a><br><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">	
+struct mad_stream {
+  unsigned char const *buffer;     /* input bitstream buffer */
+  unsigned char const *bufend;    /* end of buffer */
+  unsigned long skiplen;          /* bytes to skip before next frame */
+
+  int sync;                     /* stream sync found */
+  unsigned long freerate;          /* free bitrate (fixed) */
+
+  unsigned char const *this_frame;	/* start of current frame */
+  unsigned char const *next_frame;	/* start of next frame */
+  struct mad_bitptr ptr;           /* current processing bit pointer */
+
+  struct mad_bitptr anc_ptr;       /* ancillary bits pointer */
+  unsigned int anc_bitlen;         /* number of ancillary bits */
+
+  unsigned char (*main_data)[MAD_BUFFER_MDLEN];
+/* Layer III main_data() */
+  unsigned int md_len;           /* bytes in main_data */
+
+  int options;                   /* decoding options (see below) */
+  enum mad_error error;          /* error code (see above) */
+};
+</pre></td></tr></tbody></table><br>
+
+<p>如果缓冲区最后一个 MPEG 数据帧只有部分数据包括在缓冲区中，那么 <code>struct mad_stream</code> 中的 <code>next_frame</code> 域指到不完整数据的开始地址。由于缓冲区的 MPEG 数据帧不一定完整，所以不完整的 MPEG 帧的数据必须拷贝到下一次解码操作的缓冲区中，进行再次解码。这里我们还看到 <code>bufend</code> 指向缓冲区数据的最后地址，也就是最后一字节的地址加 1 的位置。<code>mad_stream.bufend – mad_stream.next_frame</code> 就是剩余的未被解码的 MPEG 帧的数据的字节数量（假设此帧在缓冲区中不完整）。<code>mad_stream</code> 的 <code>error</code> 域用来记录操作 <code>mad_stream</code> 得到的错误代码。错误代码在 mad.h 中有很详细的定义。</p>
+
+<br><a name="N100A6"><b>清单 2：错误代码在 mad.h 中的详细定义</b></a><br><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">
+struct mad_synth {
+  mad_fixed_t filter[2][2][2][16][8]; /* polyphase filterbank outputs */
+                              /* [ch][eo][peo][s][v] */
+  unsigned int phase;	            /* current processing phase */
+
+  struct mad_pcm pcm;           /* PCM output */
+}; 
+</pre></td></tr></tbody></table><br>
+
+<p><code>mad_synth</code> 中的关键域 <code>pcm</code> 保存解码和合成后得到的 PCM 数据。</p>
+
+<br><a name="N100B9"><b>清单 3：<code>mad_synth</code> 中的关键域</b></a><br><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">
+struct mad_pcm {
+  unsigned int samplerate;        /* sampling frequency (Hz) */
+  unsigned short channels;        /* number of channels */
+  unsigned short length;          /* number of samples per channel */
+  mad_fixed_t samples[2][1152];   /* PCM output samples [ch][sample] */
+};
+</pre></td></tr></tbody></table><br>
+
+<p><code>struct mad_pcm</code> 定义了音频的采样率、每个声道个数以及最后的 PCM 采样数据。这些参数可用来初始化音频设备。</p>
+  
+<br><a name="N100CC"><b>清单 4：struct mad_pcm</b></a><br><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">
+struct mad_frame {
+  struct mad_header header;              /* MPEG audio header */
+  int options;	                         /* decoding options (from stream) */
+
+  mad_fixed_t sbsample[2][36][32];       /* synthesis subband filter samples */
+  mad_fixed_t (*overlap)[2][32][18];      /* Layer III block overlap data */
+};
+</pre></td></tr></tbody></table><br>
+
+<p><code>mad_frame</code> 是记录 MPEG 帧解码后的数据的数据结构，其中的 <code>mad_header</code> 尤其重要，其用来记录 MPEG 帧的一些基本信息，比如 MPEG 层数、声道模式、流比特率、采样比特率等等。声道模式包括单声道、双声道、联合立体混音声以及一般立体声。</p>
+
+<br><a name="N100DF"><b>清单 5：mad_frame</b></a><br><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">
+enum mad_mode {
+  MAD_MODE_SINGLE_CHANNEL = 0,          /* single channel */
+  MAD_MODE_DUAL_CHANNEL	  = 1,	    /* dual channel */
+  MAD_MODE_JOINT_STEREO	  = 2,	          /* joint (MS/intensity) stereo */
+  MAD_MODE_STEREO	  = 3                  /* normal LR stereo */
+};
+
+struct mad_header {
+  enum mad_layer layer;         /* audio layer (1, 2, or 3) */
+  enum mad_mode mode;        /* channel mode  */
+  int mode_extension;           /* additional mode info */
+  enum mad_emphasis emphasis;  /* de-emphasis to use  */
+
+  unsigned long bitrate;          /* stream bitrate (bps) */
+  unsigned int samplerate;        /* sampling frequency (Hz) */
+
+  unsigned short crc_check;	      /* frame CRC accumulator */
+  unsigned short crc_target;	      /* final target CRC checksum */
+
+  int flags;                     /* flags  */
+  int private_bits;			/* private bits  */
+  mad_timer_t duration;		/* audio playing time of frame */
+};
+</pre></td></tr></tbody></table><br>
+
+<p>下面就本文使用的 API 的功能做简单介绍。</p>
+
+<p>在本文中用到的 API 包括：</p>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">void mad_stream_init(struct mad_stream *) 
+void mad_synth_init(struct mad_synth *);
+void mad_frame_init(struct mad_frame *);
+</pre></td></tr></tbody></table><br>
+
+<p>以上3个 API 初始化解码需要的数据结构。</p>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">void mad_stream_buffer(struct mad_stream *, unsigned char const *, unsigned long);
+</pre></td></tr></tbody></table><br>
+
+<p>此函数把原始的未解码的 MPEG 数据和 <code>mad_stream</code> 数据结构关联，以便使用 <code>mad_frame_decode( )</code> 来解码 MPEG 帧数据。</p>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">int mad_frame_decode(struct mad_frame *, struct mad_stream *);
+</pre></td></tr></tbody></table><br>
+
+<p>把 <code>mad_stream</code> 中的 MPEG 帧数据解码。</p>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">void mad_synth_frame(struct mad_synth *, struct mad_frame const *);
+</pre></td></tr></tbody></table><br>
+
+<p>把解码后的音频数据合成 PCM 采样。</p>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">void mad_stream_finish(struct mad_stream *);
+void mad_frame_finish(struct mad_frame *); 
+mad_synth_finish(struct mad_synth);
+</pre></td></tr></tbody></table><br>
+
+<p>以上 3 个 API 在解码完毕后使用，释放 libmad 占用的资源等。</p>
+
+<div class="ibm-alternate-rule"><hr></div><p class="ibm-ind-link ibm-back-to-top"><a href="#ibm-pcon" class="ibm-anchor-up-link">回页首</a></p><p><a name="N1011A"><span class="atitle">3．PCM 音频设备的操作</span></a></p>
+
+<p>对音频设备的操作主要是初始化音频设备以及往音频设备发送 PCM（Pulse Code Modulation）数据。为了方便，本文使用 
+ALSA（Advanced Linux Sound Architecture）提供的库和驱动。在编译和运行本文中的 MP3 
+流媒体播放器的时候，必须先安装 ALSA 相关的文件。</p>
+
+<p>本文用到的主要对 PCM 设备操作的函数分为 PCM 设备初始化的函数以及 PCM 接口的一些操作函数。</p>
+
+<p>PCM 硬件设备参数设置和初始化的函数有：</p>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">int  snd_pcm_hw_params_malloc (snd_pcm_hw_params_t **ptr)
+int  snd_pcm_hw_params_any (snd_pcm_t *pcm, snd_pcm_hw_params_t *params)
+void snd_pcm_hw_params_free (snd_pcm_hw_params_t *obj)
+int  snd_pcm_hw_params_set_access ( snd_pcm_t *pcm, 
+                                    snd_pcm_hw_params_t *params, 
+                                    snd_pcm_access_t _access)
+int  snd_pcm_hw_params_set_format ( snd_pcm_t *pcm, 
+                                    snd_pcm_hw_params_t *params, 
+                                    snd_pcm_format_t val)
+int  snd_pcm_hw_params_set_channels(snd_pcm_t *pcm, 
+                                    snd_pcm_hw_params_t *params, 
+                                    unsigned int val)
+int snd_pcm_hw_params_set_rate_near(snd_pcm_t *pcm, 
+                                    snd_pcm_hw_params_t *params, 
+                                    unsigned int *val, int *dir)
+</pre></td></tr></tbody></table><br>
+
+<p>PCM 接口的操作函数：</p>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">int   snd_pcm_hw_params (snd_pcm_t *pcm, snd_pcm_hw_params_t *params)
+int   snd_pcm_prepare (snd_pcm_t *pcm)
+int   snd_pcm_open (snd_pcm_t **pcm, const char *name, 
+                    snd_pcm_stream_t stream, int mode)
+int   snd_pcm_close (snd_pcm_t *pcm)
+snd_pcm_sframes_t   snd_pcm_writei (snd_pcm_t *pcm, 
+                    const void *buffer, snd_pcm_uframes_t size)
+</pre></td></tr></tbody></table><br>
+
+<p>这些函数用到了 <code>snd_pcm_hw_params_t</code> 结构，此结构包含用来播放 PCM 数据流的硬件信息配置。在往音频设备（声卡）写入音频数据之前，必须设置访问类型、采样格式、采样率、声道数等。 </p>
+
+<p>首先使用 <code>snd_pcm_open ()</code> 打开 PCM 设备，在 ALSA 中，PCM 设备都有名字与之对应。比如我们可以定义 PCM 设备名字为 <code>char  *pcm_name = "plughw:0,0"</code>。
+ 最重要的 PCM 设备接口是“plughw”以及“hw”接口。 
+使用“plughw”接口，程序员不必过多关心硬件，而且如果设置的配置参数和实际硬件支持的参数不一致，ALSA 
+会自动转换数据。如果使用“hw”接口，我们就必须检测硬件是否支持设置的参数了。Plughw 
+后面的两个数字分别表示设备号和次设备（subdevice）号。</p>
+
+<p><code>snd_pcm_hw_params_malloc( )</code> 在栈中分配 <code>snd_pcm_hw_params_t</code> 结构的空间，然后使用 <code>snd_pcm_hw_params_any( )</code> 函数用声卡的全配置空间参数初始化已经分配的 <code>snd_pcm_hw_params_t</code> 结构。<code>snd_pcm_hw_params_set_access ( )</code> 设置访问类型，常用访问类型的宏定义有：</p>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">SND_PCM_ACCESS_RW_INTERLEAVED</pre></td></tr></tbody></table><br>
+
+<p>交错访问。在缓冲区的每个 PCM 帧都包含所有设置的声道的连续的采样数据。比如声卡要播放采样长度是 16-bit 的 PCM 立体声数据，表示每个 PCM 帧中有 16-bit 的左声道数据，然后是 16-bit 右声道数据。</p>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">SND_PCM_ACCESS_RW_NONINTERLEAVED</pre></td></tr></tbody></table><br>
+
+<p>非交错访问。每个 PCM 帧只是一个声道需要的数据，如果使用多个声道，那么第一帧是第一个声道的数据，第二帧是第二个声道的数据，依此类推。</p>
+
+<p>函数 <code>snd_pcm_hw_params_set_format()</code> 设置数据格式，主要控制输入的音频数据的类型、无符号还是有符号、是 <code>little-endian</code> 还是 <code>bit-endian</code>。比如对于 16-bit 长度的采样数据可以设置为：</p>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">SND_PCM_FORMAT_S16_LE      有符号16 bit Little Endian 
+SND_PCM_FORMAT_S16_BE      有符号16 bit Big Endian 
+SND_PCM_FORMAT_U16_LE      无符号16 bit Little Endian 
+SND_PCM_FORMAT_U16_BE      无符号 16 bit Big Endian
+</pre></td></tr></tbody></table><br>
+
+<p>比如对于 32-bit 长度的采样数据可以设置为：</p>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">SND_PCM_FORMAT_S32_LE      有符号32 bit Little Endian 
+SND_PCM_FORMAT_S32_BE      有符号32 bit Big Endian 
+SND_PCM_FORMAT_U32_LE      无符号32 bit Little Endian 
+SND_PCM_FORMAT_U32_BE      无符号 32 bit Big Endian
+</pre></td></tr></tbody></table><br>
+
+<p>函数 <code>snd_pcm_hw_params_set_channels()</code> 设置音频设备的声道，常见的就是单声道和立体声，如果是立体声，设置最后一个参数为2。<code>snd_pcm_hw_params_set_rate_near ()</code> 函数设置音频数据的最接近目标的采样率。<code>snd_pcm_hw_params( )</code> 从设备配置空间选择一个配置，让函数 <code>snd_pcm_prepare()</code> 准备好 PCM 设备，以便写入 PCM 数据。<code>snd_pcm_writei()</code> 用来把交错的音频数据写入到音频设备。</p>
+
+<p>初始化 PCM 设备的例程如下：</p>
+
+<br><a name="N101A2"><b>清单 6：初始化 PCM 设备的例程</b></a><br><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">
+/* open a PCM device */
+int open_device(struct mad_header const *header)
+{
+   int err;
+   snd_pcm_hw_params_t *hw_params;
+   char  *pcm_name = "plughw:0,0";
+   int rate = header-&gt;samplerate;
+   int channels = 2;
+
+   if (header-&gt;mode == 0) {
+      channels = 1;
+   } else {
+      channels = 2;
+   }
+
+   if ((err = snd_pcm_open (&amp;playback_handle, 
+                            pcm_name, SND_PCM_STREAM_PLAYBACK, 0)) &lt; 0) {
+      printf("cannot open audio device %s (%s)\n",
+      pcm_name,
+      snd_strerror (err));
+      return -1;
+   }
+
+   if ((err = snd_pcm_hw_params_malloc (&amp;hw_params)) &lt; 0) {
+      printf("cannot allocate hardware parameter structure (%s)\n",
+      snd_strerror (err));
+      return -1;
+   }
+
+   if ((err = snd_pcm_hw_params_any (playback_handle, hw_params)) &lt; 0) {
+      printf("cannot initialize hardware parameter structure (%s)\n",
+      snd_strerror (err));
+      return -1;
+   }
+
+
+   if ((err = snd_pcm_hw_params_set_access (playback_handle, hw_params, 
+              SND_PCM_ACCESS_RW_INTERLEAVED)) &lt; 0) {
+      printf("cannot set access type (%s)\n",
+      snd_strerror (err));
+      return -1;
+   }
+
+    
+   if ((err = snd_pcm_hw_params_set_format (playback_handle, 
+              hw_params, SND_PCM_FORMAT_S32_LE)) &lt; 0) {
+      printf("cannot set sample format (%s)\n",
+      snd_strerror (err));
+      return -1;
+   }
+   if ((err = snd_pcm_hw_params_set_rate_near (playback_handle, 
+              hw_params, &amp;rate, 0)) &lt; 0) {
+      printf("cannot set sample rate (%s)\n",
+      snd_strerror (err));
+      return -1;
+   }
+
+   if ((err = snd_pcm_hw_params_set_channels (playback_handle, 
+              hw_params, channels)) &lt; 0) {
+      printf("cannot set channel count (%s)\n",
+      snd_strerror (err));
+      return -1;
+   }
+
+   if ((err = snd_pcm_hw_params (playback_handle, 
+              hw_params)) &lt; 0) {
+      printf("cannot set parameters (%s)\n",
+      snd_strerror (err));
+      return -1;
+   }
+
+   snd_pcm_hw_params_free (hw_params);
+   if ((err = snd_pcm_prepare (playback_handle)) &lt; 0) {
+      printf("cannot prepare audio interface for use (%s)\n",
+      snd_strerror (err));
+      return -1;
+   }
+
+   return 0;
+}
+</pre></td></tr></tbody></table><br>
+
+<p>这里配置的 PCM 格式是 <code>SND_PCM_FORMAT_S32_LE</code>，采样的格式是每个采样有 32-bit 的数据，数据按照 <code>little-endian</code> 存放。如果通过 <code>mad_frame_decode()</code> 函数得到 PCM 数据后，要求每个采样数据只占 16-bit，需要把数据进行MAD的定点类型到 <code>signed short</code> 类型进行转换。那么，PCM 数据如何写入声卡中呢？函数实现例程如下所示：</p>
+
+<br><a name="N101BE"><b>清单 7：PCM 数据写入声卡函数实现例程</b></a><br><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">
+while (nsamples--) {
+/* nsamples 是采样的数目 */
+       signed int sample;
+
+       sample = pcm-&gt;samples[0][j];
+       *(OutputPtr++) = sample &amp; 0xff;
+       *(OutputPtr++) = (sample &gt;&gt; 8);
+       *(OutputPtr++) = (sample &gt;&gt; 16);
+       *(OutputPtr++) = (sample &gt;&gt; 24);
+
+       if (nchannels == 2) {
+          sample = pcm-&gt;samples[1][j];
+          *(OutputPtr++) = sample  &amp; 0xff;
+          *(OutputPtr++) = sample &gt;&gt; 8;
+          *(OutputPtr++) = (sample &gt;&gt; 16);
+          *(OutputPtr++) = (sample &gt;&gt; 24);
+
+       }
+       j++;
+
+   }
+   if ((err = snd_pcm_writei (playback_handle, buf, samples)) &lt; 0) {
+      err = xrun_recovery(playback_handle, err);
+      if (err &lt; 0) {
+         printf("Write error: %s\n", snd_strerror(err));
+         return -1;
+      }
+   }
+</pre></td></tr></tbody></table><br>
+
+<p>这里用到了 <a href="http://www.alsa-project.org/">http://www.alsa-project.org/</a> 关于 ALSA 文档中的例子函数 <code>xrun_recovery( )</code>。详细例子请参见 <a href="http://www.alsa-project.org/alsa-doc/alsa-lib/_2test_2pcm_8c-example.html">http://www.alsa-project.org/alsa-doc/alsa-lib/_2test_2pcm_8c-example.html</a>。使用此函数的目的是避免出现由于网络原因，声卡不能及时得到音频数据而使得 <code>snd_pcm_writei()</code> 不能正常连续工作。实际上在 <code>xrun_recovery( )</code> 中，又调用 <code>snd_pcm_prepare()</code> 和 <code>snd_pcm_resume()</code> 以实现能“恢复错误”的功能。<code>-EPIPE</code>  错误表示应用程序没有及时把 PCM 采样数据送入ASLA 库。<code>xrun_recovery()</code> 函数如下所示：</p>
+
+<br><a name="N101EE"><b>清单 8：<code>xrun_recovery()</code> 函数</b></a><br><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">
+int xrun_recovery(snd_pcm_t *handle, int err)
+{
+   if (err == -EPIPE) {    /* under-run */
+      err = snd_pcm_prepare(handle);
+
+   if (err &lt; 0)
+      printf("Can't recovery from underrun, prepare failed: %s\n",
+         snd_strerror(err));
+      return 0;
+   } else if (err == -ESTRPIPE) {
+      while ((err = snd_pcm_resume(handle)) == -EAGAIN)
+         sleep(1);       /* wait until the suspend flag is released */
+         if (err &lt; 0) {
+            err = snd_pcm_prepare(handle);
+         if (err &lt; 0)
+            printf("Can't recovery from suspend, prepare failed: %s\n",
+              snd_strerror(err));
+      }
+      return 0;
+   }
+   return err;
+}
+</pre></td></tr></tbody></table><br>
+
+<p>知道了具体的音频设备操作方法，就该使用 MAD 提供的函数具体实现解码了。函数 <code>mp3_decode_buf( )</code> 提供了使用 libmad 解码的方法。首先调用 <code>mad_stream_buffer()</code> 函数把 MP3 流数据和 <code>decode_stream</code> 关联，然后开始循环解码数据。如果在解码数据过程中，有不完整 PCM 数据帧，那么 <code>decode_stream.error</code> 的值就是 <code>MAD_ERROR_BUFLEN</code>，且 <code>decode_stream.next_frame</code> 不为 <code>NULL</code>。这时候，把剩余的未解码的数据再拷贝到数据解码缓冲区里。 <code>mad_frame_decode( )</code> 函数从 <code>decode_stream</code> 中得到 PCM 数据。</p>
+
+<br><a name="N10222"><b>清单 9：<code>mad_frame_decode( )</code> 函数从 <code>decode_stream</code> 中得到 PCM 数据</b></a><br><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">
+int mp3_decode_buf(char *input_buf, int size)
+{
+  int decode_over_flag = 0;
+  int remain_bytes = 0;
+  int ret_val = 0;
+  mad_stream_buffer(&amp;decode_stream, input_buf, size);
+  decode_stream.error = MAD_ERROR_NONE;
+  while (1)
+  {
+      if (decode_stream.error == MAD_ERROR_BUFLEN) {
+        if (decode_stream.next_frame != NULL) {
+           remain_bytes = decode_stream.bufend - decode_stream.next_frame;
+           memcpy(input_buf, decode_stream.next_frame, remain_bytes);
+           return remain_bytes;
+        }
+      }
+      ret_val = mad_frame_decode(&amp;decode_frame, &amp;decode_stream);
+     /* 省略部分代码 */
+     ...
+     if (ret_val == 0) {
+         if (play_frame(&amp;decode_frame) == -1) {
+            return -1;
+         }
+      }
+      /* 后面代码省略 */
+      ...
+   }
+
+   return 0;
+}
+</pre></td></tr></tbody></table><br>
+
+<div class="ibm-alternate-rule"><hr></div><p class="ibm-ind-link ibm-back-to-top"><a href="#ibm-pcon" class="ibm-anchor-up-link">回页首</a></p><p><a name="N10230"><span class="atitle">4．创建线程</span></a></p>
+
+<p>本文使用 POSIX 线程库（pthreads）来创建线程。比如，本文需要两个线程，一个是数据接收线程，另一个是音乐播放线程。创建线程的程序如下所示：</p>
+
+<br><a name="N1023D"><b>清单 10：创建线程</b></a><br><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">
+ret_val =  pthread_create(&amp;thread[0],
+                            NULL,
+                            get_http_content, 
+                            &amp;read_val);
+  if (ret_val != 0) {
+     printf("Cannot create get_http_content thread!\n");
+     return 1;
+  } 
+  ret_val =  pthread_create(&amp;thread[1],
+                            NULL,
+                            play_http_content, 
+                            &amp;read_val);
+  if (ret_val != 0) {
+     printf("Cannot create play_http_content thread!\n");
+     return 1;
+  }
+
+  pthread_join(thread[0], NULL);
+  pthread_join(thread[1], NULL);
+</pre></td></tr></tbody></table><br>
+
+<p>可以看到，数据接收线程的线程主函数是 <code>get_http_content</code>， 而播放音乐的线程主函数是 <code>play_http_content</code>。创建子线程后，主线程调用 <code>pthread_join()</code> 等待子结束，并释放线程相关资源。</p>
+
+<div class="ibm-alternate-rule"><hr></div><p class="ibm-ind-link ibm-back-to-top"><a href="#ibm-pcon" class="ibm-anchor-up-link">回页首</a></p><p><a name="N10252"><span class="atitle">5．接收 MP3 流媒体数据</span></a></p>
+
+<p>由于 MP3 流媒体数据是在 HTTP 服务器的文件目录中，所以，必须由客户端发送 HTTP 请求，然后得到相关 URL 的 HTTP 响应。HTTP 的请求格式如下：</p>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">&lt;Method&gt;  &lt;Request-URI&gt;  &lt;HTTP-1.x&gt; CRLF 
+ *(( general-header        
+   | request-header         
+   | entity-header ) CRLF)
+CRLF
+ [ message-body ]
+</pre></td></tr></tbody></table><br>
+
+<p>这里 CR(13) 表示回车，LF 表示换行。</p>
+
+<p>根据 HTTP 请求格式，可以构建发送到 HTTP 服务器请求。比如，想要往  <code>192.168.0.123 HTTP</code> 发送获得文件 <code>http://192.168.0.123/45.MP3</code> 那么构建的请求是：</p>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">GET    /45.MP3   HTTP/1.1\r\n
+HOST: 192.168.0.123\r\n\r\n
+</pre></td></tr></tbody></table><br>
+
+<p>发送请求后，HTTP 服务器会就请求做出响应。如果请求合法，那么响应包括响应的媒体信息，包括 <code>HTTP/1.1 200 OK</code>，表示请求成功。最简单验证请求是否有效的方法是使用 telnet。 例如：</p>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">[root@localhost netmad]# telnet 192.168.0.123   80
+Trying 192.168.0.123...
+Connected to 192.168.0.123(192.168.0.123).
+Escape character is '^]'.
+HEAD /45.MP3 HTTP/1.1
+HOST:192.168.0.123
+
+HTTP/1.1 200 OK
+Date: Tue, 14 Nov 2006 10:11:43 GMT
+Server: Apache/2.2.0 (Fedora)
+Last-Modified: Tue, 17 Oct 2006 15:08:16 GMT
+ETag: "3147c9-32e080-1fb83800"
+Accept-Ranges: bytes
+Content-Length: 3334272
+Connection: close
+Content-Type: audio/mpeg
+X-Pad: avoid browser bug
+</pre></td></tr></tbody></table><br>
+
+<p>这里可以看到在 HTTP 请求的响应中，有关于 45.MP3 的简单信息，包括文件类型 <code>Content-Type: audio/mpeg</code>，以及文件的长度 <code>Content-Length: 3334272</code>。通过解析 HTTP 响应，很容易从 <code>Content-Length</code> 项得到 MP3 数据总的长度。为了发送 HTTP 请求，首先从
+播放器程序传递的参数解析出请求的资源的 URI，比如程序传递参数为 <code>http://192.168.0.123/45.MP3</code> 那么解析此 URL，得到 HTTP 请求的资源 URI 是 <code>/45.MP3</code>。<code>get_address</code> 函数简单地解析了 URL，用 <code>gethostbyname( )</code> 获得域名以及操作 socket 需要的地址信息。本文用于网络通信的一些 socket 相关的函数如下：
+</p>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">#include &lt;sys/types.h&gt;
+#include &lt;sys/socket.h&gt;
+
+int socket (int family, int type, int protocol)
+</pre></td></tr></tbody></table><br>
+
+<p>此函数创建 socket 。</p>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">int  connect(int  sockfd,  const  struct sockaddr *serv_addr, socklen_t addrlen);
+</pre></td></tr></tbody></table><br>
+
+<p>和目标地址服务程序连接，完成 3 次握手。</p>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">int recv(int s, void *buf, size_t len, int flags);</pre></td></tr></tbody></table><br>
+
+<p>此函数从创建的 socket 接收数据。</p>
+
+<div class="ibm-alternate-rule"><hr></div><p class="ibm-ind-link ibm-back-to-top"><a href="#ibm-pcon" class="ibm-anchor-up-link">回页首</a></p><p><a name="N102B1"><span class="atitle">6．数据接收线程和音乐播放线程</span></a></p>
+
+<p>由于是两个线程并发运行，且音乐播放线程线程运行速度较慢。如果网络速度较快，数据接收线程的接收缓冲区满后，如果当前音乐播放线程正在播放音乐，
+那么数据接收线程必须停止接收数据。如果不让数据接收线程进入等待状态，它会一直轮训音乐播放线程观察其是否需要数据，简单的轮询会浪费 CPU 
+资源，所以在这种情况下，有必要让数据接收线程进入等待状态。本文使用信号量机制，来动态控制线程的运行。数据接收缓冲区必须留出一定的空间，存放解码缓
+冲区中没有被解码的数据。那么要留出多少数据空间呢？至少应该留出一帧数据的空间。这里 8192 字节空间存放剩余的一帧 MPEG 
+数据，一般情况下应该够用。因此定义：</p>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">#define DECODE_BUF_SIZE   (8192*11)
+#define GARD_SIZE         (8192*10)
+static char decode_buf[DECODE_BUF_SIZE];
+static char recv_buf[DECODE_BUF_SIZE];
+</pre></td></tr></tbody></table><br>
+
+<p><code>GARD_SIZE</code> 是一次从 socket 读取数据字节数的最大值，而解码缓冲区的大小应该是比 <code>GARD_SIZE</code> 大 8192 字节，因此定义 <code>DECODE_BUF_SIZE</code> 为 <code>(8192*11)</code>。<code>recv_buf</code> 是数据接收缓冲区，<code>decode_buf</code> 是数据解码缓冲区。在拷贝数据到解码缓冲区的时候，上次未解码的数据，还被保存在解码缓冲区的开始部分，故拷贝数据的时候，必须拷贝到剩余数据的后面，程序例子如下：</p>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">memcpy(decode_buf + current_remain, recv_buf, current_read);
+current_read += current_remain;
+</pre></td></tr></tbody></table><br>
+
+<p>这里的 <code>current_remain</code> 表示上次解码线程中未解码的不完整 MP3 帧的数据字节数，<code>current_read</code> 表示当前接收线程接收到的实际数据字节数。两个缓冲区之间的数据拷贝操作如下图所示。</p>
+
+
+	<br><a name="N102EA"><b>图 2：缓冲区之间的数据拷贝操作</b></a><br>
+	<img alt="缓冲区之间的数据拷贝操作" src="flow_libmad_files/image002.gif" height="475" width="572">
+<br>
+
+<p><a name="N102F6"><span class="smalltitle">数据接收线程和音乐播放线程之间的同步</span></a></p>
+
+<p>由于使用了双缓冲区保存数据，所以，在音乐播放线程播放音乐的时候，数据接收线程不能把数据拷贝到数据解码缓冲区，而是需要等待。当数据接收缓冲区满的时候，接收线程自己也需要等待。本文用到了 POSIX 信号量处理函数，实现了线程之间的同步。它们分别是：</p>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">#include &lt;semaphore.h&gt;
+int sem_init(sem_t *sem, int pshared, unsigned int value); 
+</pre></td></tr></tbody></table><br>
+
+<p>初始化信号量，第三个参数表示初始的信号量的计数。</p>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">int sem_wait(sem_t * sem);</pre></td></tr></tbody></table><br>
+
+<p><code>sem_wait</code> 阻塞当前线程的执行，直到信号量的计数非 0；然后，它会把信号量计数减 1，然后程序继续执行。相当于 P 操作。</p>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">int sem_post(sem_t * sem);</pre></td></tr></tbody></table><br>
+
+<p>把 <code>sem</code> 指向的信号量计数加 1。相当于 V 操作。</p>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">int sem_destroy(sem_t * sem);</pre></td></tr></tbody></table><br>
+
+<p>释放信号量对象。</p>
+
+<p>在程序中，信号量定义及初始化为：</p>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td class="code-outline"><pre class="displaycode">static sem_t empty_sem;
+static sem_t decode_sem;
+static sem_t copy_sem;
+sem_init(&amp;empty_sem, 0, 1);
+sem_init(&amp;decode_sem, 0, 0);
+sem_init(&amp;copy_sem, 0, 1);
+</pre></td></tr></tbody></table><br>
+
+<p><code>empty_sem</code> 信号量的计数表示接收缓冲是否为空，其中如果是 1，表示为空；如果为 0 表示不为空。<code>decode_sem</code> 信号量的计数表示音乐播放线程是否正在对数据解码缓冲区的数据进行解码，如果是 1 表示正在进行解码，如果是 0 表示没有解码；<code>copy_sem</code> 信号量的计数表示是否可以从数据接收缓冲区拷贝数据到数据解码缓冲区，如果是 1 表示可以，如果是 0 表示不能。</p>
+
+<p>两个线程的同步操作或者说是 PV 操作流程如下图所示：</p>
+
+
+	<br><a name="N1033D"><b>图 3：PV 操作流程示意图</b></a><br>
+	<img alt="PV 操作流程示意图" src="flow_libmad_files/image003.gif" height="550" width="572">
+<br>
+
+<div class="ibm-alternate-rule"><hr></div><p class="ibm-ind-link ibm-back-to-top"><a href="#ibm-pcon" class="ibm-anchor-up-link">回页首</a></p><p><a name="N10349"><span class="atitle">7．程序运行实例</span></a></p>
+
+
+	<br><a name="N10352"><b>图 4：程序运行实例</b></a><br>
+	<img alt="程序运行实例" src="flow_libmad_files/image004.jpg" height="390" width="520">
+<br>
+
+<div class="ibm-alternate-rule"><hr></div><p class="ibm-ind-link ibm-back-to-top"><a href="#ibm-pcon" class="ibm-anchor-up-link">回页首</a></p><p><a name="N1035E"><span class="atitle">8．小结</span></a></p>
+
+<p>在实现基于 libmad 的 MP3 流媒体播放器中，我们用到了 libmad 的 API、网络 socket 编程技术、在音频设备上播放
+ PCM 数据技术、POSIX 信号量以及 POSIX 
+线程。数据接收线程和音乐播放线程通过信号量和共享数据通信，相比单缓冲操作，通过双缓冲数据操作有效地提高了程序执行效率。同时，通过简单的信号量操
+作，线程不必使用轮询的方法来处理数据，也进一步减少了对 CPU 资源的浪费。</p>
+
+<p>本文的意义在于给出了一个简单、明了的 MP3 流媒体播放器的实现。但是不足之处在于没有实现流媒体播放的控制协议，不能动态实现播放拖放操作。</p>
+
+ 
+<!-- CMA ID: 196171 --> <!-- Site ID: 10 --> <!-- XSLT stylesheet used to transform this file:  dw-article-6.0-beta.xsl -->
+<br>
+<p><a name="resources"><span class="atitle">参考资料 </span></a></p>
+<ul><li><a href="http://www.alsa-project.org/alsa-doc/alsa-lib/_2test_2pcm_8c-example.html">http://www.alsa-project.org/alsa-doc/alsa-lib/_2test_2pcm_8c-example.html</a><br><br></li><li><a href="http://www.alsa-project.org/alsa-doc/alsa-lib/pcm.html">http://www.alsa-project.org/alsa-doc/alsa-lib/pcm.html</a><br><br></li><li><a href="http://www.alsa-project.org/documentation.php#dev-toots">http://www.alsa-project.org/documentation.php#dev-toots</a><br><br></li><li><a href="http://www.suse.de/%7Emana/alsa090_howto.html">http://www.suse.de/~mana/alsa090_howto.html</a><br><br></li><li><a href="http://www.underbit.com/products/mad/">http://www.underbit.com/products/mad/</a><br><br></li><li><a href="http://www.bsd-dk.dk/%7Eelrond/audio/madlld/">http://www.bsd-dk.dk/~elrond/audio/madlld/</a><br><br></li></ul>
+<p><a name="author"><span class="atitle">关于作者</span></a></p><div class="ibm-container ibm-portrait-module ibm-alternate-two"><div class="ibm-container-body"><p><a name="author1"> </a>李素科，北京大学软件学院北大摩托罗拉嵌入式系统联合实验室讲师，主要研究方向是：网络与信息安全、嵌入式系统、分布式计算。现在主要从事 Linux 和 MPC860 嵌入式系统的一些教学和开发工作。可以通过电子邮件地址 <a href="mailto:lisuke@infosec.pku.edu.cn?cc=">lisuke@infosec.pku.edu.cn</a> 与他联系。</p></div></div>
+<!-- MAIN_COLUMN_CONTENT_END -->
+  <!-- OVERLAYS_START -->
+  <!-- Report_Abuse_Start -->
+  <div class="ibm-common-overlay ibm-no-print" id="reportabuseoverlay">
+    <div class="ibm-head"><p><a class="ibm-common-overlay-close" href="#">关闭 [x]</a></p></div>
+    <div class="ibm-body">
+      <div class="ibm-main">
+        <a class="ibm-access" name="reportabuseoverlay">关于报告滥用的帮助</a>   
+        <div class="ibm-title"><h1>报告滥用</h1></div>
+        <div class="ibm-container ibm-alternate">
+          <p><strong>谢谢!</strong>  此内容已经标识给管理员注意。</p>
+          <div class="ibm-overlay-rule"><hr></div>
+          <div class="ibm-buttons-row">
+            <input onclick="ibmCommon.Overlays.hide('reportabuseoverlay');return false;" class="ibm-btn-cancel-sec dw-btn-cancel-sec" name="ibm-cancel" value="关闭" type="button">
+          </div>
+        </div>
+      </div> 
+    </div>
+    <div class="ibm-footer"></div>
+  </div>
+  <!-- Report_Abuse_Error_Start -->
+  <div class="ibm-common-overlay ibm-no-print" id="reportabuseoverlayerror">
+    <div class="ibm-head"><p><a class="ibm-common-overlay-close" href="#">关闭 [x]</a></p></div>
+    <div class="ibm-body">
+      <div class="ibm-main">
+        <a class="ibm-access" name="reportabuseoverlayerror">关于报告滥用的帮助</a>   
+        <div class="ibm-title"><h1>报告滥用</h1></div>
+        <div class="ibm-container ibm-alternate">
+          <p class="ibm-ind-error"><strong>报告滥用提交失败。  请稍后重试。</strong></p>
+          <div class="ibm-overlay-rule"><hr></div>
+          <div class="ibm-buttons-row">
+            <input onclick="ibmCommon.Overlays.hide('reportabuseoverlayerror');return false;" class="ibm-btn-cancel-sec dw-btn-cancel-sec" name="ibm-cancel" value="关闭" type="button">
+          </div>
+        </div>
+      </div> 
+    </div>
+    <div class="ibm-footer"></div>
+  </div>
+  <!-- Sign in OVERLAY STARTS HERE --> 
+  <div class="ibm-common-overlay" id="signin_overlay">
+    <div class="ibm-head">
+      <p><a class="ibm-common-overlay-close" href="#" onclick="clearForm();">关闭 [x]</a></p>
+    </div>
+    <div class="ibm-body">
+      <div class="ibm-main">
+        <div class="ibm-title ibm-subtitle">
+          <h1>developerWorks：登录</h1>
+          <div id="ibm-overlay-error-signin" class="no-display"></div>
+        </div>
+        
+        <div class="ibm-container ibm-alternate ibm-buttons-last">
+          <div class="ibm-container-body">
+
+            <form class="ibm-column-form" id="sFormId" action="" method="post" name="sForm" onsubmit="return false;">
+              <p><label for="ibmid">IBM ID：</label><span><input name="ibm-id" id="ibmid" size="25" class="required" onkeypress="handleEP(event,this.form);" type="text">
+                <br><a class="ibm-forward-link" href="#" onclick="(function () {window.location='/developerworks/dwwi/DWAuthRouter?m=reg&amp;lang=zh_CN&amp;d='+encodeURIComponent(location.href);})();">需要一个 IBM ID？</a>
+                <br><a class="ibm-forward-link" href="http://www.ibm.com/developerworks/dwwi/jsp/WSHelp.jsp?lang=zh_CN">忘记 IBM ID？</a></span>   
+              </p> 
+              <p><label for="password">密码：</label><span><input name="password" id="password" size="25" value="" class="required" onkeypress="handleEP(event,this.form);" type="password"><br>
+                <a class="ibm-forward-link" href="#" onclick="(function () {window.location='https://www.ibm.com/account/profile?page=forgot&amp;lang=zh_CN&amp;appname=ibm&amp;required=null&amp;d='+encodeURIComponent(getAuthUrl())+'%3Fm%3Dloginpage%26lang%3Dzh_CN%26d%3D'+encodeURIComponent(location.href);})();">忘记密码？</a><br>
+                <a class="ibm-forward-link" href="#" onclick="(function () {window.location='https://www.ibm.com/account/profile?page=chpw&amp;lang=zh_CN&amp;appname=ibm&amp;required=null&amp;d='+encodeURIComponent(location.href);})();">更改您的密码</a></span></p> 
+
+              <p class="dw-perm-box">
+                <span><input id="perm" name="perm_name" type="checkbox"><label for="perm"> 保持登录。</label></span>
+              </p>
+
+              <p>单击提交则表示您同意developerWorks 的条款和条件。 <a href="http://www.ibm.com/developerworks/mydeveloperworks/terms?lang=zh">使用条款</a></p>
+              <div class="ibm-buttons-row">
+                <p><input class="ibm-btn-arrow-pri" name="ibm-submit" value="提交" onclick="signin();return false;" type="submit"><span class="ibm-sep">&nbsp;</span>
+                  <input value="取消" name="ibm-cancel" class="ibm-btn-cancel-sec" onclick="clearForm();ibmCommon.Overlays.hide('signin_overlay');return false;" type="button"></p>
+              </div>
+            </form>
+            <div class="ibm-overlay-rule"><hr></div>
+            <p>当您初次登录到 developerWorks 时，将会为您创建一份概要信息。<strong>您在 developerWorks 概要信息中选择公开的信息将公开显示给其他人，但您可以随时修改这些信息的显示状态。</strong>您的姓名（除非选择隐藏）和昵称将和您在 developerWorks 发布的内容一同显示。</p>
+            <div class="dw-overlay-legal"><p>所有提交的信息确保安全。</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ibm-footer"></div>
+  </div>
+  <!-- Sign in OVERLAY ENDS HERE --> 
+  
+  
+  <!-- Display name OVERLAY STARTS HERE --> 
+  <div class="ibm-common-overlay" id="displayname_overlay">
+    <div class="ibm-head">
+      <p><a class="ibm-common-overlay-close" href="#" onclick="clearForm();">关闭 [x]</a></p>
+    </div>
+    <div class="ibm-body">
+      <div class="ibm-main">
+        <div class="ibm-title ibm-subtitle">
+          <h1>请选择您的昵称：</h1>
+          <div id="ibm-overlay-error-dname" class="no-display"></div>
+        </div>
+        <div class="ibm-container ibm-alternate ibm-buttons-last">
+          <div class="ibm-container-body">
+            <p class="ibm-overlay-intro">当您初次登录到 developerWorks 时，将会为您创建一份概要信息，您需要指定一个昵称。您的昵称将和您在 developerWorks 发布的内容显示在一起。</p><p><strong>昵称长度在 3 至 31 个字符之间</strong>。 您的昵称在 developerWorks 社区中必须是唯一的，并且出于隐私保护的原因，不能是您的电子邮件地址。</p>
+            <form id="dFormId" method="post" action="" name="dForm" onsubmit="return false;" class="ibm-column-form">
+              <p><label for="displayname">昵称：</label><span><input name="displayname" id="displayname" size="25" onkeypress="handleEP(event,this.form);" type="text"></span><span class="ibm-form-note">（长度在 3 至 31 个字符之间）</span>
+              </p>
+              
+              <div class="ibm-overlay-rule"><hr>
+              </div>
+              <p>单击<strong>提交</strong>则表示您同意developerWorks 的条款和条件。 <a href="http://www.ibm.com/developerworks/mydeveloperworks/terms?lang=zh">使用条款</a>.</p>
+              <div class="ibm-buttons-row">
+                <p><input class="ibm-btn-arrow-pri" name="ibm-submit" value="提交" onclick="signin();return false;" type="submit"><span class="ibm-sep">&nbsp;</span>
+                  <input value="取消" name="ibm-cancel" class="ibm-btn-cancel-sec" onclick="clearForm();ibmCommon.Overlays.hide('displayname_overlay');return false;" type="button"></p>
+              </div>
+            </form>
+            <div class="ibm-overlay-rule"><hr></div>
+            <div class="dw-overlay-legal"><p>所有提交的信息确保安全。</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ibm-footer"></div>
+  </div>
+  <!-- Display name OVERLAY ENDS HERE -->
+  <!-- OVERLAYS_END -->
+  <!-- RATINGS START -->
+  <p class="ibm-no-print"><span class="atitle"><a name="iratings">为本文评分</a></span></p>
+  <input id="art-rating" name="ratinga" value="5" type="hidden"><div id="art-rating-module"><p id="submitErr" class="ibm-ind-error" style="display: none;"><strong>错误：提交失败，请重试。</strong></p><p><span id="ratingSectUI"><img alt="平均分 5 星 共 15 个评分" src="flow_libmad_files/stars120x20-5gw.jpg" class="dw-avg-rating"> 平均分 (15个评分)</span></p><div class="ibm-container" id="ratingForm"><div class="ibm-container-body dw-container-ratings"><form class="dw-ratings-form" onsubmit="artRating.submitRating(); return false;"><input name="ratingstars" id="rat-1" value="1" type="radio"><label class="rating-label" id="star1" for="rat-1">1 星</label><img id="rat-1-img" alt="1 星" title="1 星" src="flow_libmad_files/stars120x20-1w.jpg" class="rating-image"><span class="dw-rating-text">1 星</span><br><input name="ratingstars" id="rat-2" value="2" type="radio"><label class="rating-label" id="star2" for="rat-2">2 星</label><img id="rat-2-img" alt="2 星" title="2 星" src="flow_libmad_files/stars120x20-2w.jpg" class="rating-image2"><span class="dw-rating-text">2 星</span><br><input name="ratingstars" id="rat-3" value="3" type="radio"><label class="rating-label" id="star3" for="rat-3">3 星</label><img id="rat-3-img" alt="3 星" title="3 星" src="flow_libmad_files/stars120x20-3w.jpg" class="rating-image2"><span class="dw-rating-text">3 星</span><br><input name="ratingstars" id="rat-4" value="4" type="radio"><label class="rating-label" id="star4" for="rat-4">4 星</label><img id="rat-4-img" alt="4 星" title="4 星" src="flow_libmad_files/stars120x20-4w.jpg" class="rating-image2"><span class="dw-rating-text">4 星</span><br><input name="ratingstars" id="rat-5" value="5" type="radio"><label class="rating-label" id="star5" for="rat-5">5 星</label><img id="rat-5-img" alt="5 星" title="5 星" src="flow_libmad_files/stars120x20-5w.jpg" class="rating-image2"><span class="dw-rating-text">5 星</span><div class="ibm-buttons-row"><p class="ibm-first"><input value="提交" name="ibm-submit" class="ibm-btn-arrow-pri dw-ratings-submit" type="submit"></p></div></form></div></div></div>
+  <script language="JavaScript" type="text/javascript">
+    // <![CDATA[
+   // widget div id and article id as args
+   window.artRating.init('art-rating-module','art-rating-summary');
+// ]]>
+  </script>
+  <!-- RATINGS END --> 
+  
+  <!-- INLINE_COMMENTS_START -->
+  <p class="ibm-no-print"><span class="atitle"><a name="icomments">评论</a></span></p>
+    <script language="JavaScript" type="text/javascript">
+      // <![CDATA[
+dwc = {};
+dwc.cmts = '条评论';
+dwc.signInPreText = '请';
+dwc.signIn = '登录';
+dwc.or = '或';
+dwc.register = '注册';
+dwc.signInPostText = '';
+dwc.leaveCmt = '后发表评论。';
+dwc.view = '查看';
+dwc.totalCmts = '共有评论';
+dwc.postYourCmt = '添加您的评论';
+dwc.show = '显示：';
+dwc.recentCmts = '最新评论';
+dwc.allCmts = '所有评论';
+dwc.tooLongCmt = '您的评论超过了 1000 字符限制';
+dwc.numCharsLeft = '剩余 <span id="charCount">{1}</span> 字符';
+dwc.reportAbuse = '报告滥用';
+dwc.notifyMsg = '有新评论时提醒我';
+dwc.htmlWarning = '注意：评论中不支持 HTML 语法'; 
+dwc.cmt = '评论：';
+dwc.addCmts = '添加评论';
+dwc.addCmt = '添加评论';
+dwc.doNotErase = '--在下方添加评论--'; 
+dwc.viewOrAddCmts = '查看或添加评论';
+dwc.reportInapprCont = '举报不良信息';
+dwc.reportInapprContLink = 'http://www.ibm.com/developerworks/forums/forum.jspa?forumID=1834';
+dwc.postingCmt = '正在发布评论……';
+dwc.noCmt = '快来添加第一条评论';
+dwc.netwkErr = '在检索评论时出错，请稍后刷新。';
+dwc.addACmt = '添加评论';
+dwc.instructCmt = '标有星号（<span class="ibm-required">*</span>）的是必填项目。';
+dwc.btnPost = '发布';
+dwc.btnPostAnon = '匿名发布';
+dwc.btnClrCmt = '清除评论';
+dwc.btnCancel = '取消';
+dwc.showRecent = '显示最新的 {1} 条评论'; // {1} is the count to be substituted
+dwc.showNext = '显示后 {1} 条评论'; // {1} is the count to be substituted
+dwc.showAllCmts = '显示所有评论';
+dwc.enterCmt = '请输入评论内容。';
+dwc.loginErr = '暂时无法验证您的登录状态，请稍后再试。';
+dwc.postErr = '暂时无法发布您的评论，请稍后再试。';
+dwc.postBy = '由 <strong>{1}</strong>  于 {2} '; // {1} is the author to be substituted; {2} is the date
+dwc.siteId = 10;
+dwc.lang = 'zh_CN';
+dwc.viperLang = 'zh';
+// ]]>
+    </script>
+    <div id="threadShow"><div id="cmtTog" style=""><div class="ibm-container ibm-alternate-two dw-commentbox dw-noborder"><p id="cmtHead"><label for="newCmt"><strong>添加评论:</strong></label></p><div class="ibm-container-body dw-commentbox dw-noborder"><p id="signInSect">请 <a onclick="showSignIn();return false;" href="#">登录</a> 或 <a href="http://www.ibm.com/developerworks/dwwi/DWAuthRouter?m=register&amp;lang=zh_CN&amp;d=http%3A%2F%2Fwww.ibm.com%2Fdeveloperworks%2Fcn%2Flinux%2Fl-cn-libmadmp3player%2Findex.html%23icomments">注册</a>  后发表评论。</p><p>注意：评论中不支持 HTML 语法</p><span id="infoCmt"></span><form focus="name" enctype="multipart/form-data" method="post" action="" name="form" class="ibm-column-form"><p><textarea disabled="disabled" cols="120" rows="5" name="newCmt" id="newCmt" class="dw-inoperable"></textarea><br></p><div id="notifiedSect"><label for="comment_notification"><span><input name="comment_notification" id="comment_notification" value="1" disabled="disabled" type="checkbox"><span id="notifyText" class="ibm-form-note">有新评论时提醒我</span></span></label><span id="maxCharsCount" class="ibm-form-note">剩余 <span id="charCount">1000</span> 字符</span></div><br><br><p></p><p class="ibm-buttons-row"><input disabled="disabled" value="发布" jquery1275054459750="11" name="postCmt" id="postCmt" class="ibm-btn-arrow-sec dw-btn-arrow-sec" alt="添加您的评论" type="button"><br><br></p></form></div></div><div id="topControl" class="ibm-container ibm-alternate-two dw-comment-totals" style=""><div class="ibm-container-body"><form id="selectComments" method="get" action=""><p><span class="dw-comment-totals-label"><strong>共有评论 (<span id="numCmts">2</span>)</strong></span><span><img src="flow_libmad_files/c_002.gif" alt="" height="10" width="100"></span><span class="dw-how-many-comments-label" style="display:none" id="dropdownCmts"><label for="howManyComments">显示：</label>&nbsp;<select name="comments" id="howManyComments" class="dw-how-many-comments"><option selected="selected" value="recent">最新评论   </option></select><input class="ibm-btn-go" name="ibm-go" value="Go" src="flow_libmad_files/short-btn.gif" alt="Go" type="image"><br></span></p></form></div></div><div id="cmtSect"><div class="comment"><div class="dw-icomment-container"><div class="dw-icomment-body dw-noborder"><div class="dw-icomment-body dw-noborder"><p>还是看不懂</p><p class="ibm-item-note-alternate dw-item-note-alternate-left">由 <strong><a href="http://www.ibm.com/developerworks/forums/profile.jspa?userID=400261">knief</a></strong>  于 09 05 2011 </p><p class="ibm-ind-link ibm-item-note-alternate dw-item-note-alternate-right"><a class="ibm-caution-link dw-report-abuse" href="https://www.ibm.com/developerworks/community/report?lang=zh&amp;referingURL=http://www.ibm.com/developerworks/cn/linux/l-cn-libmadmp3player/index.html&amp;mymessage=%E8%AF%84%E8%AE%BA%EF%BC%9A%20%E8%BF%98%E6%98%AF%E7%9C%8B%E4%B8%8D%E6%87%82%0D%E7%94%B1%20knief%20%20%E4%BA%8E%2009%2005%202011%20%0D%0D--%E5%9C%A8%E4%B8%8B%E6%96%B9%E6%B7%BB%E5%8A%A0%E8%AF%84%E8%AE%BA--" target="_newtab">报告滥用</a></p><div class="dw-clear-both"></div></div></div></div></div><div class="comment"><div class="dw-icomment-container"><div class="dw-icomment-body dw-noborder"><div class="dw-icomment-body dw-noborder"><p>今天有幸拜读了您的文章,真是受益匪浅呀~这总结做的真是不错,说得都是重点~看来这北大的有才的老师还是多阿,真是非常的好.                                     <br>
+                                                                        
+                                                                        
+       一个ubuntu爱好者</p><p class="ibm-item-note-alternate dw-item-note-alternate-left">由 <strong><a href="http://www.ibm.com/developerworks/forums/profile.jspa?userID=352048">zq2019900930</a></strong>  于 09 01 2011 </p><p class="ibm-ind-link ibm-item-note-alternate dw-item-note-alternate-right"><a class="ibm-caution-link dw-report-abuse" href="https://www.ibm.com/developerworks/community/report?lang=zh&amp;referingURL=http://www.ibm.com/developerworks/cn/linux/l-cn-libmadmp3player/index.html&amp;mymessage=%E8%AF%84%E8%AE%BA%EF%BC%9A%20%E4%BB%8A%E5%A4%A9%E6%9C%89%E5%B9%B8%E6%8B%9C%E8%AF%BB%E4%BA%86%E6%82%A8%E7%9A%84%E6%96%87%E7%AB%A0%2C%E7%9C%9F%E6%98%AF%E5%8F%97%E7%9B%8A%E5%8C%AA%E6%B5%85%E5%91%80%7E%E8%BF%99%E6%80%BB%E7%BB%93%E5%81%9A%E7%9A%84%E7%9C%9F%E6%98%AF%E4%B8%8D%E9%94%99%2C%E8%AF%B4%E5%BE%97%E9%83%BD%E6%98%AF%E9%87%8D%E7%82%B9%7E%E7%9C%8B%E6%9D%A5%E8%BF%99%E5%8C%97%E5%A4%A7%E7%9A%84%E6%9C%89%E6%89%8D%E7%9A%84%E8%80%81%E5%B8%88%E8%BF%98%E6%98%AF%E5%A4%9A%E9%98%BF%2C%E7%9C%9F%E6%98%AF%E9%9D%9E%E5%B8%B8%E7%9A%84%E5%A5%BD.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E4%B8%80%E4%B8%AAubuntu%E7%88%B1%E5%A5%BD%E8%80%85%0D%E7%94%B1%20zq2019900930%20%20%E4%BA%8E%2009%2001%202011%20%0D%0D--%E5%9C%A8%E4%B8%8B%E6%96%B9%E6%B7%BB%E5%8A%A0%E8%AF%84%E8%AE%BA--" target="_newtab">报告滥用</a></p><div class="dw-clear-both"></div></div></div></div></div></div></div><div id="bottomControl" class="ibm-container ibm-alternate-two dw-comment-totals" style="display:none"><div class="ibm-container-body"><form id="selectComments2" method="get" action=""><p><span class="dw-comment-totals-label"><strong>共有评论 (<span id="numCmts2">2</span>)</strong></span><span><img src="flow_libmad_files/c_002.gif" alt="" height="10" width="100"></span><span class="dw-how-many-comments-label" style="display:none" id="dropdownCmts2"><label for="howManyComments2">显示：</label>&nbsp;<select name="comments" id="howManyComments2" class="dw-how-many-comments"><option selected="selected" value="recent">最新评论   </option></select><input class="ibm-btn-go" name="ibm-go" value="Go" src="flow_libmad_files/short-btn.gif" alt="Go" type="image"><br></span></p></form></div></div></div>
+  <!-- INLINE_COMMENTS_END -->
+  
+
+  <p class="ibm-ind-link ibm-back-to-top"><a class="ibm-anchor-up-link" href="#ibm-pcon">回页首</a></p>
+
+<!-- Overlays -->
+<!-- lk - pull in overlays from ww when required on cn -->
+  </div>
+<!-- MAIN_COLUMN_CONTAINER_END -->
+
+<!-- Rating_Meta_BEGIN -->
+<!--Rating_Meta_BEGIN--><div class="metavalue">static.content.url=http://www.ibm.com/developerworks/js/artrating/</div><div class="metavalue">SITE_ID=10</div><div class="metavalue">Zone=Linux</div><div class="metavalue">ArticleID=196171</div><div class="metavalue">ArticleTitle=基于 libmad 的简单 MP3 流媒体播放器的实现</div><div class="metavalue">publish-date=02022007</div><div class="metavalue">author1-email=lisuke@infosec.pku.edu.cn</div><div class="metavalue">author1-email-cc=</div><script language="javascript" type="text/javascript">document.write('<div class="metavalue">url='+location.href.replace(/</g, '%3C')+'</div>');</script><div class="metavalue">url=http://www.ibm.com/developerworks/cn/linux/l-cn-libmadmp3player/index.html</div><!--Rating_Meta_END-->
+<!-- Rating_Meta_END -->
+
+</div>
+<!-- MAIN_COLUMN_END-->
+
+<!-- RIGHT_COLUMN_BEGIN -->
+<div id="ibm-content-sidebar">
+
+<!-- RIGHT_COLUMN_CONTENT_BEGIN --> 
+<div class="ibm-container"><h2>内容</h2><div class="ibm-container-body"><img alt="" src="flow_libmad_files/c.gif" height="1" width="1"><ul class="ibm-bullet-list"><li><a class="ibm-feature-link" href="#N1003D">1．介绍</a></li><li><a class="ibm-feature-link" href="#N1006A">2．libmad简介</a></li><li><a class="ibm-feature-link" href="#N1011A">3．PCM 音频设备的操作</a></li><li><a class="ibm-feature-link" href="#N10230">4．创建线程</a></li><li><a class="ibm-feature-link" href="#N10252">5．接收 MP3 流媒体数据</a></li><li><a class="ibm-feature-link" href="#N102B1">6．数据接收线程和音乐播放线程</a></li><li><a class="ibm-feature-link" href="#N10349">7．程序运行实例</a></li><li><a class="ibm-feature-link" href="#N1035E">8．小结</a></li><li><a class="ibm-feature-link" href="#resources">参考资料 </a></li><li><a class="ibm-feature-link" href="#author">关于作者</a></li><li><a class="ibm-feature-link" href="#icomments">建议</a></li></ul></div></div>
+
+ 
+
+<!-- Tagging_Start -->
+<div id="dw-tag-cloud-container" class="ibm-container"><h2>标签</h2>
+<div id="dw-tag-help"><a class="dwauthor" rel="#tagtip" id="dwtagtip"><img alt="Help" src="flow_libmad_files/help_icon.gif" align="top" height="16" width="16"></a></div>
+<div style="display: none;" id="tagtip" class="dwauthor-onload-state ibm-no-print">使用 <strong>搜索</strong> 文本框在 My developerWorks 中查找包含该标签的所有内容。<p>使用 <strong>滑动条</strong> 调节标签的数量。</p><p><strong>热门标签</strong> 显示了特定专区最受欢迎的标签（例如 Java technology，Linux，WebSphere）。</p><p><strong>我的标签</strong> 显示了特定专区您标记的标签（例如 Java technology，Linux，WebSphere）。</p></div>
+<div class="ibm-access">使用搜索文本框在 My developerWorks 中查找包含该标签的所有内容。<em>热门标签</em> 显示了特定专区最受欢迎的标签（例如 Java technology，Linux，WebSphere）。<em>我的标签</em> 显示了特定专区您标记的标签（例如 Java technology，Linux，WebSphere）。</div>
+<div class="ibm-container-body">
+<div class="dw-tag-search"><form action="//www.ibm.com/developerworks/mydeveloperworks/bookmarks/html" method="get" id="actualtagform" onsubmit="popupform(this, 'join')">
+<p><label for="tagfield"><strong>搜索所有标签</strong></label>
+<input name="lang" value="zh" type="hidden">
+<input id="tagfield" name="tag" maxlength="20" size="17" type="text">&nbsp;<input src="flow_libmad_files/short-btn.gif" class="ibm-btn-view" alt="submit search" title="提交搜索" value="Search" type="image"></p></form></div>
+<div class="ibm-rule"><hr></div>
+<div id="dw-tag-select">
+<div id="dw-tag-select-popular"><p><strong>热门文章标签</strong>&nbsp;|&nbsp;<br><a id="a-my" href="javascript:;">我的文章标签</a><a href="#dw-tag-access" class="ibm-access">跳转到标签列表</a></p></div>
+<div id="dw-tag-select-my" class="dw-hidetag"><p><a id="a-popular" href="javascript:;">热门文章标签</a>&nbsp;|&nbsp;<br><strong>我的文章标签</strong></p><a href="#dw-tag-access" class="ibm-access">跳转到标签列表</a></div><div id="dw-tag-access" class="ibm-access"><h2>热门标签</h2><ul>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f1-9">
+					
+					<a title="1 9" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=1&amp;lang=zh')">
+					
+						
+						
+							1	
+						
+					
+					<span class="ibm-access">(9)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f2-1">
+					
+					<a title="3 6" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=3&amp;lang=zh')">
+					
+						
+						
+							3	
+						
+					
+					<span class="ibm-access">(6)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f3-1">
+					
+					<a title="arm学习 6" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=arm%25E5%25AD%25A6%25E4%25B9%25A0&amp;lang=zh')">
+					
+						
+						
+							arm学习	
+						
+					
+					<span class="ibm-access">(6)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f4-6">
+					
+					<a title="autoconf 8" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=autoconf&amp;lang=zh')">
+					
+						
+						
+							autoconf	
+						
+					
+					<span class="ibm-access">(8)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f5-1">
+					
+					<a title="automake 6" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=automake&amp;lang=zh')">
+					
+						
+						
+							automake	
+						
+					
+					<span class="ibm-access">(6)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f6-1">
+					
+					<a title="awk 6" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=awk&amp;lang=zh')">
+					
+						
+						
+							awk	
+						
+					
+					<span class="ibm-access">(6)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f7-9">
+					
+					<a title="bash 9" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=bash&amp;lang=zh')">
+					
+						
+						
+							bash	
+						
+					
+					<span class="ibm-access">(9)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f8-9">
+					
+					<a title="boot 9" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=boot&amp;lang=zh')">
+					
+						
+						
+							boot	
+						
+					
+					<span class="ibm-access">(9)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f9-4">
+					
+					<a title="bootloader 7" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=bootloader&amp;lang=zh')">
+					
+						
+						
+							bootloader	
+						
+					
+					<span class="ibm-access">(7)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+							
+								
+							
+							
+							
+						
+				<li class="f10-41">
+					
+					<a title="c 38" class="lotusF3 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=c&amp;lang=zh')">
+					
+						
+						
+							c	
+						
+					
+					<span class="ibm-access">(38)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f11-31">
+					
+					<a title="eclipse 25" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=eclipse&amp;lang=zh')">
+					
+						
+						
+							eclipse	
+						
+					
+					<span class="ibm-access">(25)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f12-17">
+					
+					<a title="file_systems 13" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=file_systems&amp;lang=zh')">
+					
+						
+						
+							file_systems	
+						
+					
+					<span class="ibm-access">(13)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f13-6">
+					
+					<a title="ftp 8" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=ftp&amp;lang=zh')">
+					
+						
+						
+							ftp	
+						
+					
+					<span class="ibm-access">(8)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f14-33">
+					
+					<a title="hadoop 27" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=hadoop&amp;lang=zh')">
+					
+						
+						
+							hadoop	
+						
+					
+					<span class="ibm-access">(27)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f15-6">
+					
+					<a title="i/o 8" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=i%252Fo&amp;lang=zh')">
+					
+						
+						
+							i/o	
+						
+					
+					<span class="ibm-access">(8)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f16-4">
+					
+					<a title="ipc 7" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=ipc&amp;lang=zh')">
+					
+						
+						
+							ipc	
+						
+					
+					<span class="ibm-access">(7)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f17-28">
+					
+					<a title="kernel 22" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=kernel&amp;lang=zh')">
+					
+						
+						
+							kernel	
+						
+					
+					<span class="ibm-access">(22)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f18-6">
+					
+					<a title="klx.marks 8" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=klx.marks&amp;lang=zh')">
+					
+						
+						
+							klx.marks	
+						
+					
+					<span class="ibm-access">(8)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f19-11">
+					
+					<a title="kvm 10" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=kvm&amp;lang=zh')">
+					
+						
+						
+							kvm	
+						
+					
+					<span class="ibm-access">(10)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f20-9">
+					
+					<a title="lamp 9" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=lamp&amp;lang=zh')">
+					
+						
+						
+							lamp	
+						
+					
+					<span class="ibm-access">(9)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+							
+							
+							
+								
+							
+						
+				<li class="f21-100">
+					
+					<a title="linux 501" class="lotusF5 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=linux&amp;lang=zh')">
+					
+						
+						
+							linux	
+						
+					
+					<span class="ibm-access">(501)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f22-17">
+					
+					<a title="linux_on_power 13" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=linux_on_power&amp;lang=zh')">
+					
+						
+						
+							linux_on_power	
+						
+					
+					<span class="ibm-access">(13)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f23-15">
+					
+					<a title="linux_virtualization 12" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=linux_virtualization&amp;lang=zh')">
+					
+						
+							linux_virtuali...	
+						
+						
+					
+					<span class="ibm-access">(12)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f24-13">
+					
+					<a title="linux_入门 11" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=linux_%25E5%2585%25A5%25E9%2597%25A8&amp;lang=zh')">
+					
+						
+						
+							linux_入门	
+						
+					
+					<span class="ibm-access">(11)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f25-15">
+					
+					<a title="linux环境进程间通信 12" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=linux%25E7%258E%25AF%25E5%25A2%2583%25E8%25BF%259B%25E7%25A8%258B%25E9%2597%25B4%25E9%2580%259A%25E4%25BF%25A1&amp;lang=zh')">
+					
+						
+						
+							linux环境进程间通信	
+						
+					
+					<span class="ibm-access">(12)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f26-6">
+					
+					<a title="linux进程 8" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=linux%25E8%25BF%259B%25E7%25A8%258B&amp;lang=zh')">
+					
+						
+						
+							linux进程	
+						
+					
+					<span class="ibm-access">(8)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f27-11">
+					
+					<a title="lvm 10" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=lvm&amp;lang=zh')">
+					
+						
+						
+							lvm	
+						
+					
+					<span class="ibm-access">(10)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f28-9">
+					
+					<a title="makefile 9" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=makefile&amp;lang=zh')">
+					
+						
+						
+							makefile	
+						
+					
+					<span class="ibm-access">(9)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f29-4">
+					
+					<a title="mysql 7" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=mysql&amp;lang=zh')">
+					
+						
+						
+							mysql	
+						
+					
+					<span class="ibm-access">(7)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f30-4">
+					
+					<a title="network 7" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=network&amp;lang=zh')">
+					
+						
+						
+							network	
+						
+					
+					<span class="ibm-access">(7)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f31-4">
+					
+					<a title="on_demand_business 7" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=on_demand_business&amp;lang=zh')">
+					
+						
+							on_demand_busi...	
+						
+						
+					
+					<span class="ibm-access">(7)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f32-31">
+					
+					<a title="perl 25" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=perl&amp;lang=zh')">
+					
+						
+						
+							perl	
+						
+					
+					<span class="ibm-access">(25)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f33-13">
+					
+					<a title="php 11" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=php&amp;lang=zh')">
+					
+						
+						
+							php	
+						
+					
+					<span class="ibm-access">(11)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f34-11">
+					
+					<a title="php_(hypertext_preprocessor) 10" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=php_%2528hypertext_preprocessor%2529&amp;lang=zh')">
+					
+						
+							php_(hypertext...	
+						
+						
+					
+					<span class="ibm-access">(10)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f35-18">
+					
+					<a title="posix 14" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=posix&amp;lang=zh')">
+					
+						
+						
+							posix	
+						
+					
+					<span class="ibm-access">(14)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f36-4">
+					
+					<a title="programming 7" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=programming&amp;lang=zh')">
+					
+						
+						
+							programming	
+						
+					
+					<span class="ibm-access">(7)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+							
+								
+							
+							
+							
+						
+				<li class="f37-54">
+					
+					<a title="python 68" class="lotusF3 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=python&amp;lang=zh')">
+					
+						
+						
+							python	
+						
+					
+					<span class="ibm-access">(68)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f38-25">
+					
+					<a title="resource_virtualization 19" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=resource_virtualization&amp;lang=zh')">
+					
+						
+							resource_virt...	
+						
+						
+					
+					<span class="ibm-access">(19)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f39-6">
+					
+					<a title="rpm 8" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=rpm&amp;lang=zh')">
+					
+						
+						
+							rpm	
+						
+					
+					<span class="ibm-access">(8)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f40-33">
+					
+					<a title="shell 27" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=shell&amp;lang=zh')">
+					
+						
+						
+							shell	
+						
+					
+					<span class="ibm-access">(27)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f41-15">
+					
+					<a title="shells 12" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=shells&amp;lang=zh')">
+					
+						
+						
+							shells	
+						
+					
+					<span class="ibm-access">(12)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f42-23">
+					
+					<a title="socket 17" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=socket&amp;lang=zh')">
+					
+						
+						
+							socket	
+						
+					
+					<span class="ibm-access">(17)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f43-4">
+					
+					<a title="system_p 7" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=system_p&amp;lang=zh')">
+					
+						
+						
+							system_p	
+						
+					
+					<span class="ibm-access">(7)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f44-28">
+					
+					<a title="vim 22" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=vim&amp;lang=zh')">
+					
+						
+						
+							vim	
+						
+					
+					<span class="ibm-access">(22)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f45-15">
+					
+					<a title="windows 12" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=windows&amp;lang=zh')">
+					
+						
+						
+							windows	
+						
+					
+					<span class="ibm-access">(12)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f46-35">
+					
+					<a title="安全 30" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E5%25AE%2589%25E5%2585%25A8&amp;lang=zh')">
+					
+						
+						
+							安全	
+						
+					
+					<span class="ibm-access">(30)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f47-18">
+					
+					<a title="安装 14" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E5%25AE%2589%25E8%25A3%2585&amp;lang=zh')">
+					
+						
+						
+							安装	
+						
+					
+					<span class="ibm-access">(14)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f48-11">
+					
+					<a title="编程 10" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E7%25BC%2596%25E7%25A8%258B&amp;lang=zh')">
+					
+						
+						
+							编程	
+						
+					
+					<span class="ibm-access">(10)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f49-11">
+					
+					<a title="编码 10" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E7%25BC%2596%25E7%25A0%2581&amp;lang=zh')">
+					
+						
+						
+							编码	
+						
+					
+					<span class="ibm-access">(10)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f50-13">
+					
+					<a title="部分 11" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E9%2583%25A8%25E5%2588%2586&amp;lang=zh')">
+					
+						
+						
+							部分	
+						
+					
+					<span class="ibm-access">(11)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f51-23">
+					
+					<a title="存储 17" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E5%25AD%2598%25E5%2582%25A8&amp;lang=zh')">
+					
+						
+						
+							存储	
+						
+					
+					<span class="ibm-access">(17)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f52-15">
+					
+					<a title="代码库 12" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E4%25BB%25A3%25E7%25A0%2581%25E5%25BA%2593&amp;lang=zh')">
+					
+						
+						
+							代码库	
+						
+					
+					<span class="ibm-access">(12)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f53-20">
+					
+					<a title="调试 15" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E8%25B0%2583%25E8%25AF%2595&amp;lang=zh')">
+					
+						
+						
+							调试	
+						
+					
+					<span class="ibm-access">(15)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f54-4">
+					
+					<a title="多线程 7" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E5%25A4%259A%25E7%25BA%25BF%25E7%25A8%258B&amp;lang=zh')">
+					
+						
+						
+							多线程	
+						
+					
+					<span class="ibm-access">(7)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f55-6">
+					
+					<a title="负载均衡 8" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E8%25B4%259F%25E8%25BD%25BD%25E5%259D%2587%25E8%25A1%25A1&amp;lang=zh')">
+					
+						
+						
+							负载均衡	
+						
+					
+					<span class="ibm-access">(8)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+							
+							
+								
+							
+							
+						
+				<li class="f56-63">
+					
+					<a title="管理 102" class="lotusF4 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E7%25AE%25A1%25E7%2590%2586&amp;lang=zh')">
+					
+						
+						
+							管理	
+						
+					
+					<span class="ibm-access">(102)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f57-34">
+					
+					<a title="集群 28" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E9%259B%2586%25E7%25BE%25A4&amp;lang=zh')">
+					
+						
+						
+							集群	
+						
+					
+					<span class="ibm-access">(28)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f58-17">
+					
+					<a title="脚本编程 13" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E8%2584%259A%25E6%259C%25AC%25E7%25BC%2596%25E7%25A8%258B&amp;lang=zh')">
+					
+						
+						
+							脚本编程	
+						
+					
+					<span class="ibm-access">(13)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+							
+								
+							
+							
+							
+						
+				<li class="f59-42">
+					
+					<a title="开发工具 40" class="lotusF3 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E5%25BC%2580%25E5%258F%2591%25E5%25B7%25A5%25E5%2585%25B7&amp;lang=zh')">
+					
+						
+						
+							开发工具	
+						
+					
+					<span class="ibm-access">(40)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f60-17">
+					
+					<a title="开放源码 13" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E5%25BC%2580%25E6%2594%25BE%25E6%25BA%2590%25E7%25A0%2581&amp;lang=zh')">
+					
+						
+						
+							开放源码	
+						
+					
+					<span class="ibm-access">(13)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+							
+							
+								
+							
+							
+						
+				<li class="f61-62">
+					
+					<a title="内核 95" class="lotusF4 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E5%2586%2585%25E6%25A0%25B8&amp;lang=zh')">
+					
+						
+						
+							内核	
+						
+					
+					<span class="ibm-access">(95)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f62-25">
+					
+					<a title="配置 19" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E9%2585%258D%25E7%25BD%25AE&amp;lang=zh')">
+					
+						
+						
+							配置	
+						
+					
+					<span class="ibm-access">(19)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f63-11">
+					
+					<a title="迁移 10" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E8%25BF%2581%25E7%25A7%25BB&amp;lang=zh')">
+					
+						
+						
+							迁移	
+						
+					
+					<span class="ibm-access">(10)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f64-4">
+					
+					<a title="认证 7" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E8%25AE%25A4%25E8%25AF%2581&amp;lang=zh')">
+					
+						
+						
+							认证	
+						
+					
+					<span class="ibm-access">(7)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f65-11">
+					
+					<a title="使用 10" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E4%25BD%25BF%25E7%2594%25A8&amp;lang=zh')">
+					
+						
+						
+							使用	
+						
+					
+					<span class="ibm-access">(10)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f66-21">
+					
+					<a title="数据库和数据管理 16" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%25E5%2592%258C%25E6%2595%25B0%25E6%258D%25AE%25E7%25AE%25A1%25E7%2590%2586&amp;lang=zh')">
+					
+						
+						
+							数据库和数据管理	
+						
+					
+					<span class="ibm-access">(16)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f67-9">
+					
+					<a title="通用编程 9" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E9%2580%259A%25E7%2594%25A8%25E7%25BC%2596%25E7%25A8%258B&amp;lang=zh')">
+					
+						
+						
+							通用编程	
+						
+					
+					<span class="ibm-access">(9)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f68-15">
+					
+					<a title="图形 12" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E5%259B%25BE%25E5%25BD%25A2&amp;lang=zh')">
+					
+						
+						
+							图形	
+						
+					
+					<span class="ibm-access">(12)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f69-25">
+					
+					<a title="网络 19" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E7%25BD%2591%25E7%25BB%259C&amp;lang=zh')">
+					
+						
+						
+							网络	
+						
+					
+					<span class="ibm-access">(19)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f70-13">
+					
+					<a title="文件系统 11" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E6%2596%2587%25E4%25BB%25B6%25E7%25B3%25BB%25E7%25BB%259F&amp;lang=zh')">
+					
+						
+						
+							文件系统	
+						
+					
+					<span class="ibm-access">(11)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f71-11">
+					
+					<a title="系统脚本 10" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E7%25B3%25BB%25E7%25BB%259F%25E8%2584%259A%25E6%259C%25AC&amp;lang=zh')">
+					
+						
+						
+							系统脚本	
+						
+					
+					<span class="ibm-access">(10)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f72-18">
+					
+					<a title="线程 14" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E7%25BA%25BF%25E7%25A8%258B&amp;lang=zh')">
+					
+						
+						
+							线程	
+						
+					
+					<span class="ibm-access">(14)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f73-39">
+					
+					<a title="性能 35" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E6%2580%25A7%25E8%2583%25BD&amp;lang=zh')">
+					
+						
+						
+							性能	
+						
+					
+					<span class="ibm-access">(35)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f74-13">
+					
+					<a title="学习 11" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E5%25AD%25A6%25E4%25B9%25A0&amp;lang=zh')">
+					
+						
+						
+							学习	
+						
+					
+					<span class="ibm-access">(11)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f75-27">
+					
+					<a title="移动和嵌入式系统 21" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E7%25A7%25BB%25E5%258A%25A8%25E5%2592%258C%25E5%25B5%258C%25E5%2585%25A5%25E5%25BC%258F%25E7%25B3%25BB%25E7%25BB%259F&amp;lang=zh')">
+					
+						
+						
+							移动和嵌入式系统	
+						
+					
+					<span class="ibm-access">(21)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f76-26">
+					
+					<a title="应用开发 20" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E5%25BA%2594%25E7%2594%25A8%25E5%25BC%2580%25E5%258F%2591&amp;lang=zh')">
+					
+						
+						
+							应用开发	
+						
+					
+					<span class="ibm-access">(20)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+							
+								
+							
+							
+							
+						
+				<li class="f77-49">
+					
+					<a title="硬件平台 54" class="lotusF3 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E7%25A1%25AC%25E4%25BB%25B6%25E5%25B9%25B3%25E5%258F%25B0&amp;lang=zh')">
+					
+						
+						
+							硬件平台	
+						
+					
+					<span class="ibm-access">(54)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f78-18">
+					
+					<a title="云计算 14" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E4%25BA%2591%25E8%25AE%25A1%25E7%25AE%2597&amp;lang=zh')">
+					
+						
+						
+							云计算	
+						
+					
+					<span class="ibm-access">(14)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f79-28">
+					
+					<a title="桌面环境 22" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E6%25A1%258C%25E9%259D%25A2%25E7%258E%25AF%25E5%25A2%2583&amp;lang=zh')">
+					
+						
+						
+							桌面环境	
+						
+					
+					<span class="ibm-access">(22)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f80-4">
+					
+					<a title="自旋锁 7" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E8%2587%25AA%25E6%2597%258B%25E9%2594%2581&amp;lang=zh')">
+					
+						
+						
+							自旋锁	
+						
+					
+					<span class="ibm-access">(7)</span>					
+					</a>&nbsp;
+				</li>
+					
+			</ul><p>热门标签结束</p><h2>我的标签</h2><div id="dw-tag-access-my" class="ibm-access"><center>要访问我的标签，请<a href="http://www.ibm.com/developerworks/dwwi/DWAuthRouter?m=auth&amp;lang=zh&amp;d=http%3A%2F%2Fwww.ibm.com%2Fdeveloperworks%2Fcn%2Flinux%2Fl-cn-libmadmp3player%2Findex.html">登录</a><p>查看热门标签</p></center><br></div><p>我的标签结束</p></div>
+<div id="dw-tag-cloud">
+	<div id="dogearTagCloud">
+		<div class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" id="content-slider"><a style="left: 0%;" class="ui-slider-handle ui-state-default ui-corner-all" href="#"></a></div>
+		
+			
+						
+						
+						
+						
+			
+				<div id="ui-slider-scale"><p><span class="content-slider-more">更多</span><span class="content-slider-less">更少</span></p></div>
+						
+									
+			
+		
+	    <div id="cloud-container">
+			<ul>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f1-9">
+					
+					<a title="1 9" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=1&amp;lang=zh')">
+					
+						
+						
+							1	
+						
+					
+					<span class="ibm-access">(9)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f2-1">
+					
+					<a title="3 6" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=3&amp;lang=zh')">
+					
+						
+						
+							3	
+						
+					
+					<span class="ibm-access">(6)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f3-1">
+					
+					<a title="arm学习 6" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=arm%25E5%25AD%25A6%25E4%25B9%25A0&amp;lang=zh')">
+					
+						
+						
+							arm学习	
+						
+					
+					<span class="ibm-access">(6)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f4-6">
+					
+					<a title="autoconf 8" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=autoconf&amp;lang=zh')">
+					
+						
+						
+							autoconf	
+						
+					
+					<span class="ibm-access">(8)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f5-1">
+					
+					<a title="automake 6" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=automake&amp;lang=zh')">
+					
+						
+						
+							automake	
+						
+					
+					<span class="ibm-access">(6)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f6-1">
+					
+					<a title="awk 6" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=awk&amp;lang=zh')">
+					
+						
+						
+							awk	
+						
+					
+					<span class="ibm-access">(6)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f7-9">
+					
+					<a title="bash 9" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=bash&amp;lang=zh')">
+					
+						
+						
+							bash	
+						
+					
+					<span class="ibm-access">(9)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f8-9">
+					
+					<a title="boot 9" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=boot&amp;lang=zh')">
+					
+						
+						
+							boot	
+						
+					
+					<span class="ibm-access">(9)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f9-4">
+					
+					<a title="bootloader 7" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=bootloader&amp;lang=zh')">
+					
+						
+						
+							bootloader	
+						
+					
+					<span class="ibm-access">(7)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+							
+								
+							
+							
+							
+						
+				<li class="f10-41">
+					
+					<a title="c 38" class="lotusF3 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=c&amp;lang=zh')">
+					
+						
+						
+							c	
+						
+					
+					<span class="ibm-access">(38)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f11-31">
+					
+					<a title="eclipse 25" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=eclipse&amp;lang=zh')">
+					
+						
+						
+							eclipse	
+						
+					
+					<span class="ibm-access">(25)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f12-17">
+					
+					<a title="file_systems 13" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=file_systems&amp;lang=zh')">
+					
+						
+						
+							file_systems	
+						
+					
+					<span class="ibm-access">(13)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f13-6">
+					
+					<a title="ftp 8" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=ftp&amp;lang=zh')">
+					
+						
+						
+							ftp	
+						
+					
+					<span class="ibm-access">(8)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f14-33">
+					
+					<a title="hadoop 27" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=hadoop&amp;lang=zh')">
+					
+						
+						
+							hadoop	
+						
+					
+					<span class="ibm-access">(27)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f15-6">
+					
+					<a title="i/o 8" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=i%252Fo&amp;lang=zh')">
+					
+						
+						
+							i/o	
+						
+					
+					<span class="ibm-access">(8)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f16-4">
+					
+					<a title="ipc 7" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=ipc&amp;lang=zh')">
+					
+						
+						
+							ipc	
+						
+					
+					<span class="ibm-access">(7)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f17-28">
+					
+					<a title="kernel 22" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=kernel&amp;lang=zh')">
+					
+						
+						
+							kernel	
+						
+					
+					<span class="ibm-access">(22)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f18-6">
+					
+					<a title="klx.marks 8" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=klx.marks&amp;lang=zh')">
+					
+						
+						
+							klx.marks	
+						
+					
+					<span class="ibm-access">(8)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f19-11">
+					
+					<a title="kvm 10" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=kvm&amp;lang=zh')">
+					
+						
+						
+							kvm	
+						
+					
+					<span class="ibm-access">(10)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f20-9">
+					
+					<a title="lamp 9" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=lamp&amp;lang=zh')">
+					
+						
+						
+							lamp	
+						
+					
+					<span class="ibm-access">(9)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+							
+							
+							
+								
+							
+						
+				<li class="f21-100">
+					
+					<a title="linux 501" class="lotusF5 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=linux&amp;lang=zh')">
+					
+						
+						
+							linux	
+						
+					
+					<span class="ibm-access">(501)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f22-17">
+					
+					<a title="linux_on_power 13" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=linux_on_power&amp;lang=zh')">
+					
+						
+						
+							linux_on_power	
+						
+					
+					<span class="ibm-access">(13)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f23-15">
+					
+					<a title="linux_virtualization 12" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=linux_virtualization&amp;lang=zh')">
+					
+						
+							linux_virtuali...	
+						
+						
+					
+					<span class="ibm-access">(12)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f24-13">
+					
+					<a title="linux_入门 11" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=linux_%25E5%2585%25A5%25E9%2597%25A8&amp;lang=zh')">
+					
+						
+						
+							linux_入门	
+						
+					
+					<span class="ibm-access">(11)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f25-15">
+					
+					<a title="linux环境进程间通信 12" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=linux%25E7%258E%25AF%25E5%25A2%2583%25E8%25BF%259B%25E7%25A8%258B%25E9%2597%25B4%25E9%2580%259A%25E4%25BF%25A1&amp;lang=zh')">
+					
+						
+						
+							linux环境进程间通信	
+						
+					
+					<span class="ibm-access">(12)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f26-6">
+					
+					<a title="linux进程 8" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=linux%25E8%25BF%259B%25E7%25A8%258B&amp;lang=zh')">
+					
+						
+						
+							linux进程	
+						
+					
+					<span class="ibm-access">(8)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f27-11">
+					
+					<a title="lvm 10" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=lvm&amp;lang=zh')">
+					
+						
+						
+							lvm	
+						
+					
+					<span class="ibm-access">(10)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f28-9">
+					
+					<a title="makefile 9" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=makefile&amp;lang=zh')">
+					
+						
+						
+							makefile	
+						
+					
+					<span class="ibm-access">(9)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f29-4">
+					
+					<a title="mysql 7" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=mysql&amp;lang=zh')">
+					
+						
+						
+							mysql	
+						
+					
+					<span class="ibm-access">(7)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f30-4">
+					
+					<a title="network 7" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=network&amp;lang=zh')">
+					
+						
+						
+							network	
+						
+					
+					<span class="ibm-access">(7)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f31-4">
+					
+					<a title="on_demand_business 7" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=on_demand_business&amp;lang=zh')">
+					
+						
+							on_demand_busi...	
+						
+						
+					
+					<span class="ibm-access">(7)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f32-31">
+					
+					<a title="perl 25" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=perl&amp;lang=zh')">
+					
+						
+						
+							perl	
+						
+					
+					<span class="ibm-access">(25)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f33-13">
+					
+					<a title="php 11" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=php&amp;lang=zh')">
+					
+						
+						
+							php	
+						
+					
+					<span class="ibm-access">(11)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f34-11">
+					
+					<a title="php_(hypertext_preprocessor) 10" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=php_%2528hypertext_preprocessor%2529&amp;lang=zh')">
+					
+						
+							php_(hypertext...	
+						
+						
+					
+					<span class="ibm-access">(10)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f35-18">
+					
+					<a title="posix 14" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=posix&amp;lang=zh')">
+					
+						
+						
+							posix	
+						
+					
+					<span class="ibm-access">(14)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f36-4">
+					
+					<a title="programming 7" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=programming&amp;lang=zh')">
+					
+						
+						
+							programming	
+						
+					
+					<span class="ibm-access">(7)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+							
+								
+							
+							
+							
+						
+				<li class="f37-54">
+					
+					<a title="python 68" class="lotusF3 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=python&amp;lang=zh')">
+					
+						
+						
+							python	
+						
+					
+					<span class="ibm-access">(68)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f38-25">
+					
+					<a title="resource_virtualization 19" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=resource_virtualization&amp;lang=zh')">
+					
+						
+							resource_virt...	
+						
+						
+					
+					<span class="ibm-access">(19)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f39-6">
+					
+					<a title="rpm 8" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=rpm&amp;lang=zh')">
+					
+						
+						
+							rpm	
+						
+					
+					<span class="ibm-access">(8)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f40-33">
+					
+					<a title="shell 27" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=shell&amp;lang=zh')">
+					
+						
+						
+							shell	
+						
+					
+					<span class="ibm-access">(27)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f41-15">
+					
+					<a title="shells 12" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=shells&amp;lang=zh')">
+					
+						
+						
+							shells	
+						
+					
+					<span class="ibm-access">(12)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f42-23">
+					
+					<a title="socket 17" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=socket&amp;lang=zh')">
+					
+						
+						
+							socket	
+						
+					
+					<span class="ibm-access">(17)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f43-4">
+					
+					<a title="system_p 7" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=system_p&amp;lang=zh')">
+					
+						
+						
+							system_p	
+						
+					
+					<span class="ibm-access">(7)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f44-28">
+					
+					<a title="vim 22" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=vim&amp;lang=zh')">
+					
+						
+						
+							vim	
+						
+					
+					<span class="ibm-access">(22)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f45-15">
+					
+					<a title="windows 12" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=windows&amp;lang=zh')">
+					
+						
+						
+							windows	
+						
+					
+					<span class="ibm-access">(12)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f46-35">
+					
+					<a title="安全 30" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E5%25AE%2589%25E5%2585%25A8&amp;lang=zh')">
+					
+						
+						
+							安全	
+						
+					
+					<span class="ibm-access">(30)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f47-18">
+					
+					<a title="安装 14" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E5%25AE%2589%25E8%25A3%2585&amp;lang=zh')">
+					
+						
+						
+							安装	
+						
+					
+					<span class="ibm-access">(14)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f48-11">
+					
+					<a title="编程 10" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E7%25BC%2596%25E7%25A8%258B&amp;lang=zh')">
+					
+						
+						
+							编程	
+						
+					
+					<span class="ibm-access">(10)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f49-11">
+					
+					<a title="编码 10" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E7%25BC%2596%25E7%25A0%2581&amp;lang=zh')">
+					
+						
+						
+							编码	
+						
+					
+					<span class="ibm-access">(10)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f50-13">
+					
+					<a title="部分 11" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E9%2583%25A8%25E5%2588%2586&amp;lang=zh')">
+					
+						
+						
+							部分	
+						
+					
+					<span class="ibm-access">(11)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f51-23">
+					
+					<a title="存储 17" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E5%25AD%2598%25E5%2582%25A8&amp;lang=zh')">
+					
+						
+						
+							存储	
+						
+					
+					<span class="ibm-access">(17)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f52-15">
+					
+					<a title="代码库 12" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E4%25BB%25A3%25E7%25A0%2581%25E5%25BA%2593&amp;lang=zh')">
+					
+						
+						
+							代码库	
+						
+					
+					<span class="ibm-access">(12)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f53-20">
+					
+					<a title="调试 15" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E8%25B0%2583%25E8%25AF%2595&amp;lang=zh')">
+					
+						
+						
+							调试	
+						
+					
+					<span class="ibm-access">(15)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f54-4">
+					
+					<a title="多线程 7" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E5%25A4%259A%25E7%25BA%25BF%25E7%25A8%258B&amp;lang=zh')">
+					
+						
+						
+							多线程	
+						
+					
+					<span class="ibm-access">(7)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f55-6">
+					
+					<a title="负载均衡 8" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E8%25B4%259F%25E8%25BD%25BD%25E5%259D%2587%25E8%25A1%25A1&amp;lang=zh')">
+					
+						
+						
+							负载均衡	
+						
+					
+					<span class="ibm-access">(8)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+							
+							
+								
+							
+							
+						
+				<li class="f56-63">
+					
+					<a title="管理 102" class="lotusF4 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E7%25AE%25A1%25E7%2590%2586&amp;lang=zh')">
+					
+						
+						
+							管理	
+						
+					
+					<span class="ibm-access">(102)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f57-34">
+					
+					<a title="集群 28" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E9%259B%2586%25E7%25BE%25A4&amp;lang=zh')">
+					
+						
+						
+							集群	
+						
+					
+					<span class="ibm-access">(28)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f58-17">
+					
+					<a title="脚本编程 13" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E8%2584%259A%25E6%259C%25AC%25E7%25BC%2596%25E7%25A8%258B&amp;lang=zh')">
+					
+						
+						
+							脚本编程	
+						
+					
+					<span class="ibm-access">(13)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+							
+								
+							
+							
+							
+						
+				<li class="f59-42">
+					
+					<a title="开发工具 40" class="lotusF3 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E5%25BC%2580%25E5%258F%2591%25E5%25B7%25A5%25E5%2585%25B7&amp;lang=zh')">
+					
+						
+						
+							开发工具	
+						
+					
+					<span class="ibm-access">(40)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f60-17">
+					
+					<a title="开放源码 13" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E5%25BC%2580%25E6%2594%25BE%25E6%25BA%2590%25E7%25A0%2581&amp;lang=zh')">
+					
+						
+						
+							开放源码	
+						
+					
+					<span class="ibm-access">(13)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+							
+							
+								
+							
+							
+						
+				<li class="f61-62">
+					
+					<a title="内核 95" class="lotusF4 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E5%2586%2585%25E6%25A0%25B8&amp;lang=zh')">
+					
+						
+						
+							内核	
+						
+					
+					<span class="ibm-access">(95)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f62-25">
+					
+					<a title="配置 19" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E9%2585%258D%25E7%25BD%25AE&amp;lang=zh')">
+					
+						
+						
+							配置	
+						
+					
+					<span class="ibm-access">(19)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f63-11">
+					
+					<a title="迁移 10" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E8%25BF%2581%25E7%25A7%25BB&amp;lang=zh')">
+					
+						
+						
+							迁移	
+						
+					
+					<span class="ibm-access">(10)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f64-4">
+					
+					<a title="认证 7" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E8%25AE%25A4%25E8%25AF%2581&amp;lang=zh')">
+					
+						
+						
+							认证	
+						
+					
+					<span class="ibm-access">(7)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f65-11">
+					
+					<a title="使用 10" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E4%25BD%25BF%25E7%2594%25A8&amp;lang=zh')">
+					
+						
+						
+							使用	
+						
+					
+					<span class="ibm-access">(10)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f66-21">
+					
+					<a title="数据库和数据管理 16" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%25E5%2592%258C%25E6%2595%25B0%25E6%258D%25AE%25E7%25AE%25A1%25E7%2590%2586&amp;lang=zh')">
+					
+						
+						
+							数据库和数据管理	
+						
+					
+					<span class="ibm-access">(16)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f67-9">
+					
+					<a title="通用编程 9" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E9%2580%259A%25E7%2594%25A8%25E7%25BC%2596%25E7%25A8%258B&amp;lang=zh')">
+					
+						
+						
+							通用编程	
+						
+					
+					<span class="ibm-access">(9)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f68-15">
+					
+					<a title="图形 12" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E5%259B%25BE%25E5%25BD%25A2&amp;lang=zh')">
+					
+						
+						
+							图形	
+						
+					
+					<span class="ibm-access">(12)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f69-25">
+					
+					<a title="网络 19" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E7%25BD%2591%25E7%25BB%259C&amp;lang=zh')">
+					
+						
+						
+							网络	
+						
+					
+					<span class="ibm-access">(19)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f70-13">
+					
+					<a title="文件系统 11" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E6%2596%2587%25E4%25BB%25B6%25E7%25B3%25BB%25E7%25BB%259F&amp;lang=zh')">
+					
+						
+						
+							文件系统	
+						
+					
+					<span class="ibm-access">(11)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f71-11">
+					
+					<a title="系统脚本 10" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E7%25B3%25BB%25E7%25BB%259F%25E8%2584%259A%25E6%259C%25AC&amp;lang=zh')">
+					
+						
+						
+							系统脚本	
+						
+					
+					<span class="ibm-access">(10)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f72-18">
+					
+					<a title="线程 14" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E7%25BA%25BF%25E7%25A8%258B&amp;lang=zh')">
+					
+						
+						
+							线程	
+						
+					
+					<span class="ibm-access">(14)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f73-39">
+					
+					<a title="性能 35" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E6%2580%25A7%25E8%2583%25BD&amp;lang=zh')">
+					
+						
+						
+							性能	
+						
+					
+					<span class="ibm-access">(35)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f74-13">
+					
+					<a title="学习 11" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E5%25AD%25A6%25E4%25B9%25A0&amp;lang=zh')">
+					
+						
+						
+							学习	
+						
+					
+					<span class="ibm-access">(11)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f75-27">
+					
+					<a title="移动和嵌入式系统 21" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E7%25A7%25BB%25E5%258A%25A8%25E5%2592%258C%25E5%25B5%258C%25E5%2585%25A5%25E5%25BC%258F%25E7%25B3%25BB%25E7%25BB%259F&amp;lang=zh')">
+					
+						
+						
+							移动和嵌入式系统	
+						
+					
+					<span class="ibm-access">(21)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f76-26">
+					
+					<a title="应用开发 20" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E5%25BA%2594%25E7%2594%25A8%25E5%25BC%2580%25E5%258F%2591&amp;lang=zh')">
+					
+						
+						
+							应用开发	
+						
+					
+					<span class="ibm-access">(20)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+							
+								
+							
+							
+							
+						
+				<li class="f77-49">
+					
+					<a title="硬件平台 54" class="lotusF3 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E7%25A1%25AC%25E4%25BB%25B6%25E5%25B9%25B3%25E5%258F%25B0&amp;lang=zh')">
+					
+						
+						
+							硬件平台	
+						
+					
+					<span class="ibm-access">(54)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f78-18">
+					
+					<a title="云计算 14" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E4%25BA%2591%25E8%25AE%25A1%25E7%25AE%2597&amp;lang=zh')">
+					
+						
+						
+							云计算	
+						
+					
+					<span class="ibm-access">(14)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+							
+								
+							
+							
+							
+							
+						
+				<li class="f79-28">
+					
+					<a title="桌面环境 22" class="lotusF2 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E6%25A1%258C%25E9%259D%25A2%25E7%258E%25AF%25E5%25A2%2583&amp;lang=zh')">
+					
+						
+						
+							桌面环境	
+						
+					
+					<span class="ibm-access">(22)</span>					
+					</a>&nbsp;
+				</li>
+					
+						
+							
+								
+							
+							
+							
+							
+							
+						
+				<li class="f80-4">
+					
+					<a title="自旋锁 7" class="lotusF1 my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=%25E8%2587%25AA%25E6%2597%258B%25E9%2594%2581&amp;lang=zh')">
+					
+						
+						
+							自旋锁	
+						
+					
+					<span class="ibm-access">(7)</span>					
+					</a>&nbsp;
+				</li>
+					
+			</ul>
+		</div>
+		
+			
+						
+						
+						
+						
+			
+				<div class="ibm-rule"><hr></div><p>查看方式<strong>云</strong>&nbsp;| <a id="alist" class="lotusAction" href="javascript:;">列表</a></p>
+						
+			
+			
+		
+		</div> 
+
+		
+			
+			<div class="lotusChunk dw-hidetag" id="dogearTagList">
+			<div id="list-container">
+				<ul class="lotusList lotusEditable lotusTags lotusMeta">
+				
+					
+						
+			
+
+			
+				<li>				
+					<a title="1 9" class="lotusLeft my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=1&amp;lang=zh')">
+						
+							
+							
+								1	
+							
+						
+					</a>
+					9
+				</li>
+				
+			
+					
+						
+			
+
+			
+				<li>				
+					<a title="3 6" class="lotusLeft my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=3&amp;lang=zh')">
+						
+							
+							
+								3	
+							
+						
+					</a>
+					6
+				</li>
+				
+			
+					
+						
+			
+
+			
+				<li>				
+					<a title="arm学习 6" class="lotusLeft my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=arm%25E5%25AD%25A6%25E4%25B9%25A0&amp;lang=zh')">
+						
+							
+							
+								arm学习	
+							
+						
+					</a>
+					6
+				</li>
+				
+			
+					
+						
+			
+
+			
+				<li>				
+					<a title="autoconf 8" class="lotusLeft my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=autoconf&amp;lang=zh')">
+						
+							
+							
+								autoconf	
+							
+						
+					</a>
+					8
+				</li>
+				
+			
+					
+						
+			
+
+			
+				<li>				
+					<a title="automake 6" class="lotusLeft my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=automake&amp;lang=zh')">
+						
+							
+							
+								automake	
+							
+						
+					</a>
+					6
+				</li>
+				
+			
+					
+						
+			
+
+			
+				<li>				
+					<a title="awk 6" class="lotusLeft my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=awk&amp;lang=zh')">
+						
+							
+							
+								awk	
+							
+						
+					</a>
+					6
+				</li>
+				
+			
+					
+						
+			
+
+			
+				<li>				
+					<a title="bash 9" class="lotusLeft my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=bash&amp;lang=zh')">
+						
+							
+							
+								bash	
+							
+						
+					</a>
+					9
+				</li>
+				
+			
+					
+						
+			
+
+			
+				<li>				
+					<a title="boot 9" class="lotusLeft my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=boot&amp;lang=zh')">
+						
+							
+							
+								boot	
+							
+						
+					</a>
+					9
+				</li>
+				
+			
+					
+						
+			
+
+			
+				<li>				
+					<a title="bootloader 7" class="lotusLeft my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=bootloader&amp;lang=zh')">
+						
+							
+							
+								bootloader	
+							
+						
+					</a>
+					7
+				</li>
+				
+			
+					
+						
+			
+
+			
+				<li>				
+					<a title="c 38" class="lotusLeft my" href="javascript:launchTagWindow('/developerworks/mydeveloperworks/bookmarks/html?tag=c&amp;lang=zh')">
+						
+							
+							
+								c	
+							
+						
+					</a>
+					38
+				</li>
+				
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+					
+			
+				
+			</ul>
+			</div>
+			
+				
+							
+							
+							
+							
+				
+					<div class="ibm-rule"><hr></div><p>查看方式<a id="acloud" class="lotusAction" href="javascript:;">云</a>&nbsp;| <strong>列表</strong></p>
+							
+								
+				
+			
+			</div></div>  
+</div>   
+</div>
+</div>
+<!-- Tagging_End -->
+
+<!-- Dig_Deeper -->
+
+<!-- High_Visibility_Offer -->
+
+<!-- Special_Offers -->
+
+<!-- RIGHT_COLUMN_CONTENT_END -->
+
+</div>
+<!-- RIGHT_COLUMN_END -->
+
+<!-- CONTENT_BODY_END -->
+</div>
+
+</div>
+<!-- CONTENT_END -->
+
+ <!-- END_IBM-PCON -->
+</div>
+
+<!-- FOOTER_BEGIN -->
+<div id="ibm-footer">
+<!-- IBM footer container; disabled -->
+</div>
+
+<div id="ibm-page-tools-dw">
+	<div id="dw-footer-top-row">
+		<ul id="dw-foot-options">
+			<li id="dw-print"><a class="ibm-print-link" href="#">打印此页面</a></li>
+		</ul>
+		<ul id="ibm-foot-options-dw">
+			<li id="dw-foot-0" class="dw-foot-0-cn"><a href="#">分享此页面</a></li>
+			<li id="dw-foot-1" class="dw-foot-1-cn"><a href="#">关注 developerWorks</a></li>
+		</ul>
+	</div>       
+	
+	
+	<!-- TOP ROW SLIDER -->
+    <div id="dw-page-tools-menu">    
+        <div class="ibm-ribbon-pane-dw">
+            <div class="ibm-ribbon-section-dw">
+				<!-- Share this page -->			
+                <div class="dw-footer-columns">
+                    <div class="dw-footer-col-3-1">
+                    	<h2>分享此页面：</h2>                            
+						<ul class="ibm-link-list">
+							<li><a id="dw-foot-0-0" class="ibm-facebook-link" href="http://www.facebook.com/sharer.php?u=http%3A%2F%2Fwww.ibm.com%2Fdeveloperworks%2Fcn%2Flinux%2Fl-cn-libmadmp3player%2Findex.html&amp;t=%E5%9F%BA%E4%BA%8E%20libmad%20%E7%9A%84%E7%AE%80%E5%8D%95%20MP3%20%E6%B5%81%E5%AA%92%E4%BD%93%E6%92%AD%E6%94%BE%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0">Facebook</a></li>
+							<li><a class="ibm-linkedin-link" href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http%3A%2F%2Fwww.ibm.com%2Fdeveloperworks%2Fcn%2Flinux%2Fl-cn-libmadmp3player%2Findex.html&amp;title=%E5%9F%BA%E4%BA%8E%20libmad%20%E7%9A%84%E7%AE%80%E5%8D%95%20MP3%20%E6%B5%81%E5%AA%92%E4%BD%93%E6%92%AD%E6%94%BE%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0">LinkedIn</a></li>
+							<li><a class="ibm-twitter-link" href="http://twitter.com/home?status=http%3A%2F%2Fwww.ibm.com%2Fdeveloperworks%2Fcn%2Flinux%2Fl-cn-libmadmp3player%2Findex.html%20-%20%E5%9F%BA%E4%BA%8E%20libmad%20%E7%9A%84%E7%AE%80%E5%8D%95%20MP3%20%E6%B5%81%E5%AA%92%E4%BD%93%E6%92%AD%E6%94%BE%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0">Twitter</a></li>
+						</ul>
+                    </div>
+                    <div class="dw-footer-col-3-2">
+						<ul class="ibm-link-list">
+							<li><a class="ibm-delicious-link" href="http://delicious.com/post?url=http%3A%2F%2Fwww.ibm.com%2Fdeveloperworks%2Fcn%2Flinux%2Fl-cn-libmadmp3player%2Findex.html&amp;title=%E5%9F%BA%E4%BA%8E%20libmad%20%E7%9A%84%E7%AE%80%E5%8D%95%20MP3%20%E6%B5%81%E5%AA%92%E4%BD%93%E6%92%AD%E6%94%BE%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0">Delicious</a></li>
+							<li><a class="ibm-digg-link" href="http://digg.com/submit?phase=2&amp;url=http%3A%2F%2Fwww.ibm.com%2Fdeveloperworks%2Fcn%2Flinux%2Fl-cn-libmadmp3player%2Findex.html&amp;title=%E5%9F%BA%E4%BA%8E%20libmad%20%E7%9A%84%E7%AE%80%E5%8D%95%20MP3%20%E6%B5%81%E5%AA%92%E4%BD%93%E6%92%AD%E6%94%BE%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0">Digg</a></li>
+							<!--<li><a class="ibm-stumbleupon" href="#">StumbleUpon</a></li>-->
+						</ul>
+                    </div>
+                    <div class="dw-footer-col-3-3">
+						<ul class="ibm-link-list">
+							<li><a class="ibm-email-link" href="#">发送此页面</a></li>
+						</ul>
+                    </div>
+                    <div class="dw-footer-close">
+						<ul>
+							<li><div class="dw-footer-close-share"><a href="#"><img src="flow_libmad_files/c_002.gif" alt="关闭 [x]" height="10" width="20"></a></div></li>
+						</ul>
+                    </div>
+                </div>
+                <!-- Follow developerWorks -->
+                <div class="dw-footer-columns">
+                    <div class="dw-footer-col-1-1">
+                    	<h2>分享此页面：</h2>
+						<ul class="ibm-link-list">
+							<li><a id="dw-foot-1-0" class="ibm-twitter-link" href="http://www.twitter.com/dwchina">Twitter</a></li>
+						</ul>
+                    </div>
+                    <div class="dw-footer-close">
+						<ul>
+							<li><div class="dw-footer-close-follow-cn"><a href="#"><img src="flow_libmad_files/c_002.gif" alt="关闭 [x]" height="10" width="20"></a></div></li>
+						</ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="ibm-footer-module-dw">
+	<div class="dw-footer-columns">
+		<div class="dw-footer-col-6-1">
+			<ul>
+				<!--<li><a href="http://www.ibm.com/developerworks/aboutdw/">About</a></li>-->
+				<li><a href="https://www.ibm.com/developerworks/secure/feedback.jsp?domain=dwchina">帮助</a></li>
+				<li><a href="http://www.ibm.com/developerworks/cn/author/">联系编辑</a></li>
+				<li><a href="https://www.ibm.com/developerworks/secure/myideas2.jsp?domain=dwchina&amp;start=true">提交内容</a></li>
+				<li><a href="http://www.ibm.com/developerworks/cn/sitemap/">网站导航</a></li>
+			</ul>
+		</div>
+		<div class="dw-footer-col-6-2">
+			<ul>
+				<li><a href="http://www.ibm.com/developerworks/cn/rss/">订阅源</a></li>
+				<li><a href="http://www.ibm.com/vrm/newsletter/10104?S_TACT=105AGX52&amp;S_CMP=dwcntop">在线浏览每周时事通讯</a></li>
+			</ul>
+		</div>
+		<div class="dw-footer-col-6-3">
+			<ul>
+				<li><a href="https://www.ibm.com/developerworks/community/report?lang=zh">报告滥用</a></li>
+				<li><a href="https://www.ibm.com/developerworks/community/terms?lang=zh">使用条款</a></li>
+				<li><a href="http://www.ibm.com/privacy/cn/zh/">隐私条约</a></li>
+				<li><a href="http://www.ibm.com/ibm/accessibility/cn/">浏览辅助</a></li>
+			</ul>
+		</div>
+		<div class="dw-footer-col-6-4-cn">
+			<ul>
+				<li><a href="http://www-900.ibm.com/cn/ai/">IBM 教育学院教育培养计划</a></li>
+				<li><a href="http://www.ibm.com/partnerworld/isv/">ISV 资源 (英语)</a></li>
+			</ul>
+		</div>
+		<div class="dw-footer-col-6-5">
+		</div>
+		<div class="dw-footer-col-6-6">
+		</div>
+	</div>
+	<!-- Language selector no-script -->
+	<noscript>
+	<div id="dw-footer-selectlang">
+		<h2><a name="SELECTLANG">选择语言：</a></h2>
+		<ul>
+			<li><a href="http://www.ibm.com/developerworks/">English</a></li>
+			<li><a href="http://www.ibm.com/developerworks/cn/">中文</a></li>
+			<li><a href="http://www.ibm.com/developerworks/jp/">日本語</a></li>
+			<li><a href="http://www.ibm.com/developerworks/kr/">한국어</a></li>
+			<li><a href="http://www.ibm.com/developerworks/ru/">Русский</a></li>
+			<li><a href="http://www.ibm.com/developerworks/br/">Português (Brasil)</a></li>
+			<li><a href="http://www.ibm.com/developerworks/ssa/">Español</a></li>
+			<li><a href="http://www.ibm.com/developerworks/vn/">Việt</a></li>
+		</ul>
+	</div>
+	</noscript>
+</div><!-- FOOTER_END -->
+
+ <!-- END_IBM-TOP -->
+<div id="ibm-overlay-top"></div></div>
+ 
+ <!-- SCRIPTS_INCLUDE_BEGIN -->
+<!-- JQuery start -->
+<script type="text/javascript" language="JavaScript" src="flow_libmad_files/jquery.js"></script>
+<script type="text/javascript" language="JavaScript" src="flow_libmad_files/jquery_002.js"></script>
+<script type="text/javascript" language="JavaScript" src="flow_libmad_files/ui.js"></script>
+<script type="text/javascript" language="JavaScript" src="flow_libmad_files/ui_002.js"></script>
+
+<!-- xM Masthead/Footer -->
+<script src="flow_libmad_files/jquery_004.js" type="text/javascript">//</script>
+<script src="flow_libmad_files/jquery_003.js" type="text/javascript">//</script>
+<script src="flow_libmad_files/dw_v16.js" type="text/javascript">//</script>
+<script src="flow_libmad_files/flash-detect_002.js" type="text/javascript">//</script>
+<script src="flow_libmad_files/dwsi.js" type="text/javascript">//</script>
+<script type="text/javascript" language="JavaScript" src="flow_libmad_files/dwjquerytags.js"></script>
+<script type="text/javascript" language="JavaScript" src="flow_libmad_files/showcomments.js">//</script>
+<script language="JavaScript" type="text/javascript">
+	// <![CDATA[
+ jQuery('threadShow').showComments('95%',5,'nCmts','icomments');
+// ]]>
+</script>
+<script type="text/javascript" language="JavaScript">
+	jQuery.noConflict();     
+	// Put all your code in your document ready area
+	jQuery(document).ready(function(jQuery) {
+	// Do jQuery stuff using jQuery 
+	jQuery('a.dwauthor').cluetip({
+	local: true,
+	showTitle: false,
+	positionBy: 'bottomTop',
+	sticky: true,	
+	mouseOutClose: true,
+	closeText: '<img src="//dw1.s81c.com/developerworks/js/jquery/cluetip98/i/x.gif" alt="Close" />',
+	arrows: false,
+	dropShadow: true,
+	cluetipClass: 'dwbasic'
+	});   	
+	//tagging
+	login="false";
+	userid="";
+	whichTags = "init";
+	pCont = "";
+	mCont = "";
+	signInMCont = "";
+	accessCont = "";
+	pValue = 0;
+	mValue = 0;
+	
+	rBHash = null;
+	rBHash = new Object();
+	rBHash['viperLang'] = 'zh';
+	rBHash['urlLang'] = 'cn';
+	rBHash['tagThisWinTitle'] = '添加标签';
+	rBHash['pTags1'] = '热门标签';		
+	rBHash['pTags2'] = '热门标签结束';
+	rBHash['mTags1'] = '我的标签';
+	rBHash['mTags2'] = '我的标签结束';
+	rBHash['alt1'] = '正在加载内容';
+	rBHash['noATags'] = '没有可用的标签';
+	rBHash['signIn1'] = '请';
+	rBHash['signIn2'] = '登录';
+	rBHash['signIn3'] = '以访问';
+	rBHash['signIn4'] = '我的标签';
+	rBHash['signIn5'] = '要访问我的标签，请';
+	rBHash['signIn6'] = '登录';
+	rBHash['signIn7'] = '查看热门标签';
+	rBHash['dnameSuffix'] = '';
+
+	zoneHash = new Object();
+	zoneHash['aix'] = 'AIX and UNIX';
+	zoneHash['ibmi'] = 'IBM i zone';
+	zoneHash['data'] = 'Information Management';
+	zoneHash['lotus'] = 'Lotus';
+	zoneHash['rational'] = 'Rational';
+	//zoneHash['tivoli'] = 'Tivoli zone';
+	zoneHash['websphere'] = 'WebSphere';
+	zoneHash['architecture'] = 'Technical library';
+	//zoneHash['autonomic'] = 'Technical library';
+	zoneHash['java'] = 'Java technology';
+	zoneHash['cloud'] = 'Cloud computing';
+	//zoneHash['industry'] = 'Technical library';
+	zoneHash['library'] = '文档库';
+	zoneHash['linux'] = 'Linux';
+	zoneHash['opensource'] = 'Open source';
+	//zoneHash['power'] = 'Technical library';
+	zoneHash['webservices'] = 'SOA and web services';
+	zoneHash['web'] = 'Web development';
+	zoneHash['xml'] = 'XML';
+	//zoneHash['wireless'] = 'Technical library';
+	jQuery.checkRB();
+	jQuery.getPopularTags("/developerworks/dwtags/dwjquerytabtags?lang=" + rBHash['viperLang'] + "&base=" + jQuery.getNormalizedZoneUrl(location.href));
+	jQuery.getUserTags();
+	if(jQuery.isTutorial(location.href) == "true") {
+	jQuery.getTagsForContent("/developerworks/tagging/UseCaseServlet?lang=" + rBHash['viperLang'] + "&format=maverick&cType=tutorials&use_case=geturltags&action=gettags&url=" + jQuery.normalizeUrl(location.href));
+	}
+	else {
+	jQuery.getTagsForContent("/developerworks/tagging/UseCaseServlet?lang=" + rBHash['viperLang'] + "&format=maverick&cType=articles&use_case=geturltags&action=gettags&url=" + jQuery.normalizeUrl(location.href));
+	
+	}
+	// si
+	initSI();
+	});
+</script>
+<!-- JQuery end -->
+<!-- Overlay js -->
+<script language="JavaScript" src="flow_libmad_files/overlay.js" type="text/javascript"></script><!-- BEGIN: Use this section to set page specific variables for the Unica Page Tag -->
+<script language="JavaScript">var NTPT_PGEXTRA="ibmSkillLevel=3&ibmAdoptPhase=667&ibmRole=710";</script>
+<!--END --><!-- SCRIPTS_INCLUDE_END -->
+
+<div id="ibm-metrics">
+<script src="flow_libmad_files/stats.js" type="text/javascript">//</script>
+</div>
+
+
+
+<div style="position: absolute; z-index: 95; display: none;" id="cluetip-waitimage"></div><div style="z-index: 96; display: none; position: absolute;" id="cluetip"><div style="z-index: 95; opacity: 0.1; top: 1px; left: 1px; position: absolute; background-color: rgb(0, 0, 0);"></div><div style="z-index: 94; opacity: 0.1; top: 2px; left: 2px; position: absolute; background-color: rgb(0, 0, 0);"></div><div style="z-index: 93; opacity: 0.1; top: 3px; left: 3px; position: absolute; background-color: rgb(0, 0, 0);"></div><div style="z-index: 92; opacity: 0.1; top: 4px; left: 4px; position: absolute; background-color: rgb(0, 0, 0);"></div><div style="z-index: 91; opacity: 0.1; top: 5px; left: 5px; position: absolute; background-color: rgb(0, 0, 0);"></div><div style="z-index: 90; opacity: 0.1; top: 6px; left: 6px; position: absolute; background-color: rgb(0, 0, 0);"></div><div style="position: relative; z-index: 97;" id="cluetip-outer"><h3 id="cluetip-title"></h3><div id="cluetip-inner"></div></div><div id="cluetip-extra"></div><div style="z-index: 97;" id="cluetip-arrows" class="cluetip-arrows"></div></div></body></html>
