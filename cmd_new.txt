@@ -120,7 +120,37 @@ crontab
 NFS:
 	sudo ifconfig eth0 192.168.204.104
 	/home/akaedu/NFS/ *(rw,no_root_squash,subtree_check,sync)
+	/home/creek/nfs       *(rw,sync,no_subtree_check)
 	/home/xwp/nfs *(rw,sync,no_root_squash)
-	mount -t nfs -o nolock -o tcp IP:/home/xwp/nfs /mnt
+	mount -o nolock -o tcp -t nfs IP:/home/xwp/nfs /mnt
+	nfs-kernel-server restart
 posix man:
 	sudo apt-get install manpages-posix manpages-posix-dev
+************--------------------------------
+sudo mkdir /mnt/shared
+sudo mount -t vboxsf gongxiang /mnt/shared
+sudo umount -f /mnt/shared
+-----------------------------------------------
+sudo apt-get install ckermit
+
+sudo vim  /etc/kermit/kermrc
+
+set line /dev/ttyS0
+set speed 115200
+set carrier-watch off
+set handshake none
+set flow-control none
+robust
+set file type bin
+set file name lit
+set rec pack 1000
+set send pack 1000
+set window 5
+//c
+
+kermit
+
+ctrl + / + c  -- back to kermit
+send bin_filename --kermit
+connect --to borad
+go 0x21000000 --exec
