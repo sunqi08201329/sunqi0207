@@ -154,3 +154,9 @@ ctrl + / + c  -- back to kermit
 send bin_filename --kermit
 connect --to borad
 go 0x21000000 --exec
+---------------------------------------------------
+host ubuntu and guest xp shared:
+ubuntu:
+	 VBoxManage sharedfolder add "win7" -name "shared" -hostpath "/media/Elements/"
+windows:
+	net use  x:  \\vboxsvr\shared
