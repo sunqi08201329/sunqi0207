@@ -127,10 +127,6 @@ NFS:
 posix man:
 	sudo apt-get install manpages-posix manpages-posix-dev
 ************--------------------------------
-sudo mkdir /mnt/shared
-sudo mount -t vboxsf gongxiang /mnt/shared
-sudo umount -f /mnt/shared
------------------------------------------------
 sudo apt-get install ckermit
 
 sudo vim  /etc/kermit/kermrc
@@ -155,8 +151,15 @@ send bin_filename --kermit
 connect --to borad
 go 0x21000000 --exec
 ---------------------------------------------------
-host ubuntu and guest xp shared:
+host ubuntu and guest windows shared:
 ubuntu:
 	 VBoxManage sharedfolder add "win7" -name "shared" -hostpath "/media/Elements/"
 windows:
 	net use  x:  \\vboxsvr\shared
+------------------------------------------------------
+host windows and guest shared ubuntu :
+set vbox sharedfolder
+sudo mkdir /mnt/shared
+sudo mount -t vboxsf gongxiang /mnt/shared
+sudo umount -f /mnt/shared
+-----------------------------------------------
