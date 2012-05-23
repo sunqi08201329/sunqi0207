@@ -1,6 +1,4 @@
-#include "apue.h"
-#include "socket.h"
-//#include <sys/socket.h>
+#include "package.h"
 
 int inet_pton_r(int af, const char *src, void *dst)
 {

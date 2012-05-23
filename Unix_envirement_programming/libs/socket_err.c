@@ -1,7 +1,6 @@
-#include "apue.h"
-#include "socket.h"
+#include "package.h"
 #include <errno.h>
-//#include <sys/socket.h>
+
 //int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
 int accept_r(int sockfd, struct sockaddr *addr, socklen_t *addrlen)
 {

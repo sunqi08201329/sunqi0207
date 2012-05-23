@@ -1,3 +1,5 @@
+host = sunqi
+
 src = $(wildcard *.c)
 target = $(patsubst %.c, %, $(src))
 
@@ -6,9 +8,9 @@ CC = gcc
 CLEAN_FLAGS = -rm -rf
 MACRO = 
 
-INC_PATH = /home/akaedu/github/sunqi0207/Unix_envirement_programming/include/
-LIB_PATH = /home/akaedu/github/sunqi0207/Unix_envirement_programming/libs/
-MAN_PATH = /home/akaedu/github/sunqi0207/Unix_envirement_programming/src/man
+INC_PATH = /home/$(host)/github/sunqi0207/Unix_envirement_programming/include/
+LIB_PATH = /home/$(host)/github/sunqi0207/Unix_envirement_programming/libs/
+MAN_PATH = /home/$(host)/github/sunqi0207/Unix_envirement_programming/src/man/
 
 lib_name = apue
 
