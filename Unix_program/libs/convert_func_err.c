@@ -17,9 +17,10 @@ int inet_pton_r(int af, const char *src, void *dst)
 const char *inet_ntop_r(int af, const void *src, char *dst, socklen_t cnt)
 {
 	char *str_addr ;
-	if ((str_addr = (char *)inet_ntop(af, src, dst, cnt)) == NULL)
+	if (!(inet_ntop(af, src, dst, cnt)))
 	{
 		err_ret("inet_ntop() convert IPv4 address from binary format to string failed");
 	}
+	str_addr = dst;
 	return str_addr;
 }
