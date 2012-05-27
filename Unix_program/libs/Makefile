@@ -8,13 +8,13 @@ CC = gcc
 CLEAN_FLAGS = -rm -rf
 STATIC_LINK = ar rcs
 
-INC_PATH = /home/$(host)/github/sunqi0207/Unix_envirement_programming/include/
-LIB_PATH = /home/$(host)/github/sunqi0207/Unix_envirement_programming/libs/
-MAN_PATH = /home/$(host)/github/sunqi0207/Unix_envirement_programming/src/man/
+INC_PATH = /home/$(host)/github/sunqi0207/Unix_program/include/
+LIB_PATH = /home/$(host)/github/sunqi0207/Unix_program/libs/
+MAN_PATH = /home/$(host)/github/sunqi0207/Unix_program/src/man/
 
 lib_name = apue
 
-all:$(objs) link clean
+all:$(objs) link
 $(objs):%.o:%.c
 	$(CC) -c $< -o $@ -I$(INC_PATH)
 
@@ -25,4 +25,4 @@ link:
 moveman:
 	mv man* $(MAN_PATH)	
 clean:
-	-rm -rf *.o
+	-rm -rf *.o *.a

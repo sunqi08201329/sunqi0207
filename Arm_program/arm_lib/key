@@ -1,0 +1,5 @@
+#define GPH2CON  (*(volatile unsigned int *)0xE0200C40)
+#define GPH2DAT  (*(volatile unsigned int *)0xE0200C44)
+
+#define GPH3CON  (*(volatile unsigned int *)0xE0200C60)
+#define GPH3DAT  (*(volatile unsigned int *)0xE0200C64)

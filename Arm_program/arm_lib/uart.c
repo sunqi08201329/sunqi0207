@@ -1,4 +1,3 @@
-#include "uart.h"
 
 #define GPA0CON 	(*(volatile unsigned int *)0xE0200000)
 

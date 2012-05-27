@@ -1,3 +1,5 @@
+#include ../libs/Makefile
+
 host = sunqi
 
 src = $(wildcard *.c)
