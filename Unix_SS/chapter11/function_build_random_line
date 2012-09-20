@@ -1,0 +1,19 @@
+build_random_line ()
+{
+# This function extracts random characters
+# from the KEYS array by using the RANDOM
+# shell variable
+
+C=1
+LINE=
+until (( C > 79 ))
+do
+   LINE="${LINE}${KEYS[$(($RANDOM % X + 1))]}"
+   (( C = C + 1 ))
+done
+
+# Return the line of random characters
+
+echo "$LINE"
+}
+

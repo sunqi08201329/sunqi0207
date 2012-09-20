@@ -1,0 +1,41 @@
+delete_backup ()
+{
+# This function is used to delete backups from the Dirvish server
+
+clear  # Clear the screen
+echo -e "\n\n\tREMOVE A SERVER FROM DIRVISH BACKUPS\n"
+echo -e "\n\tEnter the Host to Remove from Dirvish Backups: \c"
+read H
+
+BANK_LIST=$(parse_conf)
+
+for P in $BANK_LIST
+do
+    VAULT_ID=$(find $P -type d -name "$H")
+    if [[ ! -z "$VAULT_ID" ]]
+    then
+        STOP=0
+        until (( STOP == 1 ))
+        do
+           echo -e "\n\tRemove Backup Vault $H from the Dirvish Backup Server? (y/n): \c"
+           read ANS
+           case $ANS in
+           y|Y) echo -e "\n\tRemoving Backup Vault for $H from Dirvish Backups...\c"
+                rm -fr "$VAULT_ID"
+                echo -e "\n\tBackup Vault Removed...Press Enter to Continue...\c"
+                read KEY
+                STOP=1
+                ;;
+           n|N) echo -e "\n\tVault Removal Canceled...Press Enter to Continue...\c"
+                read KEY
+                STOP=1
+                continue
+                ;;
+             *) echo -e "\n\tInvalid Entry..."
+                ;;
+           esac
+        done
+   fi
+done
+}
+

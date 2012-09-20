@@ -1,0 +1,7 @@
+get_cdrom ()
+{
+# Query the system for all configured CD-ROM devices
+
+lsdev -Cc cdrom
+}
+

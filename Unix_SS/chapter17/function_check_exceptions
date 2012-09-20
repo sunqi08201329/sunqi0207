@@ -1,0 +1,119 @@
+function check_exceptions
+{
+# set -x # Uncomment to debug this function
+
+while read FSNAME FSLIMIT
+do
+    IN_FILE="N"
+
+    # Do an NFS sanity check and get rid of any .:..
+    # If this is found it is actually an error entry
+    # but we will try to resolve it.  It will only
+    # work if it is an NFS cross mount to the same
+    # mount point on both machines.
+    $ECHO $FSNAME | grep ':' >/dev/null \
+         && FSNAME=$($ECHO $FSNAME | cut -d ':' -f2)
+
+    # Check for empty and null variable
+    if [[ ! -z $FSLIMIT && $FSLIMIT != '' ]]
+    then
+        if [[ $FSNAME = $FSMOUNT ]] # Found it!
+        then
+            # Check for "MB" Characters...Set IN_FILE=MB
+          $ECHO $FSLIMIT | grep MB >/dev/null && IN_FILE="MB" \
+                 && (( FSLIMIT = $($ECHO $FSLIMIT \
+                       | sed s/MB//g) * 1024 ))
+            # check for '%' Character...Set IN_FILE=PC, for %
+            $ECHO $FSLIMIT | grep '%' >/dev/null && IN_FILE="PC" \
+                 && FSLIMIT=$($ECHO $FSLIMIT | sed s/\%//g)
+
+            case $IN_FILE in
+            MB) # Use MB of Free Space Method
+                # Up-case the characters, if they exist
+                FSLIMIT=$($ECHO $FSLIMIT | tr '[a-z]' '[A-Z]')
+                # Get rid of the 'MB' if it exists
+                FSLIMIT=$($ECHO $FSLIMIT | sed s/MB//g)
+                # Test for blank and null values
+                if [[ ! -z $FSLIMIT && $FSLIMIT != '' ]]
+                then
+                   # Test for a valid filesystem 'MB' limit
+                   if (( FSLIMIT >= 0 && FSLIMIT < FSSIZE ))
+                   then
+                      if (( FSMB_FREE < FSLIMIT ))
+                      then
+                         return 1 # Found out of limit
+                                  # using MB Free method
+                      else
+                         return 3 # Found OK
+                      fi
+                   else
+                       $ECHO "\nERROR: Invalid filesystem MAX for\
+ $FSMOUNT - $FSLIMIT"
+                       $ECHO "       Exceptions file value must be less\
+ than or"
+                       $ECHO "       equal to the size of the filesystem\
+ measured"
+                       $ECHO "       in 1024 bytes\n"
+                   fi
+                else
+                   $ECHO "\nERROR: Null value specified in exceptions\
+ file"
+                   $ECHO "       for the $FSMOUNT mount point.\n"
+                fi
+                ;;
+            PC) # Use Filesystem %Used Method
+                # Strip out the % sign if it exists
+                PC_USED=$($ECHO $PC_USED | sed s/\%//g)
+                # Test for blank and null values
+                if [[ ! -z "$FSLIMIT" && "$FSLIMIT" != '' ]]
+                then
+                   # Test for a valid percentage, i.e. 0-100
+                   if (( FSLIMIT >= 0 && FSLIMIT <= 100 ))
+                   then
+                      if (( $PC_USED > $FSLIMIT ))
+                      then
+                         return 2 # Found exceeded by % Used method
+                      else
+                         return 3 # Found OK
+                      fi
+                   else
+                      $ECHO "\nERROR: Invalid percentage for $FSMOUNT -\
+ $FSLIMIT"
+                      $ECHO "       Exceptions file values must be"
+                      $ECHO "       between 0 and 100%\n"
+                   fi
+                else
+                   $ECHO "\nERROR: Null value specified in exceptions\
+ file"
+                   $ECHO "       for the $FSMOUNT mount point.\n"
+                fi
+                ;;
+            N)  # Method Not Specified - Use Script Defaults
+                if (( FSSIZE >= FSTRIGGER ))
+                then # This is a "large" filesystem
+                    if (( FSMB_FREE < MIN_MB_FREE ))
+                    then
+                         return 1 # Found out of limit
+                                  # using MB Free method
+                    else
+                         return 3 # Found OK
+                    fi
+                else # This is a standard filesystem
+                    PC_USED=$($ECHO $PC_USED | sed s/\%//g) # Remove %
+                    FSLIMIT=$($ECHO $FSLIMIT | sed s/\%//g) # Remove %
+                    if (( PC_USED > FSLIMIT ))
+                    then
+                        return 2 # Found exceeded by % Used method
+                    else
+                        return 3 # Found OK
+                    fi
+                fi
+                ;;
+            esac
+        fi
+    fi
+done < $DATA_EXCEPTIONS # Feed the loop from the bottom!!!
+
+return 4 # Not found in $EXCEPTIONS file
+}
+

@@ -1,0 +1,11 @@
+#!/bin/bash
+#
+# SCRIPT: keyit.rsa
+#
+# PURPOSE: This script is used to set up RSA SSH keys.
+# This script must be executed by the user who needs the keys setup.
+
+REM_HOST=$1
+
+cat $HOME/.ssh/id_rsa.pub | ssh $REM_HOST "cat >> ~/.ssh/authorized_keys"
+

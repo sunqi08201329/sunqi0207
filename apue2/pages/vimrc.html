@@ -1,0 +1,145 @@
+<html><head>
+<title>~/.vimrc.html</title>
+<meta name="Generator" content="Vim/7.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+</head>
+<body bgcolor="#000000" text="#ffffff">
+<pre><font color="#ffff00"><b>  1 </b></font><font color="#00ffff">" Vimrc file, <a href="http://phuzz.org/">http://phuzz.org</a></font>
+<font color="#ffff00"><b>  2 </b></font>
+<font color="#ffff00"><b>  3 </b></font><font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>nocompatible</b></font>    <font color="#00ffff">" use vim defaults</font>
+<font color="#ffff00"><b>  4 </b></font><font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>ls</b></font>=2            <font color="#00ffff">" allways show status line</font>
+<font color="#ffff00"><b>  5 </b></font><font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>tabstop</b></font>=4       <font color="#00ffff">" numbers of spaces of tab character</font>
+<font color="#ffff00"><b>  6 </b></font><font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>shiftwidth</b></font>=4    <font color="#00ffff">" numbers of spaces to (auto)indent</font>
+<font color="#ffff00"><b>  7 </b></font><font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>scrolloff</b></font>=3     <font color="#00ffff">" keep 3 lines when scrolling</font>
+<font color="#ffff00"><b>  8 </b></font><font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>showcmd</b></font>         <font color="#00ffff">" display incomplete commands</font>
+<font color="#ffff00"><b>  9 </b></font><font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>hlsearch</b></font>        <font color="#00ffff">" highlight searches</font>
+<font color="#ffff00"><b> 10 </b></font><font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>incsearch</b></font>       <font color="#00ffff">" do incremental searching</font>
+<font color="#ffff00"><b> 11 </b></font><font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>ruler</b></font>           <font color="#00ffff">" show the cursor position all the time</font>
+<font color="#ffff00"><b> 12 </b></font><font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>visualbell</b></font> <font color="#8080ff"><b>t_vb</b></font>=    <font color="#00ffff">" turn off error beep/flash</font>
+<font color="#ffff00"><b> 13 </b></font><font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>novisualbell</b></font>    <font color="#00ffff">" turn off visual bell</font>
+<font color="#ffff00"><b> 14 </b></font><font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>nobackup</b></font>        <font color="#00ffff">" do not keep a backup file</font>
+<font color="#ffff00"><b> 15 </b></font><font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>number</b></font>          <font color="#00ffff">" show line numbers</font>
+<font color="#ffff00"><b> 16 </b></font><font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>ignorecase</b></font>      <font color="#00ffff">" ignore case when searching </font>
+<font color="#ffff00"><b> 17 </b></font><font color="#00ffff">"set noignorecase   " don't ignore case</font>
+<font color="#ffff00"><b> 18 </b></font><font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>title</b></font>           <font color="#00ffff">" show title in console title bar</font>
+<font color="#ffff00"><b> 19 </b></font><font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>ttyfast</b></font>         <font color="#00ffff">" smoother changes</font>
+<font color="#ffff00"><b> 20 </b></font><font color="#00ffff">"set ttyscroll=0        " turn off scrolling, didn't work well with PuTTY</font>
+<font color="#ffff00"><b> 21 </b></font><font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>modeline</b></font>        <font color="#00ffff">" last lines in document sets vim mode</font>
+<font color="#ffff00"><b> 22 </b></font><font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>modelines</b></font>=3     <font color="#00ffff">" number lines checked for modelines</font>
+<font color="#ffff00"><b> 23 </b></font><font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>shortmess</b></font>=atI   <font color="#00ffff">" Abbreviate messages</font>
+<font color="#ffff00"><b> 24 </b></font><font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>nostartofline</b></font>   <font color="#00ffff">" don't jump to first character when paging</font>
+<font color="#ffff00"><b> 25 </b></font><font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>whichwrap</b></font>=b<font color="#ffff00"><b>,</b></font>s<font color="#ffff00"><b>,</b></font>h<font color="#ffff00"><b>,</b></font>l<font color="#ffff00"><b>,</b></font><font color="#ff40ff">&lt;</font><font color="#ff40ff">,</font><font color="#ff40ff">&gt;</font><font color="#ffff00"><b>,</b></font>[<font color="#ffff00"><b>,</b></font>]   <font color="#00ffff">" move freely between files</font>
+<font color="#ffff00"><b> 26 </b></font><font color="#00ffff">"set viminfo='20,&lt;50,s10,h</font>
+<font color="#ffff00"><b> 27 </b></font>
+<font color="#ffff00"><b> 28 </b></font><font color="#00ffff">"set autoindent     " always set autoindenting on</font>
+<font color="#ffff00"><b> 29 </b></font><font color="#00ffff">"set smartindent        " smart indent</font>
+<font color="#ffff00"><b> 30 </b></font><font color="#00ffff">"set cindent            " cindent</font>
+<font color="#ffff00"><b> 31 </b></font><font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>noautoindent</b></font>
+<font color="#ffff00"><b> 32 </b></font><font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>nosmartindent</b></font>
+<font color="#ffff00"><b> 33 </b></font><font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>nocindent</b></font>
+<font color="#ffff00"><b> 34 </b></font>
+<font color="#ffff00"><b> 35 </b></font><font color="#00ffff">"set autowrite      " auto saves changes when quitting and swiching buffer</font>
+<font color="#ffff00"><b> 36 </b></font><font color="#00ffff">"set expandtab      " tabs are converted to spaces, use only when required</font>
+<font color="#ffff00"><b> 37 </b></font><font color="#00ffff">"set sm             " show matching braces, somewhat annoying...</font>
+<font color="#ffff00"><b> 38 </b></font><font color="#00ffff">"set nowrap         " don't wrap lines</font>
+<font color="#ffff00"><b> 39 </b></font>
+<font color="#ffff00"><b> 40 </b></font><font color="#ffff00"><b>syntax</b></font> <font color="#00ff00"><b>on</b></font>           <font color="#00ffff">" syntax highlighing</font>
+<font color="#ffff00"><b> 41 </b></font><font color="#ffff00"><b>if</b></font> <font color="#ffffff"><b>has</b></font><font color="#ff6060"><b>(</b></font><font color="#ff40ff"><b>"gui_running"</b></font><font color="#ff6060"><b>)</b></font>
+<font color="#ffff00"><b> 42 </b></font><font color="#00ffff">    " See ~/.gvimrc</font>
+<font color="#ffff00"><b> 43 </b></font>    <font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>guifont</b></font>=Monospace\ 10  <font color="#00ffff">" use this font </font>
+<font color="#ffff00"><b> 44 </b></font>    <font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>lines</b></font>=50       <font color="#00ffff">" height = 50 lines</font>
+<font color="#ffff00"><b> 45 </b></font>    <font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>columns</b></font>=100        <font color="#00ffff">" width = 100 columns</font>
+<font color="#ffff00"><b> 46 </b></font>    <font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>background</b></font>=light   <font color="#00ffff">" adapt colors for background</font>
+<font color="#ffff00"><b> 47 </b></font>    <font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>selectmode</b></font>=mouse<font color="#ffff00"><b>,</b></font>key<font color="#ffff00"><b>,</b></font>cmd
+<font color="#ffff00"><b> 48 </b></font>    <font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>keymodel</b></font>=
+<font color="#ffff00"><b> 49 </b></font><font color="#ffff00"><b>else</b></font>
+<font color="#ffff00"><b> 50 </b></font>    <font color="#ffff00"><b>colorscheme</b></font> elflord    <font color="#00ffff">" use this color scheme</font>
+<font color="#ffff00"><b> 51 </b></font>    <font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>background</b></font>=dark        <font color="#00ffff">" adapt colors for background</font>
+<font color="#ffff00"><b> 52 </b></font><font color="#ffff00"><b>endif</b></font>
+<font color="#ffff00"><b> 53 </b></font>
+<font color="#ffff00"><b> 54 </b></font><font color="#ffff00"><b>if</b></font> <font color="#ffffff"><b>has</b></font><font color="#ff6060"><b>(</b></font><font color="#ff40ff"><b>"autocmd"</b></font><font color="#ff6060"><b>)</b></font>
+<font color="#ffff00"><b> 55 </b></font><font color="#00ffff">    " Restore cursor position</font>
+<font color="#ffff00"><b> 56 </b></font>    <font color="#ffff00"><b>au</b></font> <font color="#00ff00"><b>BufReadPost</b></font> * <font color="#ffff00"><b>if</b></font> <font color="#ffffff"><b>line</b></font><font color="#ff6060"><b>(</b></font><font color="#ff40ff"><b>"'\""</b></font><font color="#ff6060"><b>)</b></font> <font color="#ff6060"><b>&gt;</b></font> <font color="#ff40ff"><b>0</b></font>|<font color="#ffff00"><b>if</b></font> <font color="#ffffff"><b>line</b></font><font color="#ff6060"><b>(</b></font><font color="#ff40ff"><b>"'\""</b></font><font color="#ff6060"><b>)</b></font> <font color="#ff6060"><b>&lt;=</b></font> <font color="#ffffff"><b>line</b></font><font color="#ff6060"><b>(</b></font><font color="#ff40ff"><b>"$"</b></font><font color="#ff6060"><b>)</b></font>|exe<font color="#ff6060"><b>(</b></font><font color="#ff40ff"><b>"norm '\""</b></font><font color="#ff6060"><b>)</b></font>|<font color="#ffff00"><b>else</b></font>|<font color="#ffff00"><b>exe</b></font> <font color="#ff40ff"><b>"norm $"</b></font><font color="#ffff00"><b>|endif</b></font>|<font color="#ffff00"><b>endif</b></font>
+<font color="#ffff00"><b> 57 </b></font>
+<font color="#ffff00"><b> 58 </b></font><font color="#00ffff">    " Filetypes (au = autocmd)</font>
+<font color="#ffff00"><b> 59 </b></font>    <font color="#ffff00"><b>au</b></font> <font color="#00ff00"><b>FileType</b></font> helpfile <font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>nonumber</b></font>      <font color="#00ffff">" no line numbers when viewing help</font>
+<font color="#ffff00"><b> 60 </b></font>    <font color="#ffff00"><b>au</b></font> <font color="#00ff00"><b>FileType</b></font> helpfile <font color="#ffff00"><b>nnoremap</b></font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">buffer</font><font color="#ff40ff">&gt;</font><font color="#ff40ff">&lt;</font><font color="#ff40ff">cr</font><font color="#ff40ff">&gt;</font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">c-]</font><font color="#ff40ff">&gt;</font>   " Enter selects subject
+<font color="#ffff00"><b> 61 </b></font>    <font color="#ffff00"><b>au</b></font> <font color="#00ff00"><b>FileType</b></font> helpfile <font color="#ffff00"><b>nnoremap</b></font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">buffer</font><font color="#ff40ff">&gt;</font><font color="#ff40ff">&lt;</font><font color="#ff40ff">bs</font><font color="#ff40ff">&gt;</font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">c-T</font><font color="#ff40ff">&gt;</font>   " Backspace to go back
+<font color="#ffff00"><b> 62 </b></font>
+<font color="#ffff00"><b> 63 </b></font><font color="#00ffff">    " When using mutt, text width=72</font>
+<font color="#ffff00"><b> 64 </b></font>    <font color="#ffff00"><b>au</b></font> <font color="#00ff00"><b>FileType</b></font> mail,tex <font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>textwidth</b></font>=72
+<font color="#ffff00"><b> 65 </b></font><font color="#00ffff">    "au FileType cpp,c,java,sh,pl,php,phtml,asp  set autoindent</font>
+<font color="#ffff00"><b> 66 </b></font>    <font color="#ffff00"><b>au</b></font> <font color="#00ff00"><b>FileType</b></font> cpp,c,java,sh,pl,php,phtml,asp,xml,javascript  <font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>smartindent</b></font>
+<font color="#ffff00"><b> 67 </b></font>    <font color="#ffff00"><b>nnoremap</b></font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">C-p</font><font color="#ff40ff">&gt;</font> :set invpaste paste?<font color="#ff40ff">&lt;</font><font color="#ff40ff">CR</font><font color="#ff40ff">&gt;</font>
+<font color="#ffff00"><b> 68 </b></font>    <font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>pastetoggle</b></font>=<font color="#ff40ff">&lt;</font><font color="#ff40ff">C-p</font><font color="#ff40ff">&gt;</font>
+<font color="#ffff00"><b> 69 </b></font>    <font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>showmode</b></font>
+<font color="#ffff00"><b> 70 </b></font><font color="#00ffff">    "au FileType cpp,c,java,sh,pl,php,phtml,asp  set cindent</font>
+<font color="#ffff00"><b> 71 </b></font><font color="#00ffff">    "au BufRead mutt*[0-9] set tw=72</font>
+<font color="#ffff00"><b> 72 </b></font>
+<font color="#ffff00"><b> 73 </b></font><font color="#00ffff">    " Automatically chmod +x Shell and Perl scripts</font>
+<font color="#ffff00"><b> 74 </b></font><font color="#00ffff">    "au BufWritePost   *.sh             !chmod +x %</font>
+<font color="#ffff00"><b> 75 </b></font><font color="#00ffff">    "au BufWritePost   *.pl             !chmod +x %</font>
+<font color="#ffff00"><b> 76 </b></font>
+<font color="#ffff00"><b> 77 </b></font><font color="#00ffff">    " File formats</font>
+<font color="#ffff00"><b> 78 </b></font>    <font color="#ffff00"><b>au</b></font> <font color="#00ff00"><b>BufNewFile</b></font>,<font color="#00ff00"><b>BufRead</b></font>  *.phtml  <font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>syntax</b></font>=php
+<font color="#ffff00"><b> 79 </b></font>    <font color="#ffff00"><b>au</b></font> <font color="#00ff00"><b>BufNewFile</b></font>,<font color="#00ff00"><b>BufRead</b></font>  *.pls    <font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>syntax</b></font>=dosini
+<font color="#ffff00"><b> 80 </b></font>    <font color="#ffff00"><b>au</b></font> <font color="#00ff00"><b>BufNewFile</b></font>,<font color="#00ff00"><b>BufRead</b></font>  modprobe.conf    <font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>syntax</b></font>=modconf
+<font color="#ffff00"><b> 81 </b></font>
+<font color="#ffff00"><b> 82 </b></font><font color="#00ffff">    " Ctrl+X O</font>
+<font color="#ffff00"><b> 83 </b></font>    <font color="#ffff00"><b>autocmd</b></font> <font color="#00ff00"><b>FileType</b></font> python <font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>omnifunc</b></font>=pythoncomplete#Complete
+<font color="#ffff00"><b> 84 </b></font>    <font color="#ffff00"><b>autocmd</b></font> <font color="#00ff00"><b>FileType</b></font> javascript <font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>omnifunc</b></font>=javascriptcomplete#CompleteJS
+<font color="#ffff00"><b> 85 </b></font>    <font color="#ffff00"><b>autocmd</b></font> <font color="#00ff00"><b>FileType</b></font> html <font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>omnifunc</b></font>=htmlcomplete#CompleteTags
+<font color="#ffff00"><b> 86 </b></font>    <font color="#ffff00"><b>autocmd</b></font> <font color="#00ff00"><b>FileType</b></font> css <font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>omnifunc</b></font>=csscomplete#CompleteCSS
+<font color="#ffff00"><b> 87 </b></font>    <font color="#ffff00"><b>autocmd</b></font> <font color="#00ff00"><b>FileType</b></font> xml <font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>omnifunc</b></font>=xmlcomplete#CompleteTags
+<font color="#ffff00"><b> 88 </b></font>    <font color="#ffff00"><b>autocmd</b></font> <font color="#00ff00"><b>FileType</b></font> php <font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>omnifunc</b></font>=phpcomplete#CompletePHP
+<font color="#ffff00"><b> 89 </b></font>    <font color="#ffff00"><b>autocmd</b></font> <font color="#00ff00"><b>FileType</b></font> c <font color="#ffff00"><b>set</b></font> <font color="#8080ff"><b>omnifunc</b></font>=ccomplete#Complete
+<font color="#ffff00"><b> 90 </b></font>
+<font color="#ffff00"><b> 91 </b></font>    <font color="#ffff00"><b>autocmd</b></font> <font color="#00ff00"><b>FileType</b></font> php <font color="#ffff00"><b>noremap</b></font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">C-L</font><font color="#ff40ff">&gt;</font> :!php -l %<font color="#ff40ff">&lt;</font><font color="#ff40ff">CR</font><font color="#ff40ff">&gt;</font>
+<font color="#ffff00"><b> 92 </b></font>    <font color="#ffff00"><b>autocmd</b></font> <font color="#00ff00"><b>Filetype</b></font> html,xml,xsl <font color="#ffff00"><b>source</b></font> ~/<font color="#ff6060"><b>.</b></font><font color="#ffff00"><b>vim</b></font>/closetag<font color="#ff6060"><b>.</b></font><font color="#ffff00"><b>vim</b></font>
+<font color="#ffff00"><b> 93 </b></font><font color="#ffff00"><b>endif</b></font>
+<font color="#ffff00"><b> 94 </b></font>
+<font color="#ffff00"><b> 95 </b></font><font color="#00ffff">" Keyboard mappings</font>
+<font color="#ffff00"><b> 96 </b></font><font color="#ffff00"><b>map</b></font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">F1</font><font color="#ff40ff">&gt;</font> :previous<font color="#ff40ff">&lt;</font><font color="#ff40ff">CR</font><font color="#ff40ff">&gt;</font>  " map F1 to open previous buffer
+<font color="#ffff00"><b> 97 </b></font><font color="#ffff00"><b>map</b></font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">F2</font><font color="#ff40ff">&gt;</font> :next<font color="#ff40ff">&lt;</font><font color="#ff40ff">CR</font><font color="#ff40ff">&gt;</font>      " map F2 to open next buffer
+<font color="#ffff00"><b> 98 </b></font><font color="#ffff00"><b>map</b></font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">silent</font><font color="#ff40ff">&gt;</font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">C-N</font><font color="#ff40ff">&gt;</font> :silent noh<font color="#ff40ff">&lt;</font><font color="#ff40ff">CR</font><font color="#ff40ff">&gt;</font> " turn off highlighted search
+<font color="#ffff00"><b> 99 </b></font><font color="#ffff00"><b>map</b></font> ,v :sp ~/.vimrc<font color="#ff40ff">&lt;</font><font color="#ff40ff">cr</font><font color="#ff40ff">&gt;</font> " edit my .vimrc file in a split
+<font color="#ffff00"><b>100 </b></font><font color="#ffff00"><b>map</b></font> ,e :e ~/.vimrc<font color="#ff40ff">&lt;</font><font color="#ff40ff">cr</font><font color="#ff40ff">&gt;</font>      " edit my .vimrc file
+<font color="#ffff00"><b>101 </b></font><font color="#ffff00"><b>map</b></font> ,u :source ~/.vimrc<font color="#ff40ff">&lt;</font><font color="#ff40ff">cr</font><font color="#ff40ff">&gt;</font> " update the system settings from my vimrc file
+<font color="#ffff00"><b>102 </b></font><font color="#00ffff">"----- write out html file</font>
+<font color="#ffff00"><b>103 </b></font><font color="#ffff00"><b>map</b></font> ,h :source $VIM/vim70/syntax/2html.vim<font color="#ff40ff">&lt;</font><font color="#ff40ff">cr</font><font color="#ff40ff">&gt;</font>:w<font color="#ff40ff">&lt;</font><font color="#ff40ff">cr</font><font color="#ff40ff">&gt;</font>:clo<font color="#ff40ff">&lt;</font><font color="#ff40ff">cr</font><font color="#ff40ff">&gt;</font>
+<font color="#ffff00"><b>104 </b></font>
+<font color="#ffff00"><b>105 </b></font>
+<font color="#ffff00"><b>106 </b></font><font color="#00ffff">" Common command line typos</font>
+<font color="#ffff00"><b>107 </b></font><font color="#00ffff">"cmap W w</font>
+<font color="#ffff00"><b>108 </b></font><font color="#00ffff">"cmap Q q</font>
+<font color="#ffff00"><b>109 </b></font>
+<font color="#ffff00"><b>110 </b></font><font color="#00ffff">" Keyboard mapping for numeric keypad</font>
+<font color="#ffff00"><b>111 </b></font><font color="#ffff00"><b>imap</b></font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">Esc</font><font color="#ff40ff">&gt;</font>OM <font color="#ff40ff">&lt;</font><font color="#ff40ff">c-m</font><font color="#ff40ff">&gt;</font>
+<font color="#ffff00"><b>112 </b></font> <font color="#ffff00"><b>map</b></font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">Esc</font><font color="#ff40ff">&gt;</font>OM <font color="#ff40ff">&lt;</font><font color="#ff40ff">c-m</font><font color="#ff40ff">&gt;</font>
+<font color="#ffff00"><b>113 </b></font><font color="#ffff00"><b>imap</b></font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">Esc</font><font color="#ff40ff">&gt;</font>OP <font color="#ff40ff">&lt;</font><font color="#ff40ff">nop</font><font color="#ff40ff">&gt;</font>
+<font color="#ffff00"><b>114 </b></font> <font color="#ffff00"><b>map</b></font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">Esc</font><font color="#ff40ff">&gt;</font>OP <font color="#ff40ff">&lt;</font><font color="#ff40ff">nop</font><font color="#ff40ff">&gt;</font>
+<font color="#ffff00"><b>115 </b></font><font color="#ffff00"><b>imap</b></font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">Esc</font><font color="#ff40ff">&gt;</font>OQ /
+<font color="#ffff00"><b>116 </b></font> <font color="#ffff00"><b>map</b></font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">Esc</font><font color="#ff40ff">&gt;</font>OQ /
+<font color="#ffff00"><b>117 </b></font><font color="#ffff00"><b>imap</b></font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">Esc</font><font color="#ff40ff">&gt;</font>OR *
+<font color="#ffff00"><b>118 </b></font> <font color="#ffff00"><b>map</b></font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">Esc</font><font color="#ff40ff">&gt;</font>OR *
+<font color="#ffff00"><b>119 </b></font><font color="#ffff00"><b>imap</b></font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">Esc</font><font color="#ff40ff">&gt;</font>OS -
+<font color="#ffff00"><b>120 </b></font> <font color="#ffff00"><b>map</b></font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">Esc</font><font color="#ff40ff">&gt;</font>OS -
+<font color="#ffff00"><b>121 </b></font>
+<font color="#ffff00"><b>122 </b></font><font color="#ffff00"><b>imap</b></font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">Esc</font><font color="#ff40ff">&gt;</font>Ol +
+<font color="#ffff00"><b>123 </b></font><font color="#ffff00"><b>imap</b></font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">Esc</font><font color="#ff40ff">&gt;</font>Om -
+<font color="#ffff00"><b>124 </b></font><font color="#ffff00"><b>imap</b></font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">Esc</font><font color="#ff40ff">&gt;</font>On ,
+<font color="#ffff00"><b>125 </b></font><font color="#ffff00"><b>imap</b></font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">Esc</font><font color="#ff40ff">&gt;</font>Op 0
+<font color="#ffff00"><b>126 </b></font><font color="#ffff00"><b>imap</b></font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">Esc</font><font color="#ff40ff">&gt;</font>Oq 1
+<font color="#ffff00"><b>127 </b></font><font color="#ffff00"><b>imap</b></font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">Esc</font><font color="#ff40ff">&gt;</font>Or 2
+<font color="#ffff00"><b>128 </b></font><font color="#ffff00"><b>imap</b></font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">Esc</font><font color="#ff40ff">&gt;</font>Os 3
+<font color="#ffff00"><b>129 </b></font><font color="#ffff00"><b>imap</b></font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">Esc</font><font color="#ff40ff">&gt;</font>Ot 4
+<font color="#ffff00"><b>130 </b></font><font color="#ffff00"><b>imap</b></font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">Esc</font><font color="#ff40ff">&gt;</font>Ou 5
+<font color="#ffff00"><b>131 </b></font><font color="#ffff00"><b>imap</b></font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">Esc</font><font color="#ff40ff">&gt;</font>Ov 6
+<font color="#ffff00"><b>132 </b></font><font color="#ffff00"><b>imap</b></font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">Esc</font><font color="#ff40ff">&gt;</font>Ow 7
+<font color="#ffff00"><b>133 </b></font><font color="#ffff00"><b>imap</b></font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">Esc</font><font color="#ff40ff">&gt;</font>Ox 8
+<font color="#ffff00"><b>134 </b></font><font color="#ffff00"><b>imap</b></font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">Esc</font><font color="#ff40ff">&gt;</font>Oy 9
+<font color="#ffff00"><b>135 </b></font><font color="#ffff00"><b>imap</b></font> <font color="#ff40ff">&lt;</font><font color="#ff40ff">Esc</font><font color="#ff40ff">&gt;</font>Oz 0
+</pre>
+
+
+</body></html>

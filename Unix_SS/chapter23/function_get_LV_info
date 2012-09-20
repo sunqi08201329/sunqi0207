@@ -1,0 +1,10 @@
+get_LV_info ()
+{
+# List the Logical Volumes in each varied-on Volume Group
+
+for VG in $(get_varied_on_VGs)
+do
+     lsvg -l $VG
+done
+}
+

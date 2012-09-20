@@ -1,0 +1,7 @@
+get_VGs ()
+{
+# List all defined Volume Groups
+
+lsvg | sort -r
+}
+

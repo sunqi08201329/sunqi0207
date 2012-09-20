@@ -1,0 +1,29 @@
+test_string ()
+{
+if (( $# != 1 ))
+then
+     echo 'ERROR'
+     return
+fi
+
+C_STRING=$1
+
+# Test the character string for its composition
+
+case $C_STRING in
+
+     +([0-9])) echo 'POS_INT' # Integer >= 0
+               ;;
+     +([-0-9])) echo 'NEG_INT' # Integer < 0
+               ;;
+     +([a-z])) echo 'LOW_CASE' # lower case text
+               ;;
+     +([A-Z])) echo 'UP_CASE' # UPPER case text
+               ;;
+     +([a-z]|[A-Z])) echo 'MIX_CASE' # MIxed CAse text
+               ;;
+            *) echo 'UNKNOWN' # Anything else
+               ;;
+esac
+}
+

@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="commentMiddle_data/easyXDM.js"></script>
+<script type="text/javascript">
+	var iframe;
+	var socket = new easyXDM.Socket({
+		swf: "http://open.denglu.cc/script/easyXDM/easyxdm.swf",
+		onReady: function(){
+			iframe = document.createElement("iframe");
+			iframe.frameBorder = 0;
+			iframe.allowTransparency = true;
+			iframe.scrolling = 'no';
+			document.body.appendChild(iframe);
+			iframe.src = "http://open.denglu.cc/widget/comment.jsp?appid=6790dengTFSVOCeAAHj0yVHsLRSbn6&domain=mkv.cn&postid=683&from=http%3A%2F%2Fmkv.cn%2F683%2Flinux-vi-mingling-kuaijiejian&title=Linux%2Bvi%E5%91%BD%E4%BB%A4%E5%BF%AB%E6%8D%B7%E9%94%AE%E9%9B%86%E5%90%88";
+		},
+		onMessage: function(url, origin){
+			iframe.src = url;
+       	}
+	});
+</script>
+<style type="text/css">
+html, body {
+	overflow: hidden;
+	margin: 0px;
+	padding: 0px;
+	width: 100%;
+	height: 100%;
+}
+iframe {
+	width: 100%;
+	height: 100%;
+	border: 0px;
+}
+</style>
+</head>
+<body>
+
+
+<iframe src="commentMiddle_data/comment.html" frameborder="0" scrolling="no"></iframe></body></html>

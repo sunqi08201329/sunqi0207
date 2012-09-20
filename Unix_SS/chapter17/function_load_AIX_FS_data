@@ -1,0 +1,7 @@
+function load_AIX_FS_data
+{
+
+   df -k | tail +2 | egrep -v "/dev/cd[0-9]|/proc" \
+         | awk '{print $1, $2, $3, $4, $7}' > $WORKFILE
+}
+

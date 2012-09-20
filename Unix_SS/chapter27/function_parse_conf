@@ -1,0 +1,42 @@
+parse_conf ()
+{
+# This function parses through the Dirvish Master
+# Configuration File, specified by $M_CONFIG, to
+# gather a list of all of the defined Dirvish banks.
+
+# set -x # Uncomment to debug this function
+
+# Initial local variables
+
+BANK_LIST=
+START=0
+
+# Loop through the $M_CONFIG file until we find
+# the 'bank:' stanza, then add each bank to a list
+# until we reach another stanza, 'stanza:'
+# Loop through the $M_CONFIG file until we find
+# the 'bank:' stanza, then add each bank to a list
+# until we reach another stanza, 'stanza:'
+
+while read DATA
+do
+    [[ $DATA = 'bank:' ]] && START=1 && continue
+    if (( START == 1 ))
+    then
+       if $(echo "$DATA" | grep -q ':')
+       then
+           break
+       else
+           if [[ -z "$BANK_LIST" ]]
+           then
+               BANK_LIST="$DATA"
+           else
+               BANK_LIST="$BANK_LIST $DATA"
+           fi
+       fi
+    fi
+done < $M_CONFIG  # Feed the while loop from the bottom
+
+echo "$BANK_LIST"  # Return the list
+}
+

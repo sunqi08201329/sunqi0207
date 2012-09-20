@@ -1,0 +1,7 @@
+get_routes ()
+{
+# Save the network routes defined on the system
+
+netstat -rn
+}
+

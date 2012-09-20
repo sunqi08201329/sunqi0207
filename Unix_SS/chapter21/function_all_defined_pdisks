@@ -1,0 +1,26 @@
+function all_defined_pdisks
+
+{
+   # TURN ON/OFF ALL LIGHTS:
+   # Loop through each of the system.s pdisks by using the "lsdev"
+   # command with the "-Cc pdisk" switch while using "awk" to extract
+   # out the actual pdisk number. We will either
+   # turn the identifier lights on or off, specified by the
+   # $SWITCH variable:
+   #
+   # Turn lights on: -y
+   # Turn lights off: -n
+   #
+   # as the $SWITCH value to the "ssaidentify" command, as used below...
+
+echo "\nTurning $STATE ALL of the system.s pdisks...Please Wait...\n"
+
+for PDISK in $(lsdev -Cc pdisk -s ssar -H | awk .{print $1}. | grep pdisk)
+do
+    echo "Turning $STATE ==> $PDISK"
+    ssaidentify -l $PDISK -${SWITCH} || echo "Turning $STATE $PDISK Failed"
+done
+echo "\n...TASK COMPLETE...\n"
+
+}
+

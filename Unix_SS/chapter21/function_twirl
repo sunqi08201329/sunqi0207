@@ -1,0 +1,26 @@
+function twirl
+{
+TCOUNT="0" # For each TCOUNT the line twirls one increment
+
+while :    # Loop forever...until you break out of the loop
+do
+     TCOUNT=$(expr ${TCOUNT} + 1) # Increment the TCOUNT
+     case ${TCOUNT} in
+     "1") echo '-'"\b\c"
+          sleep 1
+          ;;
+     "2") echo '\\'"\b\c"
+          sleep 1
+          ;;
+     "3") echo "|\b\c"
+          sleep 1
+          ;;
+     "4") echo "/\b\c"
+          sleep 1
+          ;;
+       *) TCOUNT="0" ;;  # Reset the TCOUNT to "0", zero.
+     esac
+done
+# End of twirl finction
+}
+

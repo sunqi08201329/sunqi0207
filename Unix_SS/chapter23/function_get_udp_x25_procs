@@ -1,0 +1,8 @@
+get_udp_x25_procs ()
+{
+# Listing of all "udp" and "x25" processes, if
+# any are running
+
+ps -ef | egrep 'udp|x25' | grep -v grep
+}
+

@@ -1,0 +1,1 @@
+SELECT * INTO employee_backup from Employee_China;

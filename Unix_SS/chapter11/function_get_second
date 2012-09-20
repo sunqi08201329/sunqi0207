@@ -1,0 +1,6 @@
+function get_second
+{
+THIS_SECOND=$(date +%S)
+echo $THIS_SECOND
+}
+

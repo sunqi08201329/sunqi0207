@@ -1,5 +1,5 @@
+#include "package.h"
 #include "rewrite.h"
-#include <errno.h>
 
 ssize_t writen(int fd, void *vptr, size_t n)
 {

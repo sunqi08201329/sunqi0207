@@ -1,0 +1,11 @@
+function my_program
+{
+# Put anything you want to process in this function. I
+# recommend that you specify an external program of shell
+# script to execute.
+
+echo "HELLO WORLD - $DATE_ST" > $UNIQUE_FN &
+
+#    :  # No-Op - Does nothing but has a return code of zero
+}
+

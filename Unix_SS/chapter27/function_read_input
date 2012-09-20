@@ -1,0 +1,19 @@
+read_input ()
+{
+# This function is used to save user input
+
+LINE=  # Initialize LINE to NULL
+
+while true
+do
+    read "ENTRY"
+    if [[ $ENTRY = 99 ]]
+    then
+        echo "$LINE"
+        break
+    fi
+    LINE="$LINE
+$ENTRY"
+done
+}
+

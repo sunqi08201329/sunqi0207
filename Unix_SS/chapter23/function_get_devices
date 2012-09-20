@@ -1,0 +1,7 @@
+get_devices ()
+{
+# Query the system for all configured devices
+
+lsdev -C
+}
+

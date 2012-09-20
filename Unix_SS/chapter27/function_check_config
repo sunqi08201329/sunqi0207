@@ -1,0 +1,19 @@
+check_config ()
+{
+# Find the Dirvish Master Configuration File
+
+if [ -r /etc/dirvish.conf ]
+then
+    M_CONFIG=/etc/dirvish.conf
+
+elif [ -r /etc/dirvish/master.conf ]
+then
+    M_CONFIG=/etc/dirvish/master.conf
+else
+    echo -e "\n\n\tERROR: Dirvish is not configured on this system"
+    echo -e "\tTo use this program install rsync and dirvish first."
+    echo -e "\n\t...Exiting...\n"
+    exit 2
+fi
+}
+

@@ -1,0 +1,46 @@
+function Linux_swap_mon
+{
+
+free -m | grep -i swap | while read junk SW_TOTAL SW_USED SW_FREE
+do
+
+# Use the bc utility in a here document to calculate
+# the percentage of free and used swap space.
+
+PERCENT_USED=$(bc <<EOF
+scale=4
+($SW_USED / $SW_TOTAL) * 100
+EOF
+)
+
+PERCENT_FREE=$(bc <<EOF
+scale=4
+($SW_FREE / $SW_TOTAL) * 100
+EOF
+)
+
+     # Produce the rest of the paging space report:
+     echo "\nTotal Amount of Swap Space:\t${SW_TOTAL}MB"
+     echo "Total KB of Swap Space Used:\t${SW_USED}MB"
+     echo "Total KB of Swap Space Free:\t${SW_FREE}MB"
+     echo "\nPercent of Swap Space Used:\t${PERCENT_USED}%"
+     echo "\nPercent of Swap Space Free:\t${PERCENT_FREE}%"
+
+     # Grap the integer portion of the percent used to
+     # test for the over limit threshold
+
+     INT_PERCENT_USED=$(echo $PERCENT_USED | cut -d. -f1)
+
+     if (( PC_LIMIT <= INT_PERCENT_USED ))
+     then
+          tput smso
+          echo "\n\nWARNING: Paging Space has Exceeded the \
+${PC_LIMIT}% Upper Limit!\n"
+          tput rmso
+     fi
+
+done
+
+echo "\n"
+}
+

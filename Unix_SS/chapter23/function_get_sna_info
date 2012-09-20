@@ -1,0 +1,11 @@
+get_sna_info ()
+{
+# If the system is using SNA save the SNA configuration
+
+sna -d s               # Syntax for 2.x SNA
+if (( $? != 0 ))
+then
+     lssrc -s sna -l   # must be SNA 1.x
+fi
+}
+

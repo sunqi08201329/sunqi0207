@@ -1,0 +1,31 @@
+build_default_conf ()
+{
+# Define files and variables here
+
+HN="$1"   # Hostname of server to add
+BANK="$2" # Bank to use for backup
+DAYS="$3" # Days before backups expire
+TREE="$4" # Directory tree to back up
+IGNORE_LIST="$5" # Files and directories to ignore
+OUTFILE=$DEFAULT_CONF  # Name of the output file
+
+# All of the following output is used to build the
+# new default.conf file for this backup
+{
+echo "client: $HN"
+echo "bank: $BANK"
+echo "vault: $HN"
+echo "server: $DIRVISH_SERVER"
+echo "expire: $DAYS day"
+echo "index: gzip"
+echo "log: gzip"
+echo "image: ${HN}-%y%m%d%H%M%S"
+echo "tree: $TREE"
+echo -e "\nexclude:"
+echo "$IGNORE_LIST" | sed /^$/d | while read Q
+do
+    echo -e "\t$Q"
+done
+} >$OUTFILE
+}
+

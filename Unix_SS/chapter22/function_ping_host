@@ -1,0 +1,40 @@
+function ping_host
+{
+# This function pings a single node based on the Unix flavor
+# set -x # Uncomment to debug this function
+# set -n # Uncomment to check the syntax without any execution
+
+# Look for exactly one argument, the host to ping
+
+if (( $# != 1 ))
+then
+     echo "\nERROR: Incorrect number of arguments - $#"
+     echo "       Expecting exactly one augument\n"
+     echo "\t...EXITING...\n"
+     exit 1
+fi
+
+HOST=$1 # Grab the host to ping from ARG1.
+
+# This next case statement executes the correct ping
+# command based on the Unix flavor
+
+case $UNAME in
+
+AIX|OpenBSD|Linux)
+           ping -c${PING_COUNT} $HOST 2>/dev/null
+           ;;
+HP-UX)
+           ping $HOST $PACKET_SIZE $PING_COUNT 2>/dev/null
+           ;;
+SunOS)
+           ping -s $HOST $PACKET_SIZE $PING_COUNT 2>/dev/null
+           ;;
+*)
+           echo "\nERROR: Unsupported Operatoring System - $(uname)"
+           echo "\n\t...EXITING...\n"
+           exit 1
+           ;;
+esac
+}
+

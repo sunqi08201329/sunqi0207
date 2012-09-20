@@ -1,0 +1,1140 @@
+#!/bin/bash
+#
+# SCRIPT: dirvish_ctrl
+# AUTHOR: Randy Michael
+# DATE: 5/14/2007
+# REV: 1.0
+# PLATFORM: Most any UNIX platform
+#
+# PURPOSE: This script is used to interface with the Dirvish
+#          backup utilities.
+#
+# set -x # Uncomment to debug this script
+#
+# set -n # Uncomment to check the script's syntax
+#        # without any execution. Do not forget to
+#        # recomment this line!
+#
+########################################
+# REVISION LIST:
+########################################
+#
+# IF YOU MODIFY THIS SCRIPT DOCUMENT THE CHANGE(S)!!!
+#
+########################################
+#
+# Revised by:
+# Revision Date:
+# Revision:
+#
+#
+########################################
+#
+# Revised by:
+# Revision Date:
+# Revision:
+#
+########################################
+# DEFINE FILES AND VARIABLES HERE
+########################################
+
+RESTORE_AREA=/dirvish_restores
+DIRVISH_SERVER=$(hostname)
+DEFAULT_CONF=/tmp/dirvish_build_conf.out
+LOGFILE=${DIR}/$(basename $0).log
+echo -e "\n\t\tDirvish Log Created: $(date) \n" >$LOGFILE
+DONE=0
+PATH=$PATH:/usr/sbin:/usr/local/sbin:.
+
+########################################
+# DEFINE FUNCTIONS HERE
+########################################
+
+display_main_menu ()
+{
+# This function displays the main menu
+
+clear  # Clear the screen
+
+# Display the menu header and menu
+
+echo -e "\n\n\tWELCOME TO DIRVISH BACKUP COMMAND-CENTER
+
+
+\t1) Dirvish RunAll Backups
+
+\t2) Dirvish Run Backup
+
+\t3) Dirvish Locate/Restore Image
+
+\t4) Dirvish Expire/Delete Backup(s)
+
+\t5) Dirvish Add a New Backup
+
+\t6) Dirvish Remove a Backup
+
+\t7) Dirvish Manage Backup Banks
+
+\t8) EXIT
+
+"
+echo -e "\tSelect an Option: \c"
+}
+
+########################################
+
+read_input ()
+{
+# This function is used to save user input
+
+LINE=  # Initialize LINE to NULL
+
+while true
+do
+    read "ENTRY"
+    if [[ $ENTRY = 99 ]]
+    then
+        echo "$LINE"
+        break
+    fi
+    LINE="$LINE
+$ENTRY"
+done
+}
+
+########################################
+
+parse_conf ()
+{
+# This function parses through the Dirvish Master
+# Configuration File, specified by $M_CONFIG, to
+# gather a list of all of the defined Dirvish banks.
+
+# set -x # Uncomment to debug this function
+
+# Initial local variables
+
+BANK_LIST=
+START=0
+
+# Loop through the $M_CONFIG file until we find
+# the 'bank:' stanza, then add each bank to a list
+# until we reach another stanza, 'stanza:'
+# Loop through the $M_CONFIG file until we find
+# the 'bank:' stanza, then add each bank to a list
+# until we reach another stanza, 'stanza:'
+
+while read DATA
+do
+    [[ $DATA = 'bank:' ]] && START=1 && continue
+    if (( START == 1 ))
+    then
+       if $(echo "$DATA" | grep -q ':')
+       then
+           break
+       else
+           if [[ -z "$BANK_LIST" ]]
+           then
+               BANK_LIST="$DATA"
+           else
+               BANK_LIST="$BANK_LIST $DATA"
+           fi
+       fi
+    fi
+done < $M_CONFIG  # Feed the while loop from the bottom
+
+echo "$BANK_LIST"  # Return the list
+}
+
+########################################
+
+build_default_conf ()
+{
+# Define files and variables here
+
+HN="$1"   # Hostname of server to add
+BANK="$2" # Bank to use for backup
+DAYS="$3" # Days before backups expire
+TREE="$4" # Directory tree to back up
+IGNORE_LIST="$5" # Files and directories to ignore
+OUTFILE=$DEFAULT_CONF  # Name of the output file
+
+# All of the following output is used to build the
+# new default.conf file for this backup
+{
+echo "client: $HN"
+echo "bank: $BANK"
+echo "vault: $HN"
+echo "server: $DIRVISH_SERVER"
+echo "expire: $DAYS day"
+echo "index: gzip"
+echo "log: gzip"
+echo "image: ${HN}-%y%m%d%H%M%S"
+echo "tree: $TREE"
+echo -e "\nexclude:"
+echo "$IGNORE_LIST" | sed /^$/d | while read Q
+do
+    echo -e "\t$Q"
+done
+} >$OUTFILE
+}
+
+########################################
+
+run_all ()
+{
+# This function runs all of the backups defined in
+# the Dirvish master configuration file stanza "Runall:"
+
+clear # Clear the screen
+echo -e "\n\n"
+
+# Execute all master.conf defined backups
+
+dirvish-runall
+
+if (( $? == 0 ))
+then
+    echo -e "\n\tBackups Complete...Press Enter to Continue...\c"
+else
+    echo -e "\n\tDirvish Backup ERROR...Press Enter to Continue...\c"
+fi
+read KEY
+}
+
+########################################
+
+run_backup ()
+{
+# This function runs one particular backup
+
+# set -x # Uncomment to debug this function
+
+clear # Clear the screen
+
+# Display the screen heading and query the user
+
+echo -e "\n\n\t\tRUN A PARTICULAR BACKUP\n"
+echo -e "\tEnter a Hostname to Backup: \c"
+read HTBU  # Host to Backup
+
+echo "Searching for default.conf in ${HTBU}'s Vault"
+
+BANK_LIST=$(parse_conf)
+
+for P in $BANK_LIST
+do
+    # Find the Default Config file (default.conf) for $HTBU
+
+    DCF=$(find ${P}/${HTBU} -type f -name default.conf)
+    if [[ ! -z $DCF ]]
+    then
+        echo -e "\nFound Configuration File...Starting Backup..."
+        dirvish --vault $HTBU
+        RC=$?
+        echo -e "\nDirvish Exit Code: $RC"
+        echo -e "\nBackup Complete..."
+        echo -e "\nPress Enter to Continue...\c"
+        read KEY
+        break
+    else
+        echo -e "\nERROR: Could not Locate the Configuration File for $HTBU"
+        echo -e "\n...You Need to Configure $HTBU for Dirvish Backup First"
+        echo -e "\nPress Enter to Continue...\c"
+        read KEY
+    fi
+done
+
+if [[ -z "$DCF" ]]
+then
+    echo -e "\nERROR: Could not Locate the Configuration File for $HTBU"
+    echo -e "\n...You Need to Configure $HTBU for Dirvish Backup First"
+    echo -e "\nPress Enter to Continue...\c"
+    read KEY
+fi
+}
+
+########################################
+
+chk_create_dir ()
+{
+# This function is used to add a new Dirvish "bank" to
+# the Dirvish backup server, which should be this machine
+
+D=$1 # Directory name to add
+
+if [ ! -d $D ]  # Check if the directory already exists
+then
+    echo -e "\n$D Directory Does Not Exist...Create $D Directory? (y/n): \c"
+    read ANS
+    case $ANS in
+    y|Y) echo -e "\nCreating $D Directory..."
+         mkdir -p $D
+         if (( $? == 0 ))
+         then
+             echo -e "\n$D Directory Created"
+         else
+             echo -e "\n$D Directory Creation Failed...See Administrator..."
+         fi
+         ;;
+    n|N) echo -e "\nSkipping Creating the $D Directory"
+         echo -e "\nWARNING: Until the $D Directory is Created Dirvish Cannot use this Bank\n"
+         ;;
+      *) echo -e "\nInvalid Input..."
+         ;;
+    esac
+fi
+}
+
+########################################
+
+locate_restore_image ()
+{
+# set -x # Uncomment to debug this function
+
+clear   # Clear the screen
+
+# Display the screen heading, query the user, display the
+# files matching the search, and ask if the user wants to
+# restore the files. If a restore is requested we ensure
+# there is a directory for the target server in the $RESTORE_AREA,
+# if not create it, and copy the files into this subdirectory in
+# the $RESTORE_AREA.
+
+echo -e "\n\n\t\tLOCATE/RESTORE A BACKUP IMAGE\n"
+echo -e "Enter the Hostname where the File/Directory Resides: \c"
+read H
+echo -e "\nEnter as Much of the Directory path and File Name as You Know:\n"
+read "DP"
+if [ "$DP" = '/' ]
+then
+    echo -e "\nERROR: This Program is Not Intended for Full System Restores...\n"
+    sleep 2
+    return
+fi
+echo -e "\nSearching for Archive Images..."
+
+# Search and display all matching files one page at a time
+
+dirvish-locate $H ${DP} | more
+
+QUIT=0
+until (( QUIT == 1 ))
+do
+   echo -e "\nDid You Find What You Want? (y/n): \c"
+   read ANS1
+   case $ANS1 in
+   y|Y) echo -e "\nDo You Want to Perform a Restore? (y/n): \c"
+        read ANS2
+        while true
+        do
+           case $ANS2 in
+           y|Y) QUIT=1
+                break
+                ;;
+           n|N) echo -e "\nPress Enter to Continue...\c"
+                read KEY
+                return 0
+                ;;
+             *) echo -e "\nInvalid Input..."
+                ;;
+           esac
+        done
+        ;;
+   n|N) return 0
+        ;;
+     *) echo -e "\nInvalid Input..."
+        ;;
+   esac
+done
+
+echo -e "\nEnter the FULL PATHNAME of the File/Directory You Want to Restore:\n"
+read TARGET
+
+if [ -z "$TARGET" ]
+then
+    echo -e "\nInvalid Entry..."
+    sleep 2
+    return
+fi
+
+if [[ $(echo "$TARGET" | cut -c1) != '/' ]]
+then
+    echo -e "\nERROR: $TARGET is Not a Valid Full Pathname...\n"
+    sleep 2
+    break
+fi
+
+echo -e "\nSearching Images..."
+
+dirvish-locate "$H" "${TARGET}" | more
+
+echo -e "\nEnter the Image to Restore From: \c"
+read IMAGE_NAME
+echo
+
+# Check to ensure that the defined $RESTORE_AREA
+# directory has been created on the system.
+
+if [[ ! -d $RESTORE_AREA ]]
+then
+    mkdir -p $RESTORE_AREA
+fi
+
+# Ensure that a subdirectory exists for this host
+
+if [[ ! -d ${RESTORE_AREA}/${H} ]]
+then
+    mkdir -p ${RESTORE_AREA}/${H}
+fi
+
+BANK_LIST=$(parse_conf)
+
+# This is where we restore the data
+
+for BANK in $BANK_LIST
+do
+   if [ -d "$TARGET" ]
+   then
+       # If $TARGET is a directory we only want the last
+       # part of the path, not the entire path.
+
+       TARGET=$(basename "$TARGET")
+
+       find ${BANK}/${H}/${IMAGE_NAME}/tree -name "${TARGET}*" -print \
+            -exec cp -rp {} "${RESTORE_AREA}/${H}" \; 2>/dev/null
+
+       if (( $? ==  0 ))
+       then
+           echo -e "\nFiles Restored to the Following Restore Area:"
+           echo -e "\n${RESTORE_AREA}/${H}/${TARGET}\n\n"
+           break
+       else
+           echo -e "\nRestore Failed...See Administrator...\n"
+           break
+       fi
+   else
+       # We are working with a file
+
+       D_NAME=$(dirname "$TARGET" | cut -d '/' -f3-)
+       F_NAME=$(basename "$TARGET")
+       echo "DIRNAME is $D_NAME"
+
+       # Find and copy the file(s) to the $RESTORE_AREA
+
+       find ${BANK}/${H}/${IMAGE_NAME}/tree/*${D_NAME} -name "${F_NAME}" \
+            -print -exec cp -rp {} "${RESTORE_AREA}/${H}" \; 2>/dev/null
+
+       if (( $? ==  0 ))
+       then
+           echo -e "\nFiles Restored to the Following Restore Area:"
+           echo -e "\n${RESTORE_AREA}/${H}/${F_NAME}\n\n"
+           break
+       else
+           echo -e "\nRestore Failed...See Administrator...\n"
+           break
+       fi
+  fi
+done
+
+echo -e "\nPress Enter to Continue...\c"
+read KEY
+}
+
+########################################
+
+expire_backup ()
+{
+# This function is used to expire backups
+
+# set -x  # Uncomment to debug this function
+
+clear # Clear the screen
+
+# Display the screen header and menu
+
+echo -e "
+   \n\n\t\tDIRVISH EXPIRE BACKUP(S)\n
+   \n\t1) Delete Expired Backups for ALL Hosts
+   \n\t2) Delete Expired Backups for One Host
+   \n\t3) Expire One Backup for One Host
+   \n\t4) Expire All Backups for One Host
+   \n\t5) Previous Menu
+   \n\n\tSelect an Option: \c"
+
+read ANS
+case $ANS in
+1) echo -e "\n\tDeleting Expired Backups for ALL Hosts..."
+   dirvish-expire --tree
+   echo -e "\n\tTasks Complete..."
+   echo -e "\n\tPress Enter to Continue...\c"
+   read KEY
+   ;;
+2) echo -e "\n\tEnter the Hostname to Delete Expired Backups: \c"
+   read H
+   dirvish-expire --tree --vault $H | more
+   echo -e "\n\tTasks Complete..."
+   echo -e "\n\tPress Enter to Continue...\c"
+   read KEY
+   ;;
+3) EXPIRE_STAMP="$(date "+%Y-%m-%d %H:%M:%S")"
+   echo -e "\n\tEnter the Hostname for the Backup Image: \c"
+   read H
+
+   BANK_LIST=$(parse_conf)
+   MYPWD=$(pwd)
+
+   for B in $BANK_LIST
+   do
+      if [ -d ${B}/${H} ]
+      then
+          cd ${B}/${H}
+          IMAGE_LIST=$(find . -type d -name "*-[0-9][0-9]*" | cut -c3-)
+      fi
+   done
+
+   echo -e "\nSelect an Image to Expire from the Following List:\n"
+   echo -e "\n$IMAGE_LIST" | more
+   echo -e "\n\nEnter the Image to Expire: \c"
+   read IMAGE_NAME
+
+   cd $MYPWD
+   if [[ -r ${B}/${H}/${IMAGE_NAME}/summary ]]
+   then
+      # This is where we expire a backup that is not currently
+      # expired. The 'summary' file contains the expire datestamp
+
+      echo -e "\n\tExpiring Image: $IMAGE_NAME"
+
+      sed s/"$(grep Expire ${B}/${H}/${IMAGE_NAME}/summary)"/"$(grep Expire ${B}/${H}/${IMAGE_NAME}/summary | cut -f 1-4 -d ' ') $EXPIRE_STAMP"/g "${B}/${H}/${IMAGE_NAME}/summary" > "${B}/${H}/${IMAGE_NAME}/summary2"
+
+      mv "${B}/${H}/${IMAGE_NAME}/summary2" "${B}/${H}/${IMAGE_NAME}/summary"
+   fi
+
+   # We expired the backups; now we ask the user if we should delete
+   # the expired images
+
+   STOP=0
+   until (( STOP == 1 ))
+   do
+     echo -e "\n\tTasks Complete...Do You Want to Delete This Expired Image? (y/n): \c"
+     read ANS
+     case $ANS in
+     y|Y) echo -e "\n\tDeleting Expired Image: $IMAGE_NAME"
+
+          # This next command deletes all expired images for $H
+          dirvish-expire --vault $H
+
+          RC=$?
+          echo -e "\n\tDirvish-expire Completed with Return Code: $RC"
+          echo -e "\n\tTasks Complete..."
+          echo -e "\n\tPress Enter to Continue...\c"
+          read KEY
+          STOP=1
+          ;;
+     n|N) STOP=1
+          continue
+          ;;
+       *) echo -e "\n\tInvalid Entry..."
+          ;;
+     esac
+   done
+   ;;
+4) EXPIRE_STAMP=$(date "+%Y-%m-%d %H:%M:%S")
+   clear
+   echo -e "\nEnter the Hostname for the Backup Image: \c"
+   read H
+
+   BANK_LIST=$(parse_conf)
+   MYPWD=$(pwd)
+
+   for P in $BANK_LIST
+   do
+      if [ -d ${P}/${H} ]
+      then
+         cd ${P}/${H}
+         IMAGE_LIST=$(find . -type d -name "*-[0-9][0-9]*" | cut -c3-)
+         B=$P
+      fi
+   done
+
+   echo -e "\nSetting to Following Images to Expire:\n\n"
+   echo "$IMAGE_LIST" | more
+   cd $MYPWD
+   echo -e "\nPress Enter to Continue...\c"
+
+   echo "$IMAGE_LIST" | while read IMAGE_NAME
+   do
+     if [ -f ${B}/${H}/${IMAGE_NAME}/summary ]
+     then
+        echo "Expiring $IMAGE_NAME"
+        sed s/"$(grep Expire ${B}/${H}/${IMAGE_NAME}/summary)"/"$(grep Expire ${B}/${H}/${IMAGE_NAME}/summary | cut -f 1-4 -d ' ') $EXPIRE_STAMP"/g "${B}/${H}/${IMAGE_NAME}/summary" > "${B}/${H}/${IMAGE_NAME}/summary2"
+
+        if (( $? == 0 ))
+        then
+           mv ${B}/${H}/${IMAGE_NAME}/summary2 ${B}/${H}/${IMAGE_NAME}/summary
+        fi
+     fi
+   done
+
+   STOP=0
+   until (( STOP == 1 ))
+   do
+     echo -e "\nTasks Complete...Do You Want to Delete Expired Images? (y/n): \c"
+     read ANS
+     case $ANS in
+     y|Y) echo -e "\nDeleting Expired Images...\n"
+          dirvish-expire --vault $H
+          RC=$?
+          echo -e "\nDirvish-expire Completed with Return Code: $RC"
+          echo -e "\nTasks Complete..."
+          echo -e "\nPress Enter to Continue...\c"
+          read KEY 
+          STOP=1
+          ;;
+     n|N) STOP=1
+          continue
+          ;;
+       *) echo -e "\n\tInvalid Entry..."
+          ;;
+     esac
+   done
+   ;;
+5) :
+   ;;
+*) echo -e "\nInvalid Entry"
+   ;;
+esac
+}
+
+########################################
+
+add_backup ()
+{
+# This function is used to define a new backup to Dirvish
+
+# set -x # Uncomment to debug this function
+
+# Get a list of available banks
+
+BANK_LIST=$(parse_conf)
+
+ESCAPE=0
+until (( ESCAPE == 1 ))
+do
+  clear
+  echo -e "
+  \n\n\t\t   DIRVISH ADD A BACKUP
+  \n\tSelect Each Option to Add a New Backup
+  \n\t1) Enter Hostname
+  \n\t2) Select a Bank for this Backup
+  \n\t3) Enter Directory Tree to Back up
+  \n\t4) Enter Directory Trees to Ignore
+  \n\t5) Enter Days to Retain Each Backup
+  \n\t6) Add this New Dirvish Backup Definition
+  \n\t7) Create the Initial Dirvish Backup
+  \n\t8) Main Menu
+  \n\n\tSelect Each Option to Add a New Backup
+  \n\n\tEnter Option: \c"
+
+  read OPTION  # Read in the user response
+
+  # Perform the desired operation
+  case $OPTION in
+  1) echo -e "\n\tEnter the Hostname for this Backup: \c"
+     read HN
+     for B in $BANK_LIST
+     do
+         P=$(find $B -type d -name $HN)
+         if [ ! -z $P ]
+         then
+             echo -e "\n\tWARNING: Vault $HN Already Exists in the Following Bank:"
+             echo -e "\n\t$P"
+             echo -e "\n\tDo you want to create a new default.conf file for $HN? (y/n): \c"
+             ANS=n # Set the default answer to 'n', No.
+             read ANS
+             case $ANS in
+             y|Y) continue
+                  ;;
+             n|N) return
+                  ;;
+             esac
+         fi
+     done
+     ;;
+  2) FINISH=0
+     until (( FINISH == 1 ))
+     do
+       clear
+       BANK=
+       echo -e "\n\n\t\tSELECT A BANK TO STORE THIS BACKUP\n"
+       echo -e "\nAvailable Banks:\n"
+       for B in $BANK_LIST
+       do
+            echo -e "\t$B"
+       done
+       echo -e "\nPlease Enter a Bank: \c:"
+       read BANK
+       if $(echo $BANK_LIST | grep -q ${BANK})
+       then
+           echo "$BANK selected for $HN"
+           FINISH=1
+       else
+           echo -e "\nERROR: $BANK is not a Valid Bank"
+           sleep 2
+           continue
+       fi
+     done
+     ;;
+  3) echo -e "\n\tEnter the Directoy Tree to Backup: \c"
+     read TREE
+     continue
+     ;;
+  4) clear
+     echo -e "\n\n\tDIRECTORY TREE(S) and FILES TO IGNORE\n"
+     echo -e "\nThe Specified Directory Tree Contains the Following Files/Directories:\n\n"
+     if [ $HN = $(hostname) ]
+     then
+         ls $TREE | more 
+     else
+         ssh $HN ls $TREE | more
+     fi
+     echo -e "\nDo you want to Exclude any Files or Directories from the Backups? (y/n): \c"
+     read ANS3
+     case $ANS3 in
+     y|Y) echo -e "\n\tEnter Directories and Files to Ignore One per Line\n"
+          echo -e "Enter 99 when finished\n"
+          IGNORE_LIST=$(read_input)
+          continue
+          ;;
+     n|N) IGNORE_LIST=$(echo)
+          continue
+          ;;
+       *) echo -e "\nInvalid Entry..."
+          ;;
+     esac
+     ;;
+  5) echo -e "\n\tDays before each Backup Expires: \c"
+     read DAYS
+     continue
+     ;;
+  6) clear
+     echo -e "\n\n\tADD NEW BACKUP TO DIRVISH"
+     if [[ -r "${BANK}/${HN}/dirvish/default.conf" ]]
+     then
+        echo -e "\nWARNING: default.conf File Exists...Rebuild default.conf? (y/n): \c"
+        read ANS
+        case $ANS in
+        y|Y) echo -e "\n\nCreating default.conf Dirvish Configuration File for $HN"
+             build_default_conf $HN "$BANK" $DAYS "$TREE" "$IGNORE_LIST"
+             echo -e "\nCopying file to: ${BANK}/${HN}/dirvish/default.conf"
+             mkdir -p ${BANK}/${HN}/dirvish
+             cp -f $DEFAULT_CONF ${BANK}/${HN}/dirvish/default.conf
+             echo -e "\n\n...Press ENTER to Continue...\c"
+             read ANS
+             ;;
+          *) break
+             ;;
+        esac
+     else
+        echo -e "\n\nCreating default.conf Dirvish Configuration File for $HN"
+        build_default_conf $HN "$BANK" $DAYS "$TREE" "$IGNORE_LIST"
+        echo -e "\nCopying file to: ${BANK}/${HN}/dirvish/default.conf"
+        mkdir -p ${BANK}/${HN}/dirvish
+        cp -f $DEFAULT_CONF ${BANK}/${HN}/dirvish/default.conf
+        echo -e "\n...Press ENTER to Continue...\c"
+        read ANS
+     fi
+     ;;
+  7) clear
+     echo -e "\n\n\tCREATE INITIAL DIRVISH BACKUP"
+     echo -e "\n"
+     if [[ ! -d "${BANK}/${HN}" ]]
+     then
+        echo -e "\nCreating Vault $HN for this Backup"
+        mkdir -p "${BANK}/${HN}"
+        mkdir -p "${BANK}/${HN}/dirvish"
+     else
+        echo -e "\nBackup Vault for $HN Exists...Continuing..." 
+     fi
+     if [[ ! -r "${BANK}/${HN}/dirvish/default.conf" ]]
+     then
+        # Now we have enough information to build the 
+        # new default.conf file
+
+        echo -e "Creating default.conf Dirvish Configuration File for $HN"
+
+        build_default_conf $HN "$BANK" $DAYS "$TREE" "$IGNORE_LIST"
+
+        echo -e "\nCopying file to:  ${BANK}/${HN}/dirvish/default.conf"
+        cp -f $DEFAULT_CONF ${BANK}/${HN}/dirvish/default.conf
+
+        # Now we need to run an initial backup
+        echo -e "\nRun an Initial Backup Now? (y/n): \c"
+        read BACK_NOW
+        case $BACK_NOW in
+        y|Y) echo -e "\nExecuting Initial Dirvish Backup for $HN..."
+             dirvish --vault $HN --init
+             RC=$?
+             echo -e "\nInitial Backup for $HN Completed with a Return Code: $RC"
+             echo -e "\nPress Enter to Continue...\c"
+             read KEY
+             ;;
+        n|N) echo -e "\nInitial Backup Skipped..."
+             echo -e "\nDo Not Forget to Run an Initial Dirvish Backup!"
+             echo -e "\nTo Manually Run an Initial Backup Enter:\n"
+             echo -e "\t/usr/sbin/dirvish --vault $HN --init\n"
+             echo -e "\nPress Enter to Continue...\c"
+             read KEY
+             ;;
+          *) echo -e "\nInvalid Input..."
+            ;;
+        esac
+     else
+        FINISH=0
+        until (( FINISH == 1 ))
+        do
+           echo -e "\nRun an Initial Backup Now? (y/n): \c"
+           read BACK_NOW
+           case $BACK_NOW in
+           y|Y) echo -e "\nExecuting Initial Dirvish Backup for $HN..."
+                dirvish --vault $HN --init
+                RC=$?
+                echo -e "\nInitial Backup for $HN Completed with a Return Code: $RC"
+                echo -e "\nPress Enter to Continue...\c"
+                read KEY
+                FINISH=1
+                ;;
+            n|N) echo -e "\nInitial Backup Skipped..."
+                 echo -e "\nDo Not Forget to Run an Initial Dirvish Backup!"
+                 echo -e "\nTo Manually Run an Initial Backup Enter:\n"
+                 echo -e "\tdirvish --vault $HN --init\n"
+                 echo -e "\nPress Enter to Continue...\c"
+                 read KEY
+                 FINISH=1
+                 ;;
+              *) echo -e "Invalid Entry..."
+                 sleep 2
+                 ;;     
+            esac
+        done
+     fi
+     continue
+     ;;
+  8) break
+     ;;
+  esac
+done
+}
+
+########################################
+
+delete_backup ()
+{
+# This function is used to delete backups from the Dirvish server
+
+clear  # Clear the screen
+echo -e "\n\n\tREMOVE A SERVER FROM DIRVISH BACKUPS\n"
+echo -e "\n\tEnter the Host to Remove from Dirvish Backups: \c"
+read H
+
+BANK_LIST=$(parse_conf)
+
+for P in $BANK_LIST
+do
+    VAULT_ID=$(find $P -type d -name "$H")
+    if [[ ! -z "$VAULT_ID" ]]
+    then
+        STOP=0
+        until (( STOP == 1 ))
+        do
+           echo -e "\n\tRemove Backup Vault $H from the Dirvish Backup Server? (y/n): \c"
+           read ANS
+           case $ANS in
+           y|Y) echo -e "\n\tRemoving Backup Vault for $H from Dirvish Backups...\c"
+                rm -fr "$VAULT_ID"
+                echo -e "\n\tBackup Vault Removed...Press Enter to Continue...\c"
+                read KEY
+                STOP=1
+                ;;
+           n|N) echo -e "\n\tVault Removal Canceled...Press Enter to Continue...\c"
+                read KEY
+                STOP=1
+                continue
+                ;;
+             *) echo -e "\n\tInvalid Entry..."
+                ;;
+           esac
+        done
+   fi
+done
+}
+
+########################################
+
+manage_banks ()
+{
+# This function is used to add and delete Dirvish banks
+
+# set -x  # Uncomment to debug this function
+
+clear  # Clear the screen`
+
+# Get a list of currently defined Dirvish banks
+BANK_LIST=$(parse_conf)
+
+# Display the screen header information
+echo -e "\n\n\tMANAGE DIRVISH BACKUP BANKS"
+echo -e "\n\nCurrently Configured Backup Bank(s):\n"
+
+NO_BANK=0
+
+# If this is an initial installation there will not
+# be any Dirvish banks defined.
+
+if [ -z "$BANK_LIST" ]
+then
+    NO_BANK=1
+    echo -e "\nNo Backup Banks Have Been Defined in Dirvish\n"
+else
+    BANK_FILE=/tmp/backlist.out
+    >$BANK_FILE
+    COUNT=0
+
+    for B in $BANK_LIST
+    do
+       ((COUNT == COUNT + 1))
+       LAST_ENTRY=$B
+       echo -e "\t$B" | tee -a $BANK_FILE
+    done
+fi
+
+# Display the menu options
+
+echo -e "\n\n1) Add a New Backup Bank"
+echo -e "\n2) Delete a Current Backup Bank"
+echo -e "\n3) Return to the Previous Menu"
+echo -e "\n\nSelect an Option: \c"
+
+# Read the user input
+read OPT
+case $OPT in
+1) # Add a New Backup Bank
+   echo -e "\nEnter the Bank to Add: \c"
+   read A_BANK
+   echo -e "\nAdding New Backup Bank: $A_BANK"
+   if (( NO_BANK == 0 ))
+   then
+     sed "s!$LAST_ENTRY!& \n\t${A_BANK}!g" $D_CONFIG > ${D_CONFIG}.modified
+     if (( $? == 0 ))
+     then
+        # Save the old Dirvish master config file with today's datestamp
+        cp ${D_CONFIG} ${D_CONFIG}.$(date +%m%d%Y)
+        cp ${D_CONFIG}.modified ${D_CONFIG}
+
+        echo -e "\n$A_BANK Successfully Added to Dirvish Master Config File"
+
+        # Check to see if the $A_BANK directoey exists, if not
+        # ask the user if it is okay to create it.
+
+        chk_create_dir $A_BANK
+     else
+        echo -e "\nERROR: Adding $A_BANK Failed...See Administrator..."
+     fi
+   else
+     if $(grep -q "bank:" $D_CONFIG)
+     then
+        # NOTICE: It is important to note that sed does not "require"
+        # us to use / as a field separator. Here we are using ! as a
+        # sed field separator because we are working with UNIX directory
+        # paths, sed gets confused using / as a field separator.
+
+        sed "s!bank:!& \n\t${A_BANK}!g" $D_CONFIG > ${D_CONFIG}.modified
+
+        if (( $? == 0 ))
+        then
+            cp ${D_CONFIG} ${D_CONFIG}.$(date +%m%d%Y)
+            cp ${D_CONFIG}.modified ${D_CONFIG}
+            echo -e "\n$A_BANK Successfully Added to Dirvish Master Config File"
+            chk_create_dir $A_BANK
+        else
+            echo -e "\nERROR: Adding $A_BANK Failed...See Administrator..."
+        fi
+     else
+        echo -e "bank:\n\t$A_BANK" >> ${D_CONFIG}.modified
+        if (( $? == 0 ))
+        then
+           cp ${D_CONFIG} ${D_CONFIG}.$(date +%m%d%Y)
+           cp ${D_CONFIG}.modified ${D_CONFIG}
+           echo -e "\n$A_BANK Successfully Added to Dirvish Master Config File"
+           chk_create_dir $A_BANK
+        else
+           echo -e "\nERROR: Adding $A_BANK Failed...See Administrator..."
+        fi
+     fi
+   fi
+
+   rm -f $BANK_FILE
+
+   echo -e "\nPress Enter to Continue...\c"
+   read KEY
+   ;;
+2) echo -e "\nEnter the Backup Bank to Remove: \c"
+   read R_BANK
+   if [ -d $R_BANK ]
+   then
+     POPULATED=$(ls $R_BANK | wc -l)
+     if (( POPULATED > 0 ))
+     then
+        echo -e "\nWARNING: The Bank $R_BANK has the Following Backup Images:\n"
+        ls $R_BANK | more
+        echo -e "\nAre you Sure you Want to Remove this Bank and all of the Backup Images? (y/n): \c"
+        read ANS
+        case $ANS in
+        y|Y) continue
+             ;;
+        n|N) break
+             ;;
+          *) echo -e "\nInvalid Input..."
+             ;;
+        esac
+     fi
+   fi
+   if $(cat "$BANK_FILE" | grep -q "$R_BANK")
+   then
+       if (( COUNT == 1 ))
+       then
+           echo -e "\nWARNING: $R_BANK is the Only Backup Bank Currently Configured!"
+           echo -e "\nRemoving this Bank Will Cripple Dirvish..."
+       fi
+       echo -e "\nAre you Sure You Want to Remove the $R_BANK Bank? (y/n): \c"
+       read ANS4
+       case $ANS4 in
+       y|Y) cat $D_CONFIG | grep -v $R_BANK > ${D_CONFIG}.modified
+            cp -p $D_CONFIG ${D_CONFIG}.bak.$(date +%m%d%y)
+            cp ${D_CONFIG}.modified $D_CONFIG
+            echo -e "\n$R_BANK Removed from the Dirvish Configuration File..."
+            if [ -d $R_BANK ]
+            then
+               echo -e "\nDo You Want to Remove the $R_BANK Directory? (y/n): \c"
+               read ANS
+               case $ANS in
+               y|Y) rm -r $R_BANK
+                   if (( $? == 0 ))
+                   then
+                       echo -e "\n$R_BANK Directory Removed Successully"
+                   else
+                       echo -e "\nERROR: Remove $R_BANK Directory Failed"
+                   fi
+                   ;;
+               n|N) echo -e "\nSkipping $R_BANK Directory Removal"
+                   ;;
+                 *) echo -e "\nInvalid Input..."
+                   ;;
+               esac
+            fi
+            ;;
+       n|N) echo -e "\nSkipping Bank Removal\n"
+            ;;
+         *) echo -e "\nInvalid Entry..."
+            ;;
+       esac
+   else
+       echo -e "\nERROR: $R_BANK is Not a Valid Bank"
+   fi
+
+   echo -e "\nPress Enter to Continue...\c"
+   read KEY
+
+   ;;
+3) continue
+   ;;
+*) echo -e "\nInvalid Entry...\n"
+   ;;
+esac
+}
+
+########################################
+
+check_root_user ()
+{
+case $(uname) in
+SunOS) if [[ $LOGNAME != root ]]
+       then
+           echo -e "\n\n\tERROR: Only the root User can Execute this Program..."
+           echo -e "\n\n\t...EXITING...\n"
+           exit 1
+       fi
+       ;;
+    *) if [[ $(whoami) != root ]]
+       then
+          echo -e "\n\n\tERROR: Only the root User can Execute this Program..."
+          echo -e "\n\n\t...EXITING...\n"
+          exit 1
+       fi
+esac
+}
+
+########################################
+
+check_config ()
+{
+# Find the Dirvish Master Configuration File
+
+if [ -r /etc/dirvish.conf ]
+then
+    M_CONFIG=/etc/dirvish.conf
+
+elif [ -r /etc/dirvish/master.conf ]
+then
+    M_CONFIG=/etc/dirvish/master.conf
+else
+    echo -e "\n\n\tERROR: Dirvish is not configured on this system"
+    echo -e "\tTo use this program install rsync and dirvish first."
+    echo -e "\n\t...Exiting...\n"
+    exit 2
+fi
+}
+
+########################################
+# BEGINNING OF MAIN
+########################################
+
+check_root_user
+
+check_config
+
+until (( DONE == 1 ))
+do
+    display_main_menu
+    read OPTION
+    case $OPTION in
+    1) # Dirvish RunAll
+       run_all
+       ;;
+    2) # Dirvish Run Backup
+       run_backup
+       ;;
+    3) # Dirvish Locate Image
+       locate_restore_image
+       ;;
+    4) # Dirvish Expire Backup(s)
+       expire_backup
+       ;;
+    5) # Dirvish Add Backup
+       add_backup
+       ;;
+    6) # Dirvish Delete Backup
+       delete_backup
+       ;;
+    7) # Manage Backup Banks
+       manage_banks
+       ;;
+    8) clear
+       DONE=1
+       ;;
+    *) echo -e "\n\tERROR: Invalid Entry..."
+       sleep 2
+       ;;
+    esac
+done

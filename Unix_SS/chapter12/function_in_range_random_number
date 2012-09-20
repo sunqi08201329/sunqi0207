@@ -1,0 +1,14 @@
+function in_range_random_number
+{
+# Create a pseudo-random number less than or equal
+# to the $UPPER_LIMIT value, which is defined in the
+# main body of the shell script.
+
+RN=$(dd if=/dev/urandom count=1 2>/dev/null \
+    | od -t u2 | awk '{print $2}'| head -n 1)
+
+RANDOM_NUMBER=$(( RN % UPPER_LIMIT + 1))
+
+echo "$RANDOM_NUMBER"
+}
+

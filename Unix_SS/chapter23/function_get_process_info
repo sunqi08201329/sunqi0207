@@ -1,0 +1,7 @@
+get_process_info ()
+{
+# List of all active processes
+
+ps -ef
+}
+

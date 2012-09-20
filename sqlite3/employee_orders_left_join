@@ -1,0 +1,5 @@
+SELECT employee.LastName, employee.FirstName, orders.OrderNo
+FROM employee
+LEFT JOIN orders
+ON employee.Id=orders.Id_P
+ORDER BY employee.LastName;

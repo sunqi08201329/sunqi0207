@@ -1,0 +1,10 @@
+function dots
+{
+SEC=$1   # How many seconds between dots?
+
+while true
+do
+    sleep $SEC
+    echo ".\c"
+done
+}

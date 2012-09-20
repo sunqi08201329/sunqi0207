@@ -1,0 +1,21 @@
+mon_proc_end ()
+{
+    END_RC="0"
+    until (( END_RC != 0 ))
+    do
+       ps aux | grep -v "grep $PROCESS" | grep -v $SCRIPT_NAME \
+              | grep $PROCESS >/dev/null 2>&1
+
+       END_RC=$? # Check the Return Code!!
+       sleep 1 # Needed to reduce CPU load!
+    done
+
+    echo 'N' # Turn the RUN flag off
+
+    # Grab a Timestamp
+    TIMESTAMP=$(date +%D@%T)
+
+    echo "END PROCESS: $PROCESS ended ==> $TIMESTAMP" >> $LOGFILE &
+    echo "END PROCESS: $PROCESS ended ==> $TIMESTAMP" > $TTY
+}
+

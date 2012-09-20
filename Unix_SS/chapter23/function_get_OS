@@ -1,0 +1,7 @@
+get_OS ()
+{
+# Operating System - AIX or exit
+
+uname -s
+}
+

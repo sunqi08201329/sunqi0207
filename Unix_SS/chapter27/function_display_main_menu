@@ -1,0 +1,31 @@
+display_main_menu ()
+{
+# This function displays the main menu
+
+clear  # Clear the screen
+
+# Display the menu header and menu
+
+echo -e "\n\n\tWELCOME TO DIRVISH BACKUP COMMAND-CENTER
+
+
+\t1) Dirvish RunAll Backups
+
+\t2) Dirvish Run Backup
+
+\t3) Dirvish Locate/Restore Image
+
+\t4) Dirvish Expire/Delete Backup(s)
+
+\t5) Dirvish Add a New Backup
+
+\t6) Dirvish Remove a Backup
+
+\t7) Dirvish Manage Backup Banks
+
+\t8) EXIT
+
+"
+echo -e "\tSelect an Option: \c"
+}
+

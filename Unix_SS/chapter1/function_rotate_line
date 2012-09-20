@@ -1,0 +1,26 @@
+function rotate_line
+{
+INTERVAL=1  # Sleep time between "twirls"
+TCOUNT="0"  # For each TCOUNT the line twirls one increment
+
+while :     # Loop forever. . .until this function is killed
+do
+    TCOUNT=`expr $TCOUNT + 1`  # Increment the TCOUNT
+
+    case $TCOUNT in
+    "1") echo .-."\b\c"
+         sleep $INTERVAL
+         ;;
+    "2") echo .\\."\b\c"
+         sleep $INTERVAL
+         ;;
+    "3") echo "|\b\c"
+         sleep $INTERVAL
+         ;;
+    "4") echo "/\b\c"
+         sleep $INTERVAL
+         ;;
+      *) TCOUNT="0" ;; # Reset the TCOUNT to "0", zero.
+    esac
+done
+}

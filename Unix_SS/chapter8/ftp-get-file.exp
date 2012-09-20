@@ -1,0 +1,30 @@
+#!/usr/bin/expect -f
+#
+# SCRIPT: ftp-get-file.exp
+#
+
+set force_conservative 0  ;# set to 1 to force conservative mode even if
+			  ;# script wasn't run conservatively originally
+if {$force_conservative} {
+	set send_slow {1 .1}
+	proc send {ignore arg} {
+		sleep .1
+		exp_send -s -- $arg
+	}
+}
+
+
+set timeout -1
+spawn ftp yogi
+match_max 100000
+expect "Name *: "
+send -- "prodmgr\r"
+expect "Password:"
+send -- "Abc1234\r"
+expect "ftp>"
+send -- "cd /scripts\r"
+expect "ftp>"
+send -- "get random_file.out\r"
+expect "ftp>"
+send -- "bye\r"
+expect eof

@@ -1,0 +1,599 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<title>Ubuntu下利用VirtualBox装XP，redhat实现互相Ping通构建局域网 - Dream Fly的专栏 - 博客频道 - CSDN.NET</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="description" content="最近在Ubuntu10.10下用VitualBox装了XP，Red Hat Enterprise 5以及Ubuntu9.04，想实现他们4个直接的互相Ping联通以便搭建内置的局域网玩玩，互相ping了以下，发现只是虚拟机直接以及虚拟机到主机之间可以ping通，但是主机无法Pin">
+<script src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/ga.js" async="" type="text/javascript"></script><script src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/jquery.js" type="text/javascript"></script>
+<script src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/plugins.js" type="text/javascript"></script>
+<script src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/common.js" type="text/javascript"></script>
+<link rel="Stylesheet" type="text/css" href="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/style.css">
+<link id="RSSLink" title="RSS" type="application/rss+xml" rel="alternate" href="http://blog.csdn.net/jjzhoujun2010/rss/list">
+<link rel="shortcut icon" href="http://blog.csdn.net/favicon.ico">
+<link type="text/css" rel="stylesheet" href="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/default.css">
+</head>
+<body>
+<script src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/pub_topnav_2011.js" type="text/javascript"></script><link rel="stylesheet" type="text/css" href="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/navtop_2012.css">
+<div class="nav_top_2011">
+<p><span style="color:red;">您还未登录！</span>|<a href="http://passport.csdn.net/account/login">登录</a>|<a href="http://passport.csdn.net/account/register">注册</a>|<a href="http://passport.csdn.net/help/faq">帮助</a></p><ul>
+<li><a href="http://www.csdn.net/" target="_blank">CSDN首页</a></li>
+<li><a href="http://news.csdn.net/" target="_blank">资讯</a></li>
+<li><a href="http://bbs.csdn.net/" target="_blank">论坛</a></li>
+<li><a href="http://blog.csdn.net/" target="_blank">博客</a></li>
+<li><a href="http://download.csdn.net/" target="_blank">下载</a></li>
+<li><a href="http://so.csdn.net/" target="_blank">搜索</a></li>
+<li class="more"><h2 id="topnav_btnmore" onclick="showNavMore(this)"><a href="javascript:void(0);">更多</a></h2>
+<div id="topnav_hidlist">
+<iframe name="nav_frm" src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/a.html" frameborder="no" height="262" scrolling="no" width="92"></iframe>
+</div>
+</li>
+</ul>
+</div>
+
+
+<div id="container">
+<div id="header">
+    <div class="header">
+        <div id="blog_title">
+            <h1><a href="http://blog.csdn.net/jjzhoujun2010">Dream Fly的专栏</a></h1>
+            <h2>Fight for dream,Fly to victory! 个人新浪微博： 周军Dream_Fly</h2>
+            <div class="clear"></div>
+        </div>
+        <div class="clear"></div>
+    </div>
+</div>
+<div id="navigator">
+    <div class="navigator_bg"></div>
+    <div class="navigator">
+        <ul>
+            <li id="btnContents"><a href="http://blog.csdn.net/jjzhoujun2010?viewmode=contents"><span><img src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/ico_list.gif">目录视图</span></a></li>
+            <li id="btnView"><a href="http://blog.csdn.net/jjzhoujun2010?viewmode=list"><span><img src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/ico_summary.gif">摘要视图</span></a></li>
+            <li id="btnRss"><a href="http://blog.csdn.net/jjzhoujun2010/rss/list"><span><img src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/ico_rss.gif">订阅</span></a></li>
+</ul>
+    </div>
+</div>
+<script type="text/javascript">
+    var username = "jjzhoujun2010";
+    var blog_address = "http://blog.csdn.net/jjzhoujun2010";
+    var static_host = "http://static.blog.csdn.net";
+    var currentUserName = "";
+</script>
+        
+<div id="body">
+<div id="main">
+<div class="main">
+<div class="notice"> 
+
+
+<a href="http://blog.csdn.net/csdnproduct/article/details/7780238" target="_blank"><font color="red">[公告]CSDN论坛重写，将于9月正式上线 
+</font></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="http://adclk.thinkmedia.cn/clk/pid=2000/media=CSDN.CN/place=1Clt1/size=760x90" target="_blank"><font color="blue">不用买彩票，就有408万！</font></a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="http://topic.csdn.net/u/20120709/15/2e6511e3-e34f-41d7-9f71-a47bb4f8c9fa.html" target="_blank"><font color="red">CSDN社区7月"畅谈加班赢程序员杂志"活动上线！</font></a>
+<br>
+<a href="http://blog.csdn.net/shiningxyy/article/details/7717035" target="_blank"><font color="blue">
+iOS &amp; Android DevCamp社区会员特惠限时抢票！</font></a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="http://cloud.csdn.net/a/20120620/2806805.html" target="_blank"><font color="red">用开源IaaS构建自己的云——OpenStack征稿启事
+</font></a>
+
+
+
+</div><script type="text/javascript" src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/ad.js"></script>
+
+<div id="article_details" class="details">
+    <div class="article_title">
+    <span class="ico ico_type_Original"></span>
+    <h3>
+        <span class="link_title"><a href="http://blog.csdn.net/jjzhoujun2010/article/details/6453856">
+        Ubuntu下利用VirtualBox装XP，redhat实现互相Ping通构建局域网
+        </a></span>
+    </h3>
+</div>
+
+        
+    <div class="article_manage">
+        <span class="link_categories">
+        分类：
+            <a href="http://blog.csdn.net/jjzhoujun2010/article/category/827723">嵌入式Linux学习</a> 
+            <a href="http://blog.csdn.net/jjzhoujun2010/article/category/865957">电脑操作</a> 
+        </span>
+    <span class="link_postdate">2011-05-30 00:38</span>
+    <span class="link_view" title="阅读次数">598人阅读</span>
+    <span class="link_comments" title="评论次数"><a href="#comments">评论</a>(0)</span>
+    <span class="link_collect"><a href="javascript:void(0);" onclick="javascript:collectArticle('Ubuntu下利用VirtualBox装XP，redhat实现互相Ping通构建局域网','6453856');return false;" title="收藏">收藏</a></span>
+    <span class="link_report"><a href="#report" onclick="javascript:report(6453856,2);return false;" title="举报">举报</a></span>
+    
+</div>
+
+    
+<div id="article_content" class="article_content">
+    
+<p></p>
+<p>最近在Ubuntu10.10下用VitualBox装了XP，Red Hat Enterprise 
+5以及Ubuntu9.04，想实现他们4个直接的互相Ping联通以便搭建内置的局域网玩玩，互相ping了以下，发现只是虚拟机直接以及虚拟机到主机
+之间可以ping通，但是主机无法Ping通任何虚拟机，找了不少资料。。终于解决了。可以互相Ping了。。（网络这东西很神奇。）</p>
+<p>————————以下配置参考了http://blog.csdn.net/Dreamcode/archive/2009/08/21/4464994.aspx—————</p>
+<p>：具体VBOX版本有点差异，我截了我自己的图上来。</p>
+<p><span>&nbsp; 首先要安装两个用于桥接网络的库，Ubuntu下使用下述命令安装这两个库：</span></p>
+<blockquote>
+<p><span>sudo apt-get install uml-utilities bridge-utils</span></p>
+</blockquote>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;之后，系统中会出现一个名为“uml-net”的用户组，使用下述命令将运行虚拟机的用户添加到该组中：</span></p>
+<blockquote>
+<p><span>sudo gpasswd -a&nbsp;<span>user_name</span>&nbsp;uml-net&nbsp;&nbsp;&nbsp;&nbsp;<span>红色部分为你自己虚拟机的用户名，一般和你主机一样</span>&nbsp;<br>
+</span></p>
+</blockquote>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;将上面的“user_name”替换成运行虚拟机的用户的用户名，然后编辑网络接口的配置文件：</span></p>
+<blockquote>
+<p><span>sudo vi /etc/network/interfaces</span></p>
+</blockquote>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;在文件的最后或者开头，添加下面一段：</span></p>
+<blockquote>
+<p><span>auto tap0<br>
+iface tap0 inet manual<br>
+up ifconfig $IFACE 0.0.0.0 up<br>
+down ifconfig $IFACE down<br>
+tunctl_user<span>&nbsp;user_name &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 同上设置</span></span></p>
+</blockquote>
+<p><span>上面的配置信息的意思是，设定虚拟网络接口的名字为“tap0”；其IP配置方式为手动；指定使用此接口的用户为“user_name”。然后要配置一个桥，同样在上述配置信息的下方添加如下内容：</span></p>
+<blockquote>
+<p><span>auto br0<br>
+iface br0 inet dhcp<br>
+bridge_ports all tap0</span></p>
+</blockquote>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;此段配置信息的意思是，建立名为“br0”的桥，它获取IP的方式是通过DHCP自动获取，本机所有网络接口，包括“tap0”虚拟接口都将建立在这个桥之上。如果希望手动指定IP，可以将上面的配置信息替换成如下内容：</span></p>
+<blockquote>
+<p><span>auto br0<br>
+iface br0 inet static<br>
+address 192.168.0.5<br>
+netmask 255.255.255.0<br>
+network 192.168.0.0<br>
+broadcast 192.168.0.255<br>
+gateway 192.168.0.1</span></p>
+</blockquote>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;上面的配置信息设置该桥的IP为“192.168.0.5”。</span></p>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;将该文件保存，重新启动系统，然后在虚拟终端中输入如下命令启用此桥接网络，此命令只需执行一次：</span></p>
+<blockquote>
+<p><span>sudo /sbin/ifup br0<br>
+sudo /sbin/ifup tap0</span></p>
+</blockquote>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;打开打开 
+VirtualBox，在列表中选中Guest系统，然后点击工具栏上的“设置”-&gt;“网络”，在列出的几个网络适配器中随便选择一个，一般只用一
+ 个“网络适配器0”，点选“启用网络适配器”；然后在“连接到”后的下拉列表中选择“Host 
+Interface”，同时确保“接入网线”处于选中状态；然后在“主机网络界面名称”中填写“tap0”；其余的不用管。点“确定”后启动Guest，
+ 设置系统的IP为自动获取即可使桥接网络生效了。</span></p>
+<p><span><span>这段看个人自己的虚拟机版本了，我的设置截图如下：</span></span></p>
+<p><span><span><img src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/b_large_MlwX_718f0002b6345c44.jpg" alt=""><br>
+</span></span></p>
+<p>&nbsp;</p>
+<p>设置好后就可以Ping通了，下图主机和虚拟机互相Ping通：</p>
+<p><img src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/b_large_rUlu_3b420001b5495c44.jpg" alt=""></p>
+<p><span>注意：XP下要是ping通的话得关掉防火墙先。</span></p>
+<p><span>互相Ping通后可以搭建相应的服务器通信啦，怎么配置就先不写了，还再学习中……TFTP，SAMBA。。<br>
+</span></p>
+<p><span>禁用该网桥，首先使用如下命令：</span></p>
+<blockquote>
+<p><span>sudo /sbin/ifdown br0<br>
+sudo /sbin/ifdown tap0</span></p>
+</blockquote>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;然后将/etc/network/interfaces文件中上面添加的配置信息删除即可。</span></p>
+<p><span>——————————以下普及各网络模式文章</span>http://www.linux-ren.org/modules/newbb/viewtopic.php?topic_id=57755————————————————————————</p>
+<p>VirtualBox是一款SUN出品的非常优秀的虚拟机程序，版本也非常齐全，你可以在官网上找到适合各种操作系统平台的版本。<br>
+这里我先给大家大致讲解下VBox的网络配置及应用。<br>
+VirtualBox的提供了四种网络接入模式，它们分别是：<br>
+1、NAT&nbsp; &nbsp; 网络地址转换模式(NAT,Network Address Translation)<br>
+2、Bridged Adapter&nbsp; &nbsp; 桥接模式<br>
+3、Internal&nbsp; &nbsp; 内部网络模式<br>
+4、Host-only Adapter&nbsp;&nbsp;主机模式<br>
+下面我们分别对这四种网络模式进行分析解释：<br>
+<br>
+第一种 NAT模式<br>
+解释：<br>
+NAT模式是最简单的实现虚拟机上网的方式，你可以这样理解：Vhost访问网络的所有数据都是由主机提供的，vhost并不真实存在于网络中，主机与网络中的任何机器都不能查看和访问到Vhost的存在。<br>
+虚拟机与主机关系：<br>
+只能单向访问，虚拟机可以通过网络访问到主机，主机无法通过网络访问到虚拟机。<br>
+虚拟机与网络中其他主机的关系：<br>
+只能单向访问，虚拟机可以访问到网络中其他主机，其他主机不能通过网络访问到虚拟机。<br>
+虚拟机与虚拟机之间的关系：<br>
+相互不能访问，虚拟机与虚拟机各自完全独立，相互间无法通过网络访问彼此。<span>;这个模式下我几个虚拟机直接可以互相访问……不知道是不是版本的问题。。求解释。。</span>&nbsp;<br>
+IP:10.0.2.15<br>
+网关：10.0.2.2<br>
+DNS：10.0.2.3<br>
+一 台虚拟机的多个网卡可以被设定使用 NAT， 第一个网卡连接了到专用网 10.0.2.0，第二个网卡连接到专用网络 
+10.0.3.0，等等。默认得到的客户端ip（IP 
+Address）是10.0.2.15，网关（Gateway）是10.0.2.2，域名服务器（DNS）是10.0.2.3，可以手动参考这个进行修 
+改。<br>
+NAT方案优缺点：<br>
+笔记本已插网线时： 虚拟机可以访问主机，虚拟机可以访问互联网，在做了端口映射后（最后有说明），主机可以访问虚拟机上的服务（如数据库）。<br>
+笔记本没插网线时： 主机的“本地连接”有红叉的，虚拟机可以访问主机，虚拟机不可以访问互联网，在做了端口映射后，主机可以访问虚拟机上的服务（如数据库）。<br>
+<br>
+第二种 Bridged Adapter模式<br>
+解释：<br>
+网桥模式是我最喜欢的用的一种模式，同时，模拟度也是相当完美。你可以这样理解，它是通过主机网卡，架设了一条桥，直接连入到网络中了。因此，它使得虚拟机能被分配到一个网络中独立的IP，所有网络功能完全和在网络中的真实机器一样。<br>
+虚拟机与主机关系：<br>
+可以相互访问，因为虚拟机在真实网络段中有独立IP，主机与虚拟机处于同一网络段中，彼此可以通过各自IP相互访问。<br>
+虚拟机于网络中其他主机关系：<br>
+可以相互访问，同样因为虚拟机在真实网络段中有独立IP，虚拟机与所有网络其他主机处于同一网络段中，彼此可以通过各自IP相互访问。<br>
+虚拟机于虚拟机关系：<br>
+可以相互访问，原因同上。<br>
+IP：一般是DHCP分配的，与主机的“本地连接”的IP 是同一网段的。虚拟机就能与主机互相通信。<br>
+笔记本已插网线时：（若网络中有DHCP服务器）主机与虚拟机会通过DHCP分别得到一个IP，这两个IP在同一网段。 主机与虚拟机可以ping通，虚拟机可以上互联网。<br>
+笔记本没插网线时：主机与虚拟机不能通信。主机的“本地连接”有红叉，就不能手工指定IP。虚拟机也不能通过DHCP得到IP地址，手工指定IP后，也无法与主机通信，因为主机无IP。<br>
+这时主机的VirtualBox Host-Only Network 网卡是有ip的，192.168.56.1。虚拟机就算手工指定了IP 192.168.56.*，也ping不能主机。<br>
+<br>
+第三种 Internal模式<br>
+解释：<br>
+内网模式，顾名思义就是内部网络模式，虚拟机与外网完全断开，只实现虚拟机于虚拟机之间的内部网络模式。<br>
+虚拟机与主机关系：<br>
+不能相互访问，彼此不属于同一个网络，无法相互访问。<br>
+虚拟机与网络中其他主机关系：<br>
+不能相互访问，理由同上。<br>
+虚拟机与虚拟机关系：<br>
+可以相互访问，前提是在设置网络时，两台虚拟机设置同一网络名称。如上配置图中，名称为intnet。<br>
+IP: VirtualBox的DHCP服务器会为它分配IP ，一般得到的是192.168.56.101，因为是从101起分的，也可手工指定192.168.56.*。<br>
+笔记本已插网线时：虚拟机可以与主机的VirtualBox Host-Only Network 网卡通信<br>
+这种方案不受主机本地连接（网卡）是否有红叉的影响。<br>
+<br>
+第四种 Host-only Adapter模式<br>
+解释：<br>
+主机模式，这是一种比较复杂的模式，需要有比较扎实的网络基础知识才能玩转。可以说前面几种模式所实现的功能，在这种模式下，通过虚拟机及网卡的设置都可以被实现。<br>
+我们可以理解为Vbox在主机中模拟出一张专供虚拟机使用的网卡，所有虚拟机都是连接到该网卡上的，我们可以通过设置这张网卡来实现上网及其他很多功能，比如（网卡共享、网卡桥接等）。<br>
+虚拟机与主机关系<br>
+默认不能相互访问，双方不属于同一IP段，host-only网卡默认IP段为192.168.56.X 子网掩码为255.255.255.0，后面的虚拟机被分配到的也都是这个网段。通过网卡共享、网卡桥接等，可以实现虚拟机于主机相互访问。<br>
+虚拟机与网络主机关系<br>
+默认不能相互访问，原因同上，通过设置，可以实现相互访问。<br>
+虚拟机与虚拟机关系<br>
+默认可以相互访问，都是同处于一个网段。<br>
+虚拟机访问主机 用的是主机的VirtualBox Host-Only Network网卡的IP：192.168.56.1&nbsp;&nbsp;，不管主机“本地连接”有无红叉，永远通。<br>
+主机访问虚拟机，用是的虚拟机的网卡3的IP： 192.168.56.101&nbsp;&nbsp;，不管主机“本地连接”有无红叉，永远通。<br>
+虚拟机访问互联网，用的是自己的网卡2， 这时主机要能通过“本地连接”有线上网，（无线网卡不行）<br>
+<br>
+通过对以上几种网络模式的了解，我们就可以灵活运用，模拟组建出我们所想要的任何一种网络环境了。<br>
+比如我想模拟出来一个一台主机，监控一个局域网上网情况的网络环境。<br>
+首先我开启了两台虚拟机vhost1与vhost2，当然如果硬件允许，我同样可以再增加vhost3、vhost4…<br>
+所 有的vhost我都设置成internat内网模式，网络名称为intnal，网关为192.168.56.100，意思就是通过 
+192.168.56.100网卡上网。其中有一台vhost1我设置为双网卡，一张为内网模式（192.168.56.100），一张为网桥模式 
+（192.168.1.101）。两张网卡设置双网卡共享上网<br>
+虚拟机之间为局域网，其中有一台虚拟机vhost1通过与外网相连，所有局域网中的虚拟机又通过vhost1来实现上外网。这样vhost1就可以监控整个虚拟机局域网上网情况了。<br>
+<br>
+NAT 设置端口映射<br>
+http://huzhangsheng.blog.163.com/blog ... /34787784200802801435931/<br>
+你 可以设置一个虚拟机的服务（比如 WEB&nbsp;&nbsp;服务），通过使用命令行工具 VboxManage 
+代理。你需要知道虚拟机的服务使用哪个端口，然后决定在主机上使用哪个端口（通常但不总是想要使虚拟机和主机使用同一个端口）。在主机上提供一个服务需要
+ 使用一个端口，你能使用在主机上没有准备用来提供服务的任何端口。一个怎样设置新的 NAT 例子，在虚拟机上连接到一个 ssh 
+服务器，需要下面的三个命令：<br>
+VBoxManage setextradata 'Linux Guest' 'VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/Protocol' TCP<br>
+VBoxManage setextradata 'Linux Guest' 'VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/GuestPort' 22<br>
+VBoxManage setextradata 'Linux Guest' 'VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/HostPort' 2222<br>
+说 明：VboxManage 是一个命令行程序，请查询你的 VirtualBox 安装目录，'Linux Guest' 
+是虚拟主机名。guestssh 是一个自定义的名称，你可以任意设置，通过上面的三个命令，把虚拟机的 22 端口 转发到主机的 2222 端口。<br>
+又比如，我在虚拟机 debian 上安装了 apache2 服务器，使用 80 端口，映射到主机的 80 端口。使用下面的命令。<br>
+'C:/Program Files/innotek VirtualBox/VBoxManage.exe' setextradata 
+'debian' 
+'VBoxInternal/Devices/pcnet/0/LUN#0/Config/huzhangsheng/Protocol' TCP<br>
+'C:/Program Files/innotek VirtualBox/VBoxManage.exe' setextradata 
+'debian' 
+'VBoxInternal/Devices/pcnet/0/LUN#0/Config/huzhangsheng/GuestPort' 80<br>
+'C:/Program Files/innotek VirtualBox/VBoxManage.exe' setextradata 
+'debian' 
+'VBoxInternal/Devices/pcnet/0/LUN#0/Config/huzhangsheng/HostPort' 80<br>
+注 意：要使设置生效，请关掉 VirtualBox 再运行虚拟机，我把 VirtualBox 安装在 winxp 上，在虚拟机中安装 
+debian 4.02r ，虚拟机名是 debian ，并安装了 apache2 php5 mysql-server ，在主机上用IE浏览 
+http://localhost，成功转发到虚拟机 debian 的 apache2 web 服务器上.</p>
+<p><br>
+</p>
+<p><span style="color:rgb(51,51,51); font-family:Arial; font-size:14px; line-height:26px"></span></p>
+<p><span style="font-size:16px"><strong>原创文章，欢迎转载，转载请注明：<a href="http://blog.csdn.net/jjzhoujun2010" target="_blank" style="color: rgb(51, 102, 153); text-decoration: none;">blog.csdn.net/jjzhoujun2010</a></strong></span></p>
+<p><span style="font-size:16px"><strong>作者：Dream Fly</strong></span></p>
+<br>
+
+</div>
+<div class="share_buttons" id="sharePanel"><span>分享到：</span> <a name="sina" class="share_sina" title="分享到新浪微博"></a><a name="qq" class="share_qq" title="分享到腾讯微博"></a></div>
+<!--192.168.1.237 2012-7-25 14:18:54-->
+<div class="article_next_prev">
+        <li class="prev_article">
+            <span>上一篇：</span><a href="http://blog.csdn.net/jjzhoujun2010/article/details/6453855">Ubuntu 10.10下安装多种屏幕保护程序</a></li>
+        <li class="next_article">
+            <span>下一篇：</span><a href="http://blog.csdn.net/jjzhoujun2010/article/details/6453860">简单在linux系统之间建立NFS共享</a></li>
+</div>
+
+
+</div>
+<div id="ad_cen"><iframe src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/ad.html" style="border-width: 0px; overflow: hidden; width: 1048px; height: 92px;" id="ad_frm_0" frameborder="0" scrolling="no"></iframe></div>
+<script type="text/javascript">
+    new Ad(4, 'ad_cen');
+</script>
+<div id="comment_title" class="panel_head">查看评论<a name="comments"></a></div>
+<div id="comment_list"><br>&nbsp;&nbsp;暂无评论<br><br><div class="clear"></div></div>
+<div id="comment_bar"></div>
+<div id="comment_form"><div class="guest_link">您还没有登录,请<a href="http://passport.csdn.net/account/login?from=http%3A%2F%2Fblog.csdn.net%2Fjjzhoujun2010%2Farticle%2Fdetails%2F6453856%2F">[登录]</a>或<a href="http://passport.csdn.net/account/register?from=http%3A%2F%2Fblog.csdn.net%2Fjjzhoujun2010%2Farticle%2Fdetails%2F6453856%2F">[注册]</a></div></div>
+<div class="announce">* 以上用户言论只代表其个人观点，不代表CSDN网站的观点或立场<a name="reply"></a><a name="quote"></a></div>
+<script type="text/javascript">
+    var fileName = '6453856';
+    var commentscount = 0;
+    var islock = false
+</script>
+<script type="text/javascript" src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/comment.js"></script>
+<div id="ad_bot"><iframe src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/ad_002.html" style="border-width: 0px; overflow: hidden; width: 1048px; height: 170px;" id="ad_frm_1" frameborder="0" scrolling="no"></iframe></div>
+<script type="text/javascript">
+    new Ad(5, 'ad_bot');
+</script>
+<div id="report_dialog"></div>
+
+
+<div class="clear"></div>
+</div>
+</div>
+
+<div id="side">
+    <div class="side">
+<div id="panel_Profile" class="panel">
+    <ul class="panel_head"><span>个人资料</span></ul>
+    <ul class="panel_body profile">
+        <div id="blog_userface">
+            <a href="http://my.csdn.net/jjzhoujun2010" target="_blank">
+            <img src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/1_jjzhoujun2010.jpg" title="访问我的空间" style="max-width: 90%;">
+            </a>
+            <br>
+            <span><a href="http://my.csdn.net/jjzhoujun2010" target="_blank">jjzhoujun2010</a></span>
+        </div>
+<div class="interact">
+<!--<a href="#" class="attented" title="已关注"></a>-->
+<a href="#" class="attent" id="span_add_follow" title="[加关注]"></a>
+<a href="http://my.csdn.net/my/letter/send/jjzhoujun2010" class="letter" title="[发私信]"></a>
+</div>
+        <div id="blog_medal">
+        <div id="bms_box"></div></div>
+        <ul id="blog_rank">
+            <li>访问：<span>34825次</span></li>
+            <li>积分：<span>856分</span></li>
+            <li>排名：<span>第8911名</span></li>
+        </ul>
+        <ul id="blog_statistics">
+            <li>原创：<span>36篇</span></li>
+            <li>转载：<span>15篇</span></li>
+            <li>译文：<span>0篇</span></li>
+            <li>评论：<span>105条</span></li>
+        </ul>
+    </ul>
+</div>
+<script type="text/javascript">
+    var _blogger = 'jjzhoujun2010';
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var un = getUN().toLowerCase();
+        if (un == _blogger.toLowerCase()) {
+            $('.interact').hide();
+        } else if(un) {
+            var url = "http://my.csdn.net/index.php/follow/check_is_followed/" + encodeURIComponent(un) + "/" + encodeURIComponent(_blogger) + "?jsonpcallback=?";
+            $.getJSON(url, {}, function (data) {
+                if (data.succ == 1 && data.info == 1) {
+                    $('#span_add_follow').attr('class', 'attented');
+                } else {
+                    $('#span_add_follow').click(guanzhu);
+                }
+            }, 'json');
+        }
+    });
+function guanzhu() {
+    var url = "http://my.csdn.net/index.php/follow/do_follow?jsonpcallback=?";
+    $.getJSON(url, { "username": _blogger }, function (data) {
+        if (data.succ == 1) {
+            alert('关注成功！');
+            $('#span_add_follow').attr('class', 'attented').click(function () { return false; });
+        } else {
+            alert(data.msg);
+        }
+    });
+    return false;
+}
+function getUN() {
+    var m = document.cookie.match(new RegExp("(^| )UserName=([^;]*)(;|$)"));
+    if (m) return m[2];
+    else return '';
+}
+</script>
+
+<div class="panel" id="panel_Search">
+    <ul class="panel_head"><span>文章搜索</span></ul>
+    <ul class="panel_body">
+        <form id="frmSearch" action="http://so.csdn.net/search" class="form_search" target="_blank">
+        <span><input id="inputSearch" class="blogsearch" title="请输入关键字" type="text"></span>
+        <input id="btnSubmit" value="搜索" title="search in blog" type="submit">
+        <input name="q" id="inputQ" type="hidden">
+        <input name="t" value="blog" type="hidden">
+        <a id="btnSearchBlog" target="_blank"></a>
+        </form>
+    </ul>
+</div><div id="panel_Category" class="panel">
+    <ul class="panel_head"><span>文章分类</span></ul>
+    <ul class="panel_body">
+        <li>
+        <a href="http://blog.csdn.net/jjzhoujun2010/article/category/836281">C/C++语言</a><span>(7)</span>
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/jjzhoujun2010/article/category/827723">嵌入式Linux学习</a><span>(32)</span>
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/jjzhoujun2010/article/category/865957">电脑操作</a><span>(14)</span>
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/jjzhoujun2010/article/category/889623">杂谈</a><span>(3)</span>
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/jjzhoujun2010/article/category/1124934">Qt编程</a><span>(2)</span>
+        </li>
+    </ul>
+</div><div id="panel_Archive" class="panel">
+    <ul class="panel_head"><span>文章存档</span></ul>
+    <ul class="panel_body">
+        <div id="archive_list"><li><a href="http://blog.csdn.net/jjzhoujun2010/article/month/2012/06">2012年06月</a><span>(1)</span></li><li><a href="http://blog.csdn.net/jjzhoujun2010/article/month/2012/05">2012年05月</a><span>(1)</span></li><li><a href="http://blog.csdn.net/jjzhoujun2010/article/month/2012/04">2012年04月</a><span>(2)</span></li><li><a href="http://blog.csdn.net/jjzhoujun2010/article/month/2012/03">2012年03月</a><span>(1)</span></li><li><a href="http://blog.csdn.net/jjzhoujun2010/article/month/2011/10">2011年10月</a><span>(2)</span></li><span class="hidelist" style="display:none;"><li><a href="http://blog.csdn.net/jjzhoujun2010/article/month/2011/09">2011年09月</a><span>(1)</span></li><li><a href="http://blog.csdn.net/jjzhoujun2010/article/month/2011/08">2011年08月</a><span>(5)</span></li><li><a href="http://blog.csdn.net/jjzhoujun2010/article/month/2011/07">2011年07月</a><span>(4)</span></li><li><a href="http://blog.csdn.net/jjzhoujun2010/article/month/2011/06">2011年06月</a><span>(12)</span></li><li><a href="http://blog.csdn.net/jjzhoujun2010/article/month/2011/05">2011年05月</a><span>(22)</span></li></span><div id="archive_list_button" class="list_closed">展开</div></div>
+    </ul>
+</div>
+<div id="hotarticls" class="panel">
+    <ul class="panel_head"><span>阅读排行</span></ul>
+    <ul class="panel_body itemlist">
+        <li>
+            <a href="http://blog.csdn.net/jjzhoujun2010/article/details/6709827" title="详解Linux终端下编写“贪吃蛇”游戏">详解Linux终端下编写“贪吃蛇”游戏</a><span>(5337)</span>
+        </li>
+        <li>
+            <a href="http://blog.csdn.net/jjzhoujun2010/article/details/6453847" title="将已经分区的移动硬盘弄成启动WIN PE盘(一般无需要格式化) 并进行GHO或ISO原版安装系统(亲自制作成功)">将已经分区的移动硬盘弄成启动WIN PE盘(一般无需要格式化) 并进行GHO或ISO原版安装系统(亲自制作成功)</a><span>(3085)</span>
+        </li>
+        <li>
+            <a href="http://blog.csdn.net/jjzhoujun2010/article/details/6694552" title="linux(ubuntu)下手动安装 firefox 6 并且添加快捷方式图标">linux(ubuntu)下手动安装 firefox 6 并且添加快捷方式图标</a><span>(2290)</span>
+        </li>
+        <li>
+            <a href="http://blog.csdn.net/jjzhoujun2010/article/details/6453834" title="Win7+Ubuntu 双系统下安装一键还原精灵导致GRUB无法引导进入系统的修复方法">Win7+Ubuntu 双系统下安装一键还原精灵导致GRUB无法引导进入系统的修复方法</a><span>(2234)</span>
+        </li>
+        <li>
+            <a href="http://blog.csdn.net/jjzhoujun2010/article/details/6453884" title="Linux 下利用dnw进行USB下载~~">Linux 下利用dnw进行USB下载~~</a><span>(1595)</span>
+        </li>
+        <li>
+            <a href="http://blog.csdn.net/jjzhoujun2010/article/details/6534535" title="GCC 常见错误解析">GCC 常见错误解析</a><span>(1488)</span>
+        </li>
+        <li>
+            <a href="http://blog.csdn.net/jjzhoujun2010/article/details/6453875" title="主机+虚拟机+开发板互相ping通(折腾很久的问题。。终于搞定了。。)">主机+虚拟机+开发板互相ping通(折腾很久的问题。。终于搞定了。。)</a><span>(1342)</span>
+        </li>
+        <li>
+            <a href="http://blog.csdn.net/jjzhoujun2010/article/details/6453877" title="Ubuntu10.10 安装WINE 并安装QQ2010，并且解决打开空间和邮箱的问题">Ubuntu10.10 安装WINE 并安装QQ2010，并且解决打开空间和邮箱的问题</a><span>(1047)</span>
+        </li>
+        <li>
+            <a href="http://blog.csdn.net/jjzhoujun2010/article/details/6696121" title="硬盘无法识别，无法通过自检(分区表出错)---在LINUX下修复成功">硬盘无法识别，无法通过自检(分区表出错)---在LINUX下修复成功</a><span>(1040)</span>
+        </li>
+        <li>
+            <a href="http://blog.csdn.net/jjzhoujun2010/article/details/6453846" title="致想要装Fedora Linux系统的同学。。 利用U盘安装Fedora 14 亲测成功，安装方法">致想要装Fedora Linux系统的同学。。 利用U盘安装Fedora 14 亲测成功，安装方法</a><span>(1039)</span>
+        </li>
+    </ul>
+</div>
+<div id="hotarticls2" class="panel">
+    <ul class="panel_head"><span>评论排行</span></ul>
+    <ul class="panel_body itemlist">
+        <li>
+            <a href="http://blog.csdn.net/jjzhoujun2010/article/details/6709827" title="详解Linux终端下编写“贪吃蛇”游戏">详解Linux终端下编写“贪吃蛇”游戏</a><span>(62)</span>
+        </li>
+        <li>
+            <a href="http://blog.csdn.net/jjzhoujun2010/article/details/6453834" title="Win7+Ubuntu 双系统下安装一键还原精灵导致GRUB无法引导进入系统的修复方法">Win7+Ubuntu 双系统下安装一键还原精灵导致GRUB无法引导进入系统的修复方法</a><span>(10)</span>
+        </li>
+        <li>
+            <a href="http://blog.csdn.net/jjzhoujun2010/article/details/7463344" title="Qt串口持续输入数据，上位机接收端未响应问题">Qt串口持续输入数据，上位机接收端未响应问题</a><span>(6)</span>
+        </li>
+        <li>
+            <a href="http://blog.csdn.net/jjzhoujun2010/article/details/6896044" title="跟着兴趣闯荡未知的未来——记录我的编程学习">跟着兴趣闯荡未知的未来——记录我的编程学习</a><span>(6)</span>
+        </li>
+        <li>
+            <a href="http://blog.csdn.net/jjzhoujun2010/article/details/6632958" title="文件I/O编程——简单串口应用编程">文件I/O编程——简单串口应用编程</a><span>(5)</span>
+        </li>
+        <li>
+            <a href="http://blog.csdn.net/jjzhoujun2010/article/details/6703656" title="C/C++ 笔试题目——林锐博士《高质量C++/C编程指南》">C/C++ 笔试题目——林锐博士《高质量C++/C编程指南》</a><span>(2)</span>
+        </li>
+        <li>
+            <a href="http://blog.csdn.net/jjzhoujun2010/article/details/6696121" title="硬盘无法识别，无法通过自检(分区表出错)---在LINUX下修复成功">硬盘无法识别，无法通过自检(分区表出错)---在LINUX下修复成功</a><span>(2)</span>
+        </li>
+        <li>
+            <a href="http://blog.csdn.net/jjzhoujun2010/article/details/6694552" title="linux(ubuntu)下手动安装 firefox 6 并且添加快捷方式图标">linux(ubuntu)下手动安装 firefox 6 并且添加快捷方式图标</a><span>(2)</span>
+        </li>
+        <li>
+            <a href="http://blog.csdn.net/jjzhoujun2010/article/details/6453874" title="利用NFS实现开发板挂载LINUX系统">利用NFS实现开发板挂载LINUX系统</a><span>(2)</span>
+        </li>
+        <li>
+            <a href="http://blog.csdn.net/jjzhoujun2010/article/details/6453877" title="Ubuntu10.10 安装WINE 并安装QQ2010，并且解决打开空间和邮箱的问题">Ubuntu10.10 安装WINE 并安装QQ2010，并且解决打开空间和邮箱的问题</a><span>(2)</span>
+        </li>
+    </ul>
+</div>
+<div id="homepageArticles" class="panel">
+    <ul class="panel_head"><span>推荐文章</span></ul>
+    <ul class="panel_body" id="ad_commend">
+    <iframe src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/ad_003.html" style="border-width: 0px; overflow: hidden; width: 194px; height: 272px;" id="ad_frm_2" frameborder="0" scrolling="no"></iframe></ul>
+</div>
+<script type="text/javascript" src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/ad.js"></script>
+<script type="text/javascript">
+    new Ad(12, 'ad_commend');
+</script><div id="newcomments" class="panel">
+<ul class="panel_head"><span>最新评论</span></ul>
+<ul class="panel_body itemlist">
+    <li>
+    <a href="http://blog.csdn.net/jjzhoujun2010/article/details/6453884#comments">Linux 下利用dnw进行USB下载~~</a>
+    <p style="margin:0px;">GumpFang008:
+Hello, i am using dnw ,and problem is Target usb d...
+    </p>
+    </li>
+    <li>
+    <a href="http://blog.csdn.net/jjzhoujun2010/article/details/7463344#comments">Qt串口持续输入数据，上位机接收端未响应问题</a>
+    <p style="margin:0px;">jjzhoujun2010:
+@liucun0505:后来从数据采集板上调节了传输的速度，数据传得慢，然后就不会卡死了。。。
+    </p>
+    </li>
+    <li>
+    <a href="http://blog.csdn.net/jjzhoujun2010/article/details/7463344#comments">Qt串口持续输入数据，上位机接收端未响应问题</a>
+    <p style="margin:0px;">liucun0505:
+请问你的这个问题解决了吗，想请教
+    </p>
+    </li>
+    <li>
+    <a href="http://blog.csdn.net/jjzhoujun2010/article/details/6709827#comments">详解Linux终端下编写“贪吃蛇”游戏</a>
+    <p style="margin:0px;">jjzhoujun2010:
+嗯的~ 互相交流~
+    </p>
+    </li>
+    <li>
+    <a href="http://blog.csdn.net/jjzhoujun2010/article/details/7463344#comments">Qt串口持续输入数据，上位机接收端未响应问题</a>
+    <p style="margin:0px;">jjzhoujun2010:
+我用的是QextSerialPort 的类来着，Qt的教程上面用的类，没试过您说的类，有空试试看~
+    </p>
+    </li>
+    <li>
+    <a href="http://blog.csdn.net/jjzhoujun2010/article/details/7463344#comments">Qt串口持续输入数据，上位机接收端未响应问题</a>
+    <p style="margin:0px;">henreash:
+你应该使用的别人封装的串口操作类吧，试试boost中的asio里面带的串口类呢.
+    </p>
+    </li>
+    <li>
+    <a href="http://blog.csdn.net/jjzhoujun2010/article/details/7463344#comments">Qt串口持续输入数据，上位机接收端未响应问题</a>
+    <p style="margin:0px;">henreash:
+你应该使用的别人封装的串口操作类吧，试试boost中的asio里面带的串口类呢.
+    </p>
+    </li>
+    <li>
+    <a href="http://blog.csdn.net/jjzhoujun2010/article/details/7463344#comments">Qt串口持续输入数据，上位机接收端未响应问题</a>
+    <p style="margin:0px;">henreash:
+你应该使用的别人封装的串口操作类吧，试试boost中的asio里面带的串口类呢.
+    </p>
+    </li>
+    <li>
+    <a href="http://blog.csdn.net/jjzhoujun2010/article/details/6709827#comments">详解Linux终端下编写“贪吃蛇”游戏</a>
+    <p style="margin:0px;">swimming38:
+楼主 在没看到你这代码之前 我用c++写了一个。现也发表在这儿，希望共同学习http://blog....
+    </p>
+    </li>
+    <li>
+    <a href="http://blog.csdn.net/jjzhoujun2010/article/details/6453874#comments">利用NFS实现开发板挂载LINUX系统</a>
+    <p style="margin:0px;">jjzhoujun2010:
+@hjhcs121:共同分享，共同进步
+    </p>
+    </li>
+</ul>
+</div>
+    </div>
+    <div class="clear"></div>
+</div>
+
+<div class="clear"></div>
+</div>
+<script type="text/javascript" src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/shCore-src.js"></script>
+<script type="text/javascript" src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/ZeroClipboard.js"></script>
+<script type="text/javascript" src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/article_code.js"></script>
+
+<script type="text/javascript" src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/show.js"></script>
+<script type="text/javascript" src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/showblogmedal.js"></script>
+<script type="text/javascript">document.write("<img src=http://counter.csdn.net/pv.aspx?id=24 border=0 width=0 height=0>");</script><img src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/pv.asc" height="0" border="0" width="0">
+
+<script type="text/javascript" src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/publib_footer.js"></script><link rel="stylesheet" type="text/css" href="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/pub_footer_2012.css"><div class="pub_footerall"><dl><dt></dt> <dd><a href="http://www.csdn.net/company/about.html" target="_blank">公司简介</a>|<a href="http://www.csdn.net/company/recruit.html" target="_blank">招贤纳士</a>|<a href="http://www.csdn.net/company/marketing.html" target="_blank">广告服务</a>|<a href="http://www.csdn.net/company/account.html" target="_blank">银行汇款帐号</a>|<a href="http://www.csdn.net/company/contact.html" target="_blank">联系方式</a>|<a href="http://www.csdn.net/company/statement.html" target="_blank">版权声明</a>|<a href="http://www.csdn.net/company/layer.html" target="_blank">法律顾问</a>|<a href="mailto:webmaster@csdn.net">问题报告</a></dd><dd>京&nbsp;ICP&nbsp;证&nbsp;070598&nbsp;号</dd><dd>北京创新乐知信息技术有限公司 版权所有</dd><dd><img src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/ico_email.gif" alt="" title=""> 联系邮箱：webmaster@csdn.net</dd><dd>Copyright © 1999-2012, CSDN.NET, All Rights Reserved&nbsp;<a href="http://www.hd315.gov.cn/beian/view.asp?bianhao=010202001032100010" target="_blank"><img src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/gongshang_logos.gif" alt="GongshangLogo" title=""></a></dd></dl></div>
+
+<script type="text/javascript" src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/counter.js"></script><script type="text/javascript" charset="UTF-8" src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/msg.js"></script>
+
+<script type="text/javascript" src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/ad-ibm2.js"></script>
+
+</div>
+
+<iframe src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/log.swf" style="width: 1px; height: 1px; position: absolute; visibility: hidden;"></iframe><iframe src="Ubuntu%E4%B8%8B%E5%88%A9%E7%94%A8VirtualBox%E8%A3%85XP%EF%BC%8Credhat%E5%AE%9E%E7%8E%B0%E4%BA%92%E7%9B%B8Ping%E9%80%9A%E6%9E%84%E5%BB%BA%E5%B1%80%E5%9F%9F%E7%BD%91%20-%20Dream%20Fly%E7%9A%84%E4%B8%93%E6%A0%8F%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/log.jpeg" style="width: 1px; height: 1px; position: absolute; visibility: hidden;"></iframe></body></html>

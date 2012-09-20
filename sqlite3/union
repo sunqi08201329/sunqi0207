@@ -1,0 +1,3 @@
+SELECT E_Name FROM Employee_China
+UNION ALL
+SELECT E_Name FROM Employee_USA;

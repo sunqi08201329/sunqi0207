@@ -1,0 +1,8 @@
+function load_EXCEPTIONS_data
+{
+# Ingore any line that begins with a pound sign, #
+# and omit all blank lines
+
+cat $EXCEPTIONS |  grep -v "^#" | sed /^$/d > $DATA_EXCEPTIONS
+}
+

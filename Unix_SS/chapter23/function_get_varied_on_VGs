@@ -1,0 +1,7 @@
+get_varied_on_VGs ()
+{
+# List all varied-on Volume Groups
+
+lsvg -o | sort -r
+}
+

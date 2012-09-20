@@ -1,0 +1,6 @@
+function get_date_time_stamp
+{
+DATE_STAMP=$(date +'%m%d%y.%H%M%S')
+echo $DATE_STAMP
+}
+

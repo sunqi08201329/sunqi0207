@@ -1,0 +1,10 @@
+post_event ()
+{
+# Add anything that you want to execute in this function. You can
+# hardcode the tasks in this function or create an external shell
+# script and execute the external function here.
+
+:  # No-Op: The colon (:) is a No-Op character. It does nothing and
+   # always produces a 0, zero, return code.
+}
+

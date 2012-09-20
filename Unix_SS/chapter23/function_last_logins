@@ -1,0 +1,7 @@
+last_logins ()
+{
+# List the last 100 system logins
+
+last | tail -100
+}
+

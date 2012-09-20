@@ -1,0 +1,7 @@
+get_ML_for_AIX ()
+{
+# Query the system for the maintenance level patch set
+
+instfix -i | grep AIX_ML
+}
+

@@ -5,6 +5,8 @@ LD=arm-linux-ld
 OBJCOPY=arm-linux-objcopy
 OBJCFLAGS=--gap-fill=0xff
 
+CFLAGS = -nostdlib
+
 src_c = $(wildcard *.c)
 src_s = $(wildcard *.s)
 obj_c = $(patsubst %.c, %.o, $(src_c))
@@ -17,9 +19,10 @@ $(target).bin:$(target)
 	$(OBJCOPY) $(OBJCFLAGS) -O binary  $< $@
 
 $(target):$(obj)
-	$(LD) -e 0x21000000  -Ttext 0x21000000 $^ -o $@
+	$(LD)  -Tlink.lds  $^ -o $@
+#$(LD) -e 0x21000000  -Ttext 0x21000000 $^ -o $@
 %.o:%.c
-	$(CC) -o $@ -c $<
+	$(CC) -o $@ $(CFLAGS) -c $<
 %.o:%.s
 	$(AS) -o $@ $<
 

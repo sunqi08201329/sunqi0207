@@ -1,5 +1,4 @@
 #include "package.h"
-#include <errno.h>
 
 //int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
 int accept_r(int sockfd, struct sockaddr *addr, socklen_t *addrlen)
@@ -20,7 +19,7 @@ int socket_r(int domain, int type, int protocol)
 	int listening_socket;
 	if ((listening_socket = socket(domain, type, protocol)) < 0)
 		err_sys("Create new  %d socket failed", domain);
-	fprintf(stdout, "Created a new socket, listening_socket = %d\n", listening_socket);
+	fprintf(stdout, "Created a new socket %d\n", listening_socket);
 	return listening_socket;
 }
 //int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
@@ -121,4 +120,14 @@ int setsockopt_r(int sockfd, int level, int optname, const void *optval, socklen
 {
 	if(setsockopt(sockfd, level, optname, optval, optlen) == -1)
 		err_ret("setsockopt() error");
+}
+int getsockname_r(int sockfd, struct sockaddr *addr, socklen_t *addrlen)
+{
+	if(getsockname(sockfd, addr, addrlen) == -1)
+		err_ret("getsockname error");
+}
+int getpeername_r(int sockfd, struct sockaddr *addr, socklen_t *addrlen)
+{
+	if(getpeername(sockfd, addr, addrlen) == -1)
+		err_ret("getpeername error");
 }

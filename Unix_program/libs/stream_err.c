@@ -33,3 +33,15 @@ int fclose_r(FILE *fp)
 	if((i = fclose(fp)) == EOF)
 		err_ret("fclose error");
 }
+char *fgets_r(char *s, int size, FILE *stream)
+{
+	char *ptr;
+	if((ptr = fgets(s, size, stream)) == NULL && ferror(stream))
+		err_sys("fgets error");
+	return ptr;
+}
+void fputs_r(const char *buf, FILE *stream)
+{
+	if(fputs(buf, stream) == EOF)
+		err_sys("fputs error");
+}

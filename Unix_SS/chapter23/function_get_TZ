@@ -1,0 +1,7 @@
+get_TZ ()
+{
+# Get the time zone that the system is operating in.
+
+cat /etc/environment | grep TZ | awk -F'=' '{print $2}'
+}
+

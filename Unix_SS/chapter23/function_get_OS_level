@@ -1,0 +1,13 @@
+get_OS_level ()
+{
+# Query for the operating system release and version level
+
+oslevel -r
+
+OSL=$(oslevel -r | cut -c1-2)
+if (( OSL >= 53 ))
+then
+    echo "Technology Level:       $(oslevel -s)"
+fi
+}
+

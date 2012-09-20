@@ -1,0 +1,9 @@
+get_host ()
+{
+# Hostname of this machine
+
+hostname
+
+# uname -n  # works too
+}
+

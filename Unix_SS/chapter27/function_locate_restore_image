@@ -1,0 +1,153 @@
+locate_restore_image ()
+{
+# set -x # Uncomment to debug this function
+
+clear   # Clear the screen
+
+# Display the screen heading, query the user, display the
+# files matching the search, and ask if the user wants to
+# restore the files. If a restore is requested we ensure
+# there is a directory for the target server in the $RESTORE_AREA,
+# if not create it, and copy the files into this subdirectory in
+# the $RESTORE_AREA.
+
+echo -e "\n\n\t\tLOCATE/RESTORE A BACKUP IMAGE\n"
+echo -e "Enter the Hostname where the File/Directory Resides: \c"
+read H
+echo -e "\nEnter as Much of the Directory path and File Name as You Know:\n"
+read "DP"
+if [ "$DP" = '/' ]
+then
+    echo -e "\nERROR: This Program is Not Intended for Full System Restores...\n"
+    sleep 2
+    return
+fi
+echo -e "\nSearching for Archive Images..."
+
+# Search and display all matching files one page at a time
+
+dirvish-locate $H ${DP} | more
+
+QUIT=0
+until (( QUIT == 1 ))
+do
+   echo -e "\nDid You Find What You Want? (y/n): \c"
+   read ANS1
+   case $ANS1 in
+   y|Y) echo -e "\nDo You Want to Perform a Restore? (y/n): \c"
+        read ANS2
+        while true
+        do
+           case $ANS2 in
+           y|Y) QUIT=1
+                break
+                ;;
+           n|N) echo -e "\nPress Enter to Continue...\c"
+                read KEY
+                return 0
+                ;;
+             *) echo -e "\nInvalid Input..."
+                ;;
+           esac
+        done
+        ;;
+   n|N) return 0
+        ;;
+     *) echo -e "\nInvalid Input..."
+        ;;
+   esac
+done
+
+echo -e "\nEnter the FULL PATHNAME of the File/Directory You Want to Restore:\n"
+read TARGET
+
+if [ -z "$TARGET" ]
+then
+    echo -e "\nInvalid Entry..."
+    sleep 2
+    return
+fi
+
+if [[ $(echo "$TARGET" | cut -c1) != '/' ]]
+then
+    echo -e "\nERROR: $TARGET is Not a Valid Full Pathname...\n"
+    sleep 2
+    break
+fi
+
+echo -e "\nSearching Images..."
+
+dirvish-locate "$H" "${TARGET}" | more
+
+echo -e "\nEnter the Image to Restore From: \c"
+read IMAGE_NAME
+echo
+
+# Check to ensure that the defined $RESTORE_AREA
+# directory has been created on the system.
+
+if [[ ! -d $RESTORE_AREA ]]
+then
+    mkdir -p $RESTORE_AREA
+fi
+
+# Ensure that a subdirectory exists for this host
+
+if [[ ! -d ${RESTORE_AREA}/${H} ]]
+then
+    mkdir -p ${RESTORE_AREA}/${H}
+fi
+
+BANK_LIST=$(parse_conf)
+
+# This is where we restore the data
+
+for BANK in $BANK_LIST
+do
+   if [ -d "$TARGET" ]
+   then
+       # If $TARGET is a directory we only want the last
+       # part of the path, not the entire path.
+
+       TARGET=$(basename "$TARGET")
+
+       find ${BANK}/${H}/${IMAGE_NAME}/tree -name "${TARGET}*" -print \
+            -exec cp -rp {} "${RESTORE_AREA}/${H}" \; 2>/dev/null
+
+       if (( $? ==  0 ))
+       then
+           echo -e "\nFiles Restored to the Following Restore Area:"
+           echo -e "\n${RESTORE_AREA}/${H}/${TARGET}\n\n"
+           break
+       else
+           echo -e "\nRestore Failed...See Administrator...\n"
+           break
+       fi
+   else
+       # We are working with a file
+
+       D_NAME=$(dirname "$TARGET" | cut -d '/' -f3-)
+       F_NAME=$(basename "$TARGET")
+       echo "DIRNAME is $D_NAME"
+
+       # Find and copy the file(s) to the $RESTORE_AREA
+
+       find ${BANK}/${H}/${IMAGE_NAME}/tree/*${D_NAME} -name "${F_NAME}" \
+            -print -exec cp -rp {} "${RESTORE_AREA}/${H}" \; 2>/dev/null
+
+       if (( $? ==  0 ))
+       then
+           echo -e "\nFiles Restored to the Following Restore Area:"
+           echo -e "\n${RESTORE_AREA}/${H}/${F_NAME}\n\n"
+           break
+       else
+           echo -e "\nRestore Failed...See Administrator...\n"
+           break
+       fi
+  fi
+done
+
+echo -e "\nPress Enter to Continue...\c"
+read KEY
+}
+

@@ -1,0 +1,12 @@
+pre_event_script ()
+{
+# Put anything that you want to execute BEFORE the
+# monitored process STARTS in this function
+
+:   # No-OP - Needed as a placeholder for an empty function
+    # Comment Out the Above colon, ':'
+
+PRE_RC=$?
+return $PRE_RC
+}
+

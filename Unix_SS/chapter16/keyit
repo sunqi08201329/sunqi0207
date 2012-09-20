@@ -1,0 +1,197 @@
+#!/usr/bin/ksh
+#
+# SCRIPT: keyit
+# AUTHOR: Randy Michael
+# DATE: 7/31/2007
+# REV: 1.0
+# PLATFORM: Not platform dependent
+# REQUIREMENTS: OpenSSH
+#
+# PURPOSE: This script is used to set up
+# encryption keypairs between two hosts.
+#
+# set -x # Uncomment to debug this script
+#
+# set -n # Uncomment to check script syntax
+#        # without any execution. Do not
+#        # forget to add the comment back,
+#        # or the script will never execute.
+#
+# USAGE:  keyit remote_host username
+#
+#######################################
+# DEFINE FILES AND VARIABLES HERE
+#######################################
+
+RHOST=$1
+THIS_USER=$2
+THIS_SCRIPT=$(basename $0)
+THIS_HOST=$(hostname)
+
+#######################################
+# DEFINE FUNCTIONS HERE
+#######################################
+
+usage ()
+{
+echo "\nUSAGE: $THIS_SCRIPT \
+remote_host username\n"
+}
+
+#######################################
+
+success_message ()
+{
+KTYPE=$1
+echo "\nSUCCESS: $KTYPE key pairs configured for $THIS_USER on $RHOST"
+echo "\n$THIS_USER should no longer require an SSH password on $RHOST"
+echo "when logging in directly, however, using the ssh commands:\n"
+echo "\tssh -l $THIS_USER $RHOST\nAND\n\tssh ${THIS_USER}@${RHOST}"
+echo "\nWHILE LOGGED IN LOCALLY AS ANOTHER USER will still not work"
+echo "without a valid user password\n"
+}
+
+#######################################
+
+failure_message ()
+{
+echo "\nERROR: Setting up the $KEYTYPE key pairs failed"
+echo "Ensure that OpenSSH is installed and running"
+echo "on both hosts. Then ensure that the user has"
+echo "a .ssh directory in their \$HOME directory."
+echo "See the man page on ssh and ssh-keygen"
+echo "for more details and manual setup\n"
+}
+
+#######################################
+
+keyit_dsa ()
+{
+# Append the local public key to the same user's
+# authorized_users file
+
+cat ~${THIS_USER}/.ssh/id_dsa.pub | ssh ${THIS_USER}@$RHOST \
+"cat >> ~${THIS_USER}/.ssh/authorized_keys"
+
+if (( $? == 0 ))
+then
+    success_message dsa
+else
+    failure_message
+fi
+}
+
+#######################################
+
+keyit_rsa ()
+{
+# Append the local public key to the same user's
+# authorized_users file
+
+cat ~${THIS_USER}/.ssh/id_rsa.pub | ssh ${THIS_USER}@$RHOST \
+"cat >> ~${THIS_USER}/.ssh/authorized_keys"
+
+if (( $? == 0 ))
+then
+    success_message rsa
+else
+    failure_message
+fi
+}
+
+#######################################
+# BEGINNING OF MAIN
+#######################################
+
+# Ensure the user $THIS_USER exists on the local system
+
+if ! $(/usr/bin/id $THIS_USER >/dev/null 2>&1)
+then
+    echo "\nERROR: $THIS_USER is not a valid user on $THIS_HOST\n"
+    usage
+    exit 1
+fi
+
+# Ensure ssh is installed locally
+
+if [[ ! -x /usr/bin/ssh && ! -x /usr/local/bin/ssh ]]
+then
+    echo "\nERROR: SSH does not appear to be installed on this machine"
+    echo "This script requires SSH...Exiting...\n"
+    usage
+    exit 2
+fi
+
+# Check for proper usage 
+
+if ! [ $2 ]
+then
+   usage
+   exit 1
+fi
+
+# Ping the remote host 1 ping
+
+if ! $(ping -c1 $RHOST >/dev/null 2>&1)
+then
+    echo "\nERROR: $RHOST is not pingable...Exiting...\n"
+    exit 2
+fi
+
+# Set up the key pairs for the configured key(s)
+
+SET=0
+
+if [ -s ~$THIS_USER/.ssh/id_dsa.pub ]
+then
+   keyit_dsa
+   SET=1
+fi
+
+if [ -s ~$THIS_USER/.ssh/id_rsa.pub ]
+then
+   keyit_rsa
+   SET=2
+fi
+
+if (( SET == 0 ))
+then
+   echo "\nERROR: SSH public key is not set for $THIS_USER..."
+   echo "\nTo Configure Run: ssh-keygen -t type"
+   echo "Where type is rsa or dsa encryption\n"
+   echo "Would you like to set up the keys now? (y/n): \c"
+   read REPLY
+   case $REPLY in
+   y|Y) if $(id $THIS_USER >/dev/null 2>&1)
+        then
+           echo "\nEncryption Type: (dsa or rsa?): \c"
+           read KEYTYPE
+           case "$KEYTYPE" in
+           +([d|Ds|Sa|A])) KEYTYPE=dsa
+              ;;
+           +([r|Rs|Sa|A])) KEYTYPE=rsa
+              ;;
+           *) echo "\nERROR: Invalid entry...Exiting..."
+              exit 1
+              ;;
+           esac
+           echo "\nAccept the defaults and do not enter a passphrase...\n"
+           su - $THIS_USER "-c ssh-keygen -t $KEYTYPE"
+           if (( $? == 0 ))
+           then
+              echo "\nSuccess, keying $THIS_USER on $RHOST\n"
+              keyit_${KEYTYPE} $KEYTYPE
+           fi
+        else 
+           echo "\nERROR: $THIS_USER username does not exist\n" 
+        fi
+       ;;
+     *) # Do nothing
+        :  # A colon, :, is a "no-op"
+        ;;
+   esac
+fi
+
+#########################################
+# END OF KEYIT SCRIPT
+#########################################

@@ -1,0 +1,12 @@
+post_event_script ()
+{
+# Put anything that you want to execute AFTER the
+# monitored process ENDS in this function
+
+:     # No-OP - Need as a placeholder for an empty function
+      # Comment Out the Above colon, ':'
+
+POST_RC=$?
+return $POST_RC
+}
+

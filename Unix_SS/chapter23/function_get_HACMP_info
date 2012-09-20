@@ -1,0 +1,17 @@
+get_HACMP_info ()
+{
+# If the System is running HACMP then save the
+# HACMP configuration
+
+if [ -x /usr/es/sbin/cluster/utilities/cllsif ]
+then
+     /usr/es/sbin/cluster/utilities/cllsif
+     echo "\n\n"
+fi
+
+if [ -x /usr/essbin/cluster/utilities/clshowres ]
+then
+     /usr/es/sbin/cluster/utilities/clshowres
+fi
+}
+

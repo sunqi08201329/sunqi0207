@@ -1,0 +1,15 @@
+cleanup_exit ()
+{
+# This function is executed on any type of exit except of course
+# a kill -9, which cannot be trapped. The script log file is
+# emailed either locally or remotely, and the log file is
+# compressed. The last "exit" is needed so the user does not
+# have the ability to get to the command line without logging.
+
+if [[ -s ${LOGDIR}/${LOGFILE} ]] # Is it greater than zero bytes?
+then
+    mailx -s "$TS - $LOGNAME Audit Report" $LOG_MANAGER < ${LOGDIR}/${LOGFILE}
+    nohup compress ${LOGDIR}/${LOGFILE} &
+fi
+}
+

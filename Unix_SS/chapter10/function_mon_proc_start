@@ -1,0 +1,21 @@
+mon_proc_start ()
+{
+    START_RC="-1" # Initialize to -1
+    until (( START_RC == 0 ))
+    do
+        ps aux | grep -v "grep $PROCESS" | grep -v $SCRIPT_NAME \
+               | grep $PROCESS >/dev/null 2>&1
+
+        START_RC=$? # Check the Return Code!!!
+        sleep 1 # Needed to reduce CPU load!
+    done
+
+    echo 'Y' # Turn the RUN flag on
+
+    # Grab the timestamp
+    TIMESTAMP=$(date +%D@%T)
+
+    echo "START PROCESS: $PROCESS began ==> $TIMESTAMP" >> $LOGFILE &
+    echo "START PROCESS: $PROCESS began ==> $TIMESTAMP" > $TTY
+}
+

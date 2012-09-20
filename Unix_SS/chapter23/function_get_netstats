@@ -1,0 +1,7 @@
+get_netstats ()
+{
+# Save the network adapter statistics
+
+netstat -i
+}
+

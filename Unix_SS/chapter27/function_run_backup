@@ -1,0 +1,50 @@
+run_backup ()
+{
+# This function runs one particular backup
+
+# set -x # Uncomment to debug this function
+
+clear # Clear the screen
+
+# Display the screen heading and query the user
+
+echo -e "\n\n\t\tRUN A PARTICULAR BACKUP\n"
+echo -e "\tEnter a Hostname to Backup: \c"
+read HTBU  # Host to Backup
+
+echo "Searching for default.conf in ${HTBU}'s Vault"
+
+BANK_LIST=$(parse_conf)
+
+for P in $BANK_LIST
+do
+    # Find the Default Config file (default.conf) for $HTBU
+
+    DCF=$(find ${P}/${HTBU} -type f -name default.conf)
+    if [[ ! -z $DCF ]]
+    then
+        echo -e "\nFound Configuration File...Starting Backup..."
+        dirvish --vault $HTBU
+        RC=$?
+        echo -e "\nDirvish Exit Code: $RC"
+        echo -e "\nBackup Complete..."
+        echo -e "\nPress Enter to Continue...\c"
+        read KEY
+        break
+    else
+        echo -e "\nERROR: Could not Locate the Configuration File for $HTBU"
+        echo -e "\n...You Need to Configure $HTBU for Dirvish Backup First"
+        echo -e "\nPress Enter to Continue...\c"
+        read KEY
+    fi
+done
+
+if [[ -z "$DCF" ]]
+then
+    echo -e "\nERROR: Could not Locate the Configuration File for $HTBU"
+    echo -e "\n...You Need to Configure $HTBU for Dirvish Backup First"
+    echo -e "\nPress Enter to Continue...\c"
+    read KEY
+fi
+}
+

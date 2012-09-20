@@ -9,7 +9,7 @@ cat .gitignore
 .gitignore's content like this:
 *.[ao]
 *~
----------------
+--------------⇔
 git diff
 -------------
 git rm ..
@@ -153,7 +153,8 @@ go 0x21000000 --exec
 ---------------------------------------------------
 host ubuntu and guest windows shared:
 ubuntu:
-	 VBoxManage sharedfolder add "win7" -name "shared" -hostpath "/media/Elements/"
+	 VBoxManage sharedfolder add "virtual OS name" -name "foldName" -hostpath "truePath"
+	 VBoxManage sharedfolder add "windows7" -name "shared" -hostpath "/media/Elements/"
 windows:
 	net use  x:  \\vboxsvr\shared
 ------------------------------------------------------
@@ -163,3 +164,17 @@ sudo mkdir /mnt/shared
 sudo mount -t vboxsf gongxiang /mnt/shared
 sudo umount -f /mnt/shared
 -----------------------------------------------
+host ubuntu and guest Redhat shared:
+??????????????????????????
+-------------------------------------------
+u-boot
+	sudo dd iflag=dsync oflag=dsync if=tiny210-uboot.bin of=/dev/sdb1 seek=1
+u-boot compile:
+	
+-----------------------------
+httpd
+	sudo /var/httpd/bin/httpd -k start/stop
+---------------------------------------------------
+man bash-builtins  --look up the command in shell
+------------------------
+dig --ctrl + k

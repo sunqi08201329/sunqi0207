@@ -1,0 +1,10 @@
+get_VG_disk_info ()
+{
+# List disks by Volume Group assignment
+
+for VG in $(get_varied_on_VGs)
+do
+     lsvg -p $VG
+done
+}
+

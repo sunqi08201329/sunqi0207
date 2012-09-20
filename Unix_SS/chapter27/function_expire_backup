@@ -1,0 +1,164 @@
+expire_backup ()
+{
+# This function is used to expire backups
+
+# set -x  # Uncomment to debug this function
+
+clear # Clear the screen
+
+# Display the screen header and menu
+
+echo -e "
+   \n\n\t\tDIRVISH EXPIRE BACKUP(S)\n
+   \n\t1) Delete Expired Backups for ALL Hosts
+   \n\t2) Delete Expired Backups for One Host
+   \n\t3) Expire One Backup for One Host
+   \n\t4) Expire All Backups for One Host
+   \n\t5) Previous Menu
+   \n\n\tSelect an Option: \c"
+
+read ANS
+case $ANS in
+1) echo -e "\n\tDeleting Expired Backups for ALL Hosts..."
+   dirvish-expire --tree
+   echo -e "\n\tTasks Complete..."
+   echo -e "\n\tPress Enter to Continue...\c"
+   read KEY
+   ;;
+2) echo -e "\n\tEnter the Hostname to Delete Expired Backups: \c"
+   read H
+   dirvish-expire --tree --vault $H | more
+   echo -e "\n\tTasks Complete..."
+   echo -e "\n\tPress Enter to Continue...\c"
+   read KEY
+   ;;
+3) EXPIRE_STAMP="$(date "+%Y-%m-%d %H:%M:%S")"
+   echo -e "\n\tEnter the Hostname for the Backup Image: \c"
+   read H
+
+   BANK_LIST=$(parse_conf)
+   MYPWD=$(pwd)
+
+   for B in $BANK_LIST
+   do
+      if [ -d ${B}/${H} ]
+      then
+          cd ${B}/${H}
+          IMAGE_LIST=$(find . -type d -name "*-[0-9][0-9]*" | cut -c3-)
+      fi
+   done
+
+   echo -e "\nSelect an Image to Expire from the Following List:\n"
+   echo -e "\n$IMAGE_LIST" | more
+   echo -e "\n\nEnter the Image to Expire: \c"
+   read IMAGE_NAME
+
+   cd $MYPWD
+   if [[ -r ${B}/${H}/${IMAGE_NAME}/summary ]]
+   then
+      # This is where we expire a backup that is not currently
+      # expired. The 'summary' file contains the expire datestamp
+
+      echo -e "\n\tExpiring Image: $IMAGE_NAME"
+
+      sed s/"$(grep Expire ${B}/${H}/${IMAGE_NAME}/summary)"/"$(grep Expire ${B}/${H}/${IMAGE_NAME}/summary | cut -f 1-4 -d ' ') $EXPIRE_STAMP"/g "${B}/${H}/${IMAGE_NAME}/summary" > "${B}/${H}/${IMAGE_NAME}/summary2"
+
+      mv "${B}/${H}/${IMAGE_NAME}/summary2" "${B}/${H}/${IMAGE_NAME}/summary"
+   fi
+
+   # We expired the backups; now we ask the user if we should delete
+   # the expired images
+
+   STOP=0
+   until (( STOP == 1 ))
+   do
+     echo -e "\n\tTasks Complete...Do You Want to Delete This Expired Image? (y/n): \c"
+     read ANS
+     case $ANS in
+     y|Y) echo -e "\n\tDeleting Expired Image: $IMAGE_NAME"
+
+          # This next command deletes all expired images for $H
+          dirvish-expire --vault $H
+
+          RC=$?
+          echo -e "\n\tDirvish-expire Completed with Return Code: $RC"
+          echo -e "\n\tTasks Complete..."
+          echo -e "\n\tPress Enter to Continue...\c"
+          read KEY
+          STOP=1
+          ;;
+     n|N) STOP=1
+          continue
+          ;;
+       *) echo -e "\n\tInvalid Entry..."
+          ;;
+     esac
+   done
+   ;;
+4) EXPIRE_STAMP=$(date "+%Y-%m-%d %H:%M:%S")
+   clear
+   echo -e "\nEnter the Hostname for the Backup Image: \c"
+   read H
+
+   BANK_LIST=$(parse_conf)
+   MYPWD=$(pwd)
+
+   for P in $BANK_LIST
+   do
+      if [ -d ${P}/${H} ]
+      then
+         cd ${P}/${H}
+         IMAGE_LIST=$(find . -type d -name "*-[0-9][0-9]*" | cut -c3-)
+         B=$P
+      fi
+   done
+
+   echo -e "\nSetting to Following Images to Expire:\n\n"
+   echo "$IMAGE_LIST" | more
+   cd $MYPWD
+   echo -e "\nPress Enter to Continue...\c"
+
+   echo "$IMAGE_LIST" | while read IMAGE_NAME
+   do
+     if [ -f ${B}/${H}/${IMAGE_NAME}/summary ]
+     then
+        echo "Expiring $IMAGE_NAME"
+        sed s/"$(grep Expire ${B}/${H}/${IMAGE_NAME}/summary)"/"$(grep Expire ${B}/${H}/${IMAGE_NAME}/summary | cut -f 1-4 -d ' ') $EXPIRE_STAMP"/g "${B}/${H}/${IMAGE_NAME}/summary" > "${B}/${H}/${IMAGE_NAME}/summary2"
+
+        if (( $? == 0 ))
+        then
+           mv ${B}/${H}/${IMAGE_NAME}/summary2 ${B}/${H}/${IMAGE_NAME}/summary
+        fi
+     fi
+   done
+
+   STOP=0
+   until (( STOP == 1 ))
+   do
+     echo -e "\nTasks Complete...Do You Want to Delete Expired Images? (y/n): \c"
+     read ANS
+     case $ANS in
+     y|Y) echo -e "\nDeleting Expired Images...\n"
+          dirvish-expire --vault $H
+          RC=$?
+          echo -e "\nDirvish-expire Completed with Return Code: $RC"
+          echo -e "\nTasks Complete..."
+          echo -e "\nPress Enter to Continue...\c"
+          read KEY
+          STOP=1
+          ;;
+     n|N) STOP=1
+          continue
+          ;;
+       *) echo -e "\n\tInvalid Entry..."
+          ;;
+     esac
+   done
+   ;;
+5) :
+   ;;
+*) echo -e "\nInvalid Entry"
+   ;;
+esac
+}
+

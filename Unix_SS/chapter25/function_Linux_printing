@@ -1,0 +1,27 @@
+function Linux_printing
+{
+lpc status | tail +2 | while read pqstat[1] pqstat[2] pqstat[3] junk
+do
+     # First check the status of printing for each printer
+     case ${pqstat[2]} in
+     disabled)
+               # Printing is disable - print status and restart printing
+               echo "${pqstat[1]} Printing is ${pqstat[2]}"
+               lpc start ${pqstat[1]}
+               (($? == 0)) && echo "${pqstat[1]} Printing Restarted"
+             ;;
+     enabled|*) : # No-Op - Do Nothing
+             ;;
+     esac
+     # Next check the status of queueing for each printer
+     case ${pqstat[3]} in
+     disabled)
+               echo "${pqstat[1]} Queueing is ${pqstat[3]}"
+               lpc enable ${pqstat[1]}
+               (($? == 0)) && echo "${pqstat[1]} Printing Restarted"
+              ;;
+     enabled|*) :   # No-Op - Do Nothing
+             ;;
+     esac
+done
+}

@@ -1,0 +1,4 @@
+proc increment_by_1 { MY_COUNT } {
+     set MY_COUNT [expr $MY_COUNT + 1]
+     return "$MY_COUNT"
+}

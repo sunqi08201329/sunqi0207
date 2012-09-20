@@ -1,0 +1,7 @@
+get_tape_drives ()
+{
+# Query the system for all configured tape drives
+
+lsdev -Cc tape
+}
+

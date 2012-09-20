@@ -1,0 +1,11 @@
+function get_OS_info
+{
+# For a few commands it is necessary to know the OS and its level
+# to execute the proper command syntax.  This will always return
+# the OS in UPPERCASE
+
+typeset -u OS   # Use the UPPERCASE values for the OS variable
+OS=`uname`   # Grab the Operating system, i.e. AIX, HP-UX
+print $OS    # Send back the UPPERCASE value
+}
+

@@ -1,0 +1,9 @@
+function AIX_classic_printing
+{
+for Q in $( enq -AW | tail +3 | grep DOWN | awk '{print $1}')
+do
+     enable $Q
+     (( $? == 0 )) || echo "\n$Q print queue FAILED to enable.\n"
+done
+}
+

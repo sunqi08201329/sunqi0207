@@ -1,0 +1,101 @@
+#!/usr/local/bin/expect -f
+#
+# SCRIPT: etc-hosts-copy.exp
+
+# Set the timeout to 3 seconds
+set timeout 3
+
+# Assign the first command line argument to the
+# "host" variable
+set rem_host [lindex $argv 0]
+
+# Spawn an ssh session to $host as the prodmgr user
+spawn /usr/bin/ssh -l prodmgr ${rem_host}
+
+# When we ssh to a remote server we can have two
+# possible responses, 1) "*re you sure you want to continue
+# connecting*", which we must reply to with "yes", and
+# 2) Password: prompt. This next expect statement
+# will perform the correct action based on the
+# response.
+
+expect {
+        "*re you sure you want to continue connecting*"
+           {
+              send "yes\n"
+              expect {
+                      "*assword*"
+                          {
+                              send "Abc1234\n"
+                          }
+                     }
+           }
+        "*assword*"
+           {
+               send "Abc1234\n"
+           }
+       }
+
+# Sleep for 1 second before proceeding
+
+sleep 1
+
+# Set the command-line prompt for the prodmgr user
+# to the hash mark, #
+
+send "PS1\=\"\# \"\n "
+
+# Now we know what to expect as a command-line prompt
+
+expect "^#*"
+
+# Copy the master /etc/hosts file from yogi
+# to this machine.
+
+# First su to root
+
+send "su - \n"
+expect "*assword:*"
+send "ABCD1234\n"
+sleep 1
+
+# Set the command-line prompt for the root user
+# to the hash mark, #
+
+send "PS1\=\"\# \"\n "
+
+# Now we know what the command-line prompt is for
+# the root user
+expect "^#*"
+
+# Save the current version of the /etc/hosts file
+send "cp /etc/hosts /etc/hosts$$\n"
+expect {
+        "*re you sure you want to continue connecting*"
+            {
+               send "yes\n"
+               expect {
+                       "*assword*"
+                           {
+                              send "Abc1234\n"
+                           }
+                      }
+            }
+        "*assword*"
+            {
+                send "Abc1234\n"
+            }
+        "^#*" 
+            {
+                send "\n"
+            }
+        }
+
+# Copy the master /etc/hosts file from yogi to
+# this server.
+send "rcp yogi:/etc/hosts /etc/hosts \n"
+expect "^#*"
+
+# Logout from $host
+send "exit\n"
+expect eof

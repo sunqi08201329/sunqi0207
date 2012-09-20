@@ -1,0 +1,16 @@
+get_arch ()
+{
+# Query the system for the hardware architecture. Newer
+# machines use the -M switch and the older Micro-Channel
+# architecture (MCA) machines use the -p option for
+# the "uname" command.
+
+ARCH=$(uname -M)
+if [[ -z "$ARCH" && "$ARCH" = '' ]]
+then
+     ARCH=$(uname -p)
+fi
+
+echo "$ARCH"
+}
+

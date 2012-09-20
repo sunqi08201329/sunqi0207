@@ -1,0 +1,68 @@
+verify_copy ()
+{
+#set -x
+
+MYLOGFILE=${WORK_DIR}/verify_rsync_copy_day${DAY}.log
+>$MYLOGFILE
+ERROR=0
+
+# Enclose this loop so we can redirect output to the log file
+# with one assignment at the bottom of the function
+{
+# Put a header for the verification log file
+
+echo "\nRsync copy verification between $THIS_HOST and machines $MACHINE_LIST\n\n" >$MYLOGFILE
+
+
+for M in $MACHINE_LIST
+do
+   for LOC_MP in $(df | grep oradata_dm_[0-2][0-9] | awk '{print $7}')
+   do
+       LS_FILES=$(find $LOC_MP -type f)
+       for FL in $LS_FILES
+       do
+           LOC_FS=$(ls -l $FL | awk '{print $5}' 2>&1)
+
+           # This sed statement changes the "m" to $DAY
+           REM_FL=$(echo $FL | sed s/oradata_dm_/oradata_d${DAY}_/g)
+
+           REM_FS=$(rsh $M ls -l $REM_FL | awk '{print $5}' 2>&1)
+           echo "Checking File: $FL"
+           echo "Local $THIS_HOST size:\t$LOC_FS"
+           echo "Checking Remote File: $REM_FL"
+           echo "$M size:\t$REM_FS"
+           if [ "$LOC_FS" -ne "$REM_FS" ]
+           then
+              echo "ERROR: File size mismatch between $THIS_HOST and $M"
+              echo "File is: $FL"
+              ERROR=1
+           fi
+       done
+   done
+done
+
+if (( ERROR != 0 ))
+then
+    # Record the failure in the log file
+
+    echo "\n\nRSYNC ERROR: $THIS_HOST Rsync copy failed...file size \
+mismatch...\n\n" | tee -a $MYLOGFILE
+
+    # Send email notification with file size log
+
+    mailx -r "$EMAIL_FROM" -s "RSYNC ERROR: $THIS_HOST Rsync copy failed\
+...file size mismatch -- log attached" data_support < $MYLOGFILE
+
+    echo "\nERROR: Rsync copy Failed!"
+    echo "\n\nCheck log file: $MYLOGFILE\n\n"
+    echo "\n...Exiting...\n"
+    cleanup_exit 3
+    return 3
+else
+    echo "\nSUCCESS: Rsync copy completed successfully..."
+    echo "\nAll file sizes match...\n"
+fi
+} | tee -a $MYLOGFILE
+
+}
+

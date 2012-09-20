@@ -1,0 +1,9 @@
+get_paging_space ()
+{
+# List the paging space definitions and usage
+
+lsps -a
+echo "\n"
+lsps -s
+}
+

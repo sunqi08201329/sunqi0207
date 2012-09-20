@@ -1,0 +1,55 @@
+function man_page
+{
+MAN_FILE="/tmp/man_file.out"
+>$MAN_FILE
+
+# Text for the man page...
+
+echo "\n\t\tMAN PAGE FOR SSAidentify.ksh SHELL SCRIPT\n
+This script is used to turn on, or off, the system's SSA disk drive
+identification lights.  You can use this script in the following ways:\n
+To turn on/off ALL DEFINED SSA drive identification lights, ALL VARIED-ON SSA
+drive identification lights (-v switch), AN INDIVIDUAL SSA drive identification
+light or A LIST OF SSA drive identification lights.\n
+SSA disk drives can be specified by EITHER the pdisk OR the hdisk, or
+a COMBINATION OF BOTH.  The script translates all hdisks into the
+associated pdisk(s) using the system's /usr/sbin/ssaxlate command and turns
+the SSA identification light on/off using the system's /usr/sbin/ssaidentify
+command.\n
+
+This script has four switches that control its' action:\n
+-? - Displays this man page.\n
+on - Turns the SSA identify light(s) ON.\n
+off - Turns the SSA identify light(s) OFF.\n
+-v - Specifies to only act on SSA disks which are in currently varied-on
+volume groups.  The default action is to act on ALL DEFINED SSA disks.\n
+NOTE: This switch is ignored for turning on/off individual SSA drive lights,
+only valid when turning on/off ALL lights.  This option is very helpful in an
+HACMP environment since ALL DEFINED, the default action, will turn on/off all
+of the SSA drive lights even if the SSA disk is in a volume group which is not
+currently varied-on.  This can be confusing in an HA cluster.\n
+Using this script is very straight forward.  The following examples show the
+correct use of this script:\n" >> $MAN_FILE
+echo "\nUSAGE: SSAidentify.ksh [-v] [on] [off] [pdisk#/hdisk#] [pdisk#/hdisk# list]
+\n\nTo Turn ALL Lights Either ON or OFF:
+\nUSAGE: SSAidentify.ksh [-v] [on] [off]
+\nEXAMPLE: $SCRIPTNAME  on
+\nWill turn ON ALL of the system's DEFINED SSA identify lights.
+This is the default.
+EXAMPLE: SSAidentify.ksh -v  on
+\nWill turn ON ALL of the system's currently VARIED ON
+SSA identify lights.  OVERRIDES THE DEFAULT ACTION OF ALL DEFINED SSA DISKS
+\nTo Turn SPECIFIC LIGHTS Either ON or OFF Using EITHER
+the pdisk#(s) AND/OR the hdisk#(s):
+\nUSAGE: $SCRIPTNAME [on] [off] pdisk{#1} [hdisk{#2}]...
+\nEXAMPLE: $SCRIPTNAME on hdisk36 pdisk44 pdisk47
+\nWill turn ON the lights to all of the associated pdisk#(s)
+that hdisk36 translates to and PDISKS pdisk44 and pdisk47.
+\nNOTE: Can use all pdisks, all hdisks or BOTH hdisk
+and pdisk together if you want...\n\n" >> $MAN_FILE
+
+more $MAN_FILE
+
+# End of man_page function
+}
+

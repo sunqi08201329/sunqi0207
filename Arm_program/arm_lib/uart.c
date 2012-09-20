@@ -52,6 +52,26 @@ void uart_puts(char *str)
 	}
 	
 }
+void uart_gets(char *buf)
+{
+	while((*buf = uart_getchar()) != '\r'){
+		uart_putchar(*buf);
+		buf++;
+	}
+	*buf = '\0';
+}
+void uart_gets_cmd(char *buf, char *cmd)
+{
+	while(*buf){
+		if(*buf != ' ' || *buf != '\0')
+			*cmd = *buf;
+		else
+			break;
+		buf++;
+		cmd++;
+	}
+	*cmd = 0;
+}
 void uart_printdec(int data)
 {
 	int temp1, temp2;

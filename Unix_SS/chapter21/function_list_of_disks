@@ -1,0 +1,51 @@
+function list_of_disks
+{
+# TURN ON/OFF INDIVDUAL LIGHTS:
+# Loop through each of the disks that was passed to this script
+# via the positional parameters greater than $1, i.e., $2, $3, $4...
+# We first determine if each of the parameters is a pdisk or an hdisk.
+# For each hdisk passed to the script we first need to translate
+# the hdisk definition into a pdisk definition. This script has
+# been set up to accept a combination of hdisks and pdisks.
+#
+# We will either turn the identifier lights on or off, specified by
+# the $SWITCH variable for each pdisk#:
+#
+#     Turn lights on: -y
+#     Turn lights off: -n
+#
+# as the $SWITCH value to the "ssaidentify" command.
+
+echo "\n"
+
+# The disks passed to this script can be all hdisks, all pdisks
+# or a combination of pdisks and hdisks; it just does not matter.
+# We translate each hdisk into the associated pdisk(s).
+
+echo "\nTurning $STATE individual SSA disk lights...\n"
+
+for PDISK in $PDISKLIST
+do
+    # Is it a real pdisk??
+    if [ -c /dev/${PDISK} ] 2>/dev/null
+    then # Yep - act on it...
+
+        /usr/sbin/ssaidentify -l $PDISK -${SWITCH}
+        if [ $? -eq 0 ]
+        then
+            /usr/bin/ssaxlate -l $PDISK -${SWITCH}
+            if (($? == 0))
+            then
+                echo "Light on $PDISK is $STATE"
+            else
+                echo "Turning $STATE $PDISK Failed"
+            fi
+        fi
+    else
+        echo "\nERROR: $PDISK is not a defined device on $THISHOST\n"
+    fi
+done
+
+echo "\n...TASK COMPLETE...\n"
+}
+

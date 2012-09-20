@@ -1,0 +1,7 @@
+get_adapters ()
+{
+# List all configured adapters in the system
+
+lsdev -Cc adapter
+}
+

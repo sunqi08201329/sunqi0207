@@ -1,0 +1,7 @@
+get_disk_info ()
+{
+# List of all "hdisk"s (hard drives) on the system
+
+lspv
+}
+

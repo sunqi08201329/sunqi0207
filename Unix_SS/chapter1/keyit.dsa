@@ -1,0 +1,11 @@
+#!/bin/bash
+#
+# SCRIPT: keyit.dsa
+#
+# PURPOSE: This script is used to set up DSA SSH keys. This script must
+#     be executed by the user who needs the keys setup.
+
+REM_HOST=$1
+
+cat $HOME/.ssh/id_dsa.pub | ssh $REM_HOST "cat >> ~/.ssh/authorized_keys"
+

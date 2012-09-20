@@ -1,0 +1,21 @@
+run_all ()
+{
+# This function runs all of the backups defined in
+# the Dirvish master configuration file stanza "Runall:"
+
+clear # Clear the screen
+echo -e "\n\n"
+
+# Execute all master.conf defined backups
+
+dirvish-runall
+
+if (( $? == 0 ))
+then
+    echo -e "\n\tBackups Complete...Press Enter to Continue...\c"
+else
+    echo -e "\n\tDirvish Backup ERROR...Press Enter to Continue...\c"
+fi
+read KEY
+}
+

@@ -1,0 +1,18 @@
+ready_to_run ()
+{
+# set -x
+# This function looks for a file on the system
+# defined by the $READYTORUN_FILE variable. The
+# presents presence of this file indicates we are ready
+# to run this script. This file will contain a
+# number 1 or 2 identifying the day we are
+# working with.
+
+if [ -r ${READYTORUN_FILE} ]
+then
+     cat ${READYTORUN_FILE}
+else
+     echo "NOT_READY"
+fi
+}
+

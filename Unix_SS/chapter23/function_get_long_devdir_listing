@@ -1,0 +1,8 @@
+get_long_devdir_listing ()
+{
+# Long listing of the /dev directory. This shows the
+# device major and minor numbers and raw device ownership
+
+ls -l /dev
+}
+

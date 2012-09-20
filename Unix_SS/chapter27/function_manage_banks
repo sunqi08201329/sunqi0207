@@ -1,0 +1,182 @@
+manage_banks ()
+{
+# This function is used to add and delete Dirvish banks
+
+# set -x  # Uncomment to debug this function
+
+clear  # Clear the screen`
+
+# Get a list of currently defined Dirvish banks
+BANK_LIST=$(parse_conf)
+
+# Display the screen header information
+echo -e "\n\n\tMANAGE DIRVISH BACKUP BANKS"
+echo -e "\n\nCurrently Configured Backup Bank(s):\n"
+
+NO_BANK=0
+
+# If this is an initial installation there will not
+# be any Dirvish banks defined.
+
+if [ -z "$BANK_LIST" ]
+then
+    NO_BANK=1
+    echo -e "\nNo Backup Banks Have Been Defined in Dirvish\n"
+else
+    BANK_FILE=/tmp/backlist.out
+    >$BANK_FILE
+    COUNT=0
+
+    for B in $BANK_LIST
+    do
+       ((COUNT == COUNT + 1))
+       LAST_ENTRY=$B
+       echo -e "\t$B" | tee -a $BANK_FILE
+    done
+fi
+
+# Display the menu options
+
+echo -e "\n\n1) Add a New Backup Bank"
+echo -e "\n2) Delete a Current Backup Bank"
+echo -e "\n3) Return to the Previous Menu"
+echo -e "\n\nSelect an Option: \c"
+
+# Read the user input
+read OPT
+case $OPT in
+1) # Add a New Backup Bank
+   echo -e "\nEnter the Bank to Add: \c"
+   read A_BANK
+   echo -e "\nAdding New Backup Bank: $A_BANK"
+   if (( NO_BANK == 0 ))
+   then
+     sed "s!$LAST_ENTRY!& \n\t${A_BANK}!g" $D_CONFIG > ${D_CONFIG}.modified
+     if (( $? == 0 ))
+     then
+        # Save the old Dirvish master config file with today's datestamp
+        cp ${D_CONFIG} ${D_CONFIG}.$(date +%m%d%Y)
+        cp ${D_CONFIG}.modified ${D_CONFIG}
+
+        echo -e "\n$A_BANK Successfully Added to Dirvish Master Config File"
+
+        # Check to see if the $A_BANK directoey exists, if not
+        # ask the user if it is okay to create it.
+
+        chk_create_dir $A_BANK
+     else
+        echo -e "\nERROR: Adding $A_BANK Failed...See Administrator..."
+     fi
+   else
+     if $(grep -q "bank:" $D_CONFIG)
+     then
+        # NOTICE: It is important to note that sed does not "require"
+        # us to use / as a field separator. Here we are using ! as a
+        # sed field separator because we are working with UNIX directory
+        # paths, sed gets confused using / as a field separator.
+
+        sed "s!bank:!& \n\t${A_BANK}!g" $D_CONFIG > ${D_CONFIG}.modified
+
+        if (( $? == 0 ))
+        then
+            cp ${D_CONFIG} ${D_CONFIG}.$(date +%m%d%Y)
+            cp ${D_CONFIG}.modified ${D_CONFIG}
+            echo -e "\n$A_BANK Successfully Added to Dirvish Master Config File"
+            chk_create_dir $A_BANK
+        else
+            echo -e "\nERROR: Adding $A_BANK Failed...See Administrator..."
+        fi
+     else
+        echo -e "bank:\n\t$A_BANK" >> ${D_CONFIG}.modified
+        if (( $? == 0 ))
+        then
+           cp ${D_CONFIG} ${D_CONFIG}.$(date +%m%d%Y)
+           cp ${D_CONFIG}.modified ${D_CONFIG}
+           echo -e "\n$A_BANK Successfully Added to Dirvish Master Config File"
+           chk_create_dir $A_BANK
+        else
+           echo -e "\nERROR: Adding $A_BANK Failed...See Administrator..."
+        fi
+     fi
+   fi
+
+   rm -f $BANK_FILE
+
+   echo -e "\nPress Enter to Continue...\c"
+   read KEY
+   ;;
+2) echo -e "\nEnter the Backup Bank to Remove: \c"
+   read R_BANK
+   if [ -d $R_BANK ]
+   then
+     POPULATED=$(ls $R_BANK | wc -l)
+     if (( POPULATED > 0 ))
+     then
+        echo -e "\nWARNING: The Bank $R_BANK has the Following Backup Images:\n"
+        ls $R_BANK | more
+        echo -e "\nAre you Sure you Want to Remove this Bank and all of the Backup Images? (y/n): \c"
+        read ANS
+        case $ANS in
+        y|Y) continue
+             ;;
+        n|N) break
+             ;;
+          *) echo -e "\nInvalid Input..."
+             ;;
+        esac
+     fi
+   fi
+   if $(cat "$BANK_FILE" | grep -q "$R_BANK")
+   then
+       if (( COUNT == 1 ))
+       then
+           echo -e "\nWARNING: $R_BANK is the Only Backup Bank Currently Configured!"
+           echo -e "\nRemoving this Bank Will Cripple Dirvish..."
+       fi
+       echo -e "\nAre you Sure You Want to Remove the $R_BANK Bank? (y/n): \c"
+       read ANS4
+       case $ANS4 in
+       y|Y) cat $D_CONFIG | grep -v $R_BANK > ${D_CONFIG}.modified
+            cp -p $D_CONFIG ${D_CONFIG}.bak.$(date +%m%d%y)
+            cp ${D_CONFIG}.modified $D_CONFIG
+            echo -e "\n$R_BANK Removed from the Dirvish Configuration File..."
+            if [ -d $R_BANK ]
+            then
+               echo -e "\nDo You Want to Remove the $R_BANK Directory? (y/n): \c"
+               read ANS
+               case $ANS in
+               y|Y) rm -r $R_BANK
+                   if (( $? == 0 ))
+                   then
+                       echo -e "\n$R_BANK Directory Removed Successully"
+                   else
+                       echo -e "\nERROR: Remove $R_BANK Directory Failed"
+                   fi
+                   ;;
+               n|N) echo -e "\nSkipping $R_BANK Directory Removal"
+                   ;;
+                 *) echo -e "\nInvalid Input..."
+                   ;;
+               esac
+            fi
+            ;;
+       n|N) echo -e "\nSkipping Bank Removal\n"
+            ;;
+         *) echo -e "\nInvalid Entry..."
+            ;;
+       esac
+   else
+       echo -e "\nERROR: $R_BANK is Not a Valid Bank"
+   fi
+
+   echo -e "\nPress Enter to Continue...\c"
+   read KEY
+
+   ;;
+3) continue
+   ;;
+*) echo -e "\nInvalid Entry...\n"
+   ;;
+esac
+}
+

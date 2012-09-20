@@ -1,0 +1,218 @@
+add_backup ()
+{
+# This function is used to define a new backup to Dirvish
+
+# set -x # Uncomment to debug this function
+
+# Get a list of available banks
+
+BANK_LIST=$(parse_conf)
+
+ESCAPE=0
+until (( ESCAPE == 1 ))
+do
+  clear
+  echo -e "
+  \n\n\t\t   DIRVISH ADD A BACKUP
+  \n\tSelect Each Option to Add a New Backup
+  \n\t1) Enter Hostname
+  \n\t2) Select a Bank for this Backup
+  \n\t3) Enter Directory Tree to Back up
+  \n\t4) Enter Directory Trees to Ignore
+  \n\t5) Enter Days to Retain Each Backup
+  \n\t6) Add this New Dirvish Backup Definition
+  \n\t7) Create the Initial Dirvish Backup
+  \n\t8) Main Menu
+  \n\n\tSelect Each Option to Add a New Backup
+  \n\n\tEnter Option: \c"
+
+  read OPTION  # Read in the user response
+
+  # Perform the desired operation
+  case $OPTION in
+  1) echo -e "\n\tEnter the Hostname for this Backup: \c"
+     read HN
+     for B in $BANK_LIST
+     do
+         P=$(find $B -type d -name $HN)
+         if [ ! -z $P ]
+         then
+             echo -e "\n\tWARNING: Vault $HN Already Exists in the Following Bank:"
+             echo -e "\n\t$P"
+             echo -e "\n\tDo you want to create a new default.conf file for $HN? (y/n): \c"
+             ANS=n # Set the default answer to 'n', No.
+             read ANS
+             case $ANS in
+             y|Y) continue
+                  ;;
+             n|N) return
+                  ;;
+             esac
+         fi
+     done
+     ;;
+  2) FINISH=0
+     until (( FINISH == 1 ))
+     do
+       clear
+       BANK=
+       echo -e "\n\n\t\tSELECT A BANK TO STORE THIS BACKUP\n"
+       echo -e "\nAvailable Banks:\n"
+       for B in $BANK_LIST
+       do
+            echo -e "\t$B"
+       done
+       echo -e "\nPlease Enter a Bank: \c:"
+       read BANK
+       if $(echo $BANK_LIST | grep -q ${BANK})
+       then
+           echo "$BANK selected for $HN"
+           FINISH=1
+       else
+           echo -e "\nERROR: $BANK is not a Valid Bank"
+           sleep 2
+           continue
+       fi
+     done
+     ;;
+  3) echo -e "\n\tEnter the Directoy Tree to Backup: \c"
+     read TREE
+     continue
+     ;;
+  4) clear
+     echo -e "\n\n\tDIRECTORY TREE(S) and FILES TO IGNORE\n"
+     echo -e "\nThe Specified Directory Tree Contains the Following Files/Directories:\n\n"
+     if [ $HN = $(hostname) ]
+     then
+         ls $TREE | more
+     else
+         ssh $HN ls $TREE | more
+     fi
+     echo -e "\nDo you want to Exclude any Files or Directories from the Backups? (y/n): \c"
+     read ANS3
+     case $ANS3 in
+     y|Y) echo -e "\n\tEnter Directories and Files to Ignore One per Line\n"
+          echo -e "Enter 99 when finished\n"
+          IGNORE_LIST=$(read_input)
+          continue
+          ;;
+     n|N) IGNORE_LIST=$(echo)
+          continue
+          ;;
+       *) echo -e "\nInvalid Entry..."
+          ;;
+     esac
+     ;;
+  5) echo -e "\n\tDays before each Backup Expires: \c"
+     read DAYS
+     continue
+     ;;
+  6) clear
+     echo -e "\n\n\tADD NEW BACKUP TO DIRVISH"
+     if [[ -r "${BANK}/${HN}/dirvish/default.conf" ]]
+     then
+        echo -e "\nWARNING: default.conf File Exists...Rebuild default.conf? (y/n): \c"
+        read ANS
+        case $ANS in
+        y|Y) echo -e "\n\nCreating default.conf Dirvish Configuration File for $HN"
+             build_default_conf $HN "$BANK" $DAYS "$TREE" "$IGNORE_LIST"
+             echo -e "\nCopying file to: ${BANK}/${HN}/dirvish/default.conf"
+             mkdir -p ${BANK}/${HN}/dirvish
+             cp -f $DEFAULT_CONF ${BANK}/${HN}/dirvish/default.conf
+             echo -e "\n\n...Press ENTER to Continue...\c"
+             read ANS
+             ;;
+          *) break
+             ;;
+        esac
+     else
+        echo -e "\n\nCreating default.conf Dirvish Configuration File for $HN"
+        build_default_conf $HN "$BANK" $DAYS "$TREE" "$IGNORE_LIST"
+        echo -e "\nCopying file to: ${BANK}/${HN}/dirvish/default.conf"
+        mkdir -p ${BANK}/${HN}/dirvish
+        cp -f $DEFAULT_CONF ${BANK}/${HN}/dirvish/default.conf
+        echo -e "\n...Press ENTER to Continue...\c"
+        read ANS
+     fi
+     ;;
+  7) clear
+     echo -e "\n\n\tCREATE INITIAL DIRVISH BACKUP"
+     echo -e "\n"
+     if [[ ! -d "${BANK}/${HN}" ]]
+     then
+        echo -e "\nCreating Vault $HN for this Backup"
+        mkdir -p "${BANK}/${HN}"
+        mkdir -p "${BANK}/${HN}/dirvish"
+     else
+        echo -e "\nBackup Vault for $HN Exists...Continuing..."
+     fi
+     if [[ ! -r "${BANK}/${HN}/dirvish/default.conf" ]]
+     then
+        # Now we have enough information to build the
+        # new default.conf file
+
+        echo -e "Creating default.conf Dirvish Configuration File for $HN"
+
+        build_default_conf $HN "$BANK" $DAYS "$TREE" "$IGNORE_LIST"
+
+        echo -e "\nCopying file to:  ${BANK}/${HN}/dirvish/default.conf"
+        cp -f $DEFAULT_CONF ${BANK}/${HN}/dirvish/default.conf
+
+        # Now we need to run an initial backup
+        echo -e "\nRun an Initial Backup Now? (y/n): \c"
+        read BACK_NOW
+        case $BACK_NOW in
+        y|Y) echo -e "\nExecuting Initial Dirvish Backup for $HN..."
+             dirvish --vault $HN --init
+             RC=$?
+             echo -e "\nInitial Backup for $HN Completed with a Return Code: $RC"
+             echo -e "\nPress Enter to Continue...\c"
+             read KEY
+             ;;
+        n|N) echo -e "\nInitial Backup Skipped..."
+             echo -e "\nDo Not Forget to Run an Initial Dirvish Backup!"
+             echo -e "\nTo Manually Run an Initial Backup Enter:\n"
+             echo -e "\t/usr/sbin/dirvish --vault $HN --init\n"
+             echo -e "\nPress Enter to Continue...\c"
+             read KEY
+             ;;
+          *) echo -e "\nInvalid Input..."
+            ;;
+        esac
+     else
+        FINISH=0
+        until (( FINISH == 1 ))
+        do
+           echo -e "\nRun an Initial Backup Now? (y/n): \c"
+           read BACK_NOW
+           case $BACK_NOW in
+           y|Y) echo -e "\nExecuting Initial Dirvish Backup for $HN..."
+                dirvish --vault $HN --init
+                RC=$?
+                echo -e "\nInitial Backup for $HN Completed with a Return Code: $RC"
+                echo -e "\nPress Enter to Continue...\c"
+                read KEY
+                FINISH=1
+                ;;
+            n|N) echo -e "\nInitial Backup Skipped..."
+                 echo -e "\nDo Not Forget to Run an Initial Dirvish Backup!"
+                 echo -e "\nTo Manually Run an Initial Backup Enter:\n"
+                 echo -e "\tdirvish --vault $HN --init\n"
+                 echo -e "\nPress Enter to Continue...\c"
+                 read KEY
+                 FINISH=1
+                 ;;
+              *) echo -e "Invalid Entry..."
+                 sleep 2
+                 ;;
+            esac
+        done
+     fi
+     continue
+     ;;
+  8) break
+     ;;
+  esac
+done
+}
+

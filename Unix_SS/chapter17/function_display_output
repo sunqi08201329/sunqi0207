@@ -1,0 +1,10 @@
+function display_output
+{
+if [[ -s $OUTFILE ]]
+then
+      $ECHO "\nFull Filesystem(s) on $THISHOST\n"
+      cat $OUTFILE
+      print
+fi
+}
+

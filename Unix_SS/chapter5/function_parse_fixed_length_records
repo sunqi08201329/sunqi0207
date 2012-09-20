@@ -1,0 +1,43 @@
+function parse_fixed_length_records
+{
+# set -x
+# Zero out the $OUTFILE
+
+>$OUTFILE
+
+# Associate standard output with file descriptor 4
+# and redirect standard output to $OUTFILE
+
+exec 4<&1
+exec 1> $OUTFILE
+
+while read RECORD
+do
+    # On each loop iteration extract the data fields
+    # from the record as we process the record file
+    # line by line
+    BRANCH=$(echo "$RECORD" | cut -c1-6)
+    ACCOUNT=$(echo "$RECORD" | cut -c7-25)
+    NAME=$(echo "$RECORD" | cut -c26-45)
+    TOTAL=$(echo "$RECORD" | cut -c46-70)
+    DUEDATE=$(echo "$RECORD" | cut -c71-78)
+    RECFILE=$(echo "$RECORD" | cut -c79-)
+
+    # Perform some action on the data
+
+    process_fixedlength_data_new_duedate $BRANCH $ACCOUNT $NAME \
+           $TOTAL $DUEDATE $RECFILE $NEW_DATEDUE
+    if (( $? != 0 ))
+      then
+          # Note that $LOGFILE is a global variable
+          echo "Record Error: $RECORD" | tee -a $LOGFILE
+    fi
+done < $MERGERECORDFILE
+
+# Restore standard output and close file
+# descriptor 4
+
+exec 1<&4
+exec 4>&-
+}
+

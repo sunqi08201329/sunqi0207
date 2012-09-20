@@ -1,0 +1,55 @@
+
+var start = 1;
+
+var _html = '<div class="blogpopMain"><div class="l">'
+          + '<a href="http://blog.51cto.com/zt/320" target="_blank"><img src="http://blog.51cto.com/image/blog_top/upload/1343181822_index.jpg" width="105" height="105" /></a>'
+          + '<p><a href="http://blog.51cto.com/zt/320" target="_blank">H3C交换机大全</a></p></div>'
+          + '<div class="r"><h4 style="text-align:left;"><a href="http://zhaisj.blog.51cto.com/219066/940939" target="_blank">“跳槽加薪”，无奈的职场规则</a></h4>'
+          + '<ul>'
+          + '<li><a href="http://wmcxy.blog.51cto.com/2509483/941594" target="_blank">真加班，假加班，你属于哪种？</a></li>'
+          + '<li><a href="http://xmmartin.blog.51cto.com/2310947/940740" target="_blank">堕落十年之后的软考之路</a></li>'
+          + '<li><a href="http://itmydream.blog.51cto.com/961933/938825" target="_blank">IT人，你频繁跳槽为哪般?</a></li>'
+          + '<li><a href="http://doctor.51cto.com/develop-266.html" target="_blank"style="color:red;">【技术门诊】讨论渗透性测试服务</a></li>'
+          + '</ul>'
+          + '</div></div>'
+          + '';
+
+jQuery('#showMessagerDim').show();
+
+jQuery(function(){
+//window.onload=function(){
+   if(get_cookie('blog_top')==''&&start==1){
+//	 show_pop();
+	    jQuery.messager.showblogtop('', _html);
+        var date=new Date();
+	    var day = 1343232000000;//
+	    date.setTime(day);
+	    var test = date.getTime();
+	    document.cookie="blog_top=yes;domain=.blog.51cto.com;expires="+date.toGMTString()+";path=/;";
+    }
+	jQuery("#showMessagerDim").click(function(){
+		jQuery.messager.showblogtop('', _html);
+		//removeIframe();
+	});
+//}
+});
+
+
+function get_cookie(Name) {
+    var search = Name + "=";
+    var returnvalue = "";
+    if (document.cookie.length > 0) {
+        offset = document.cookie.indexOf(search);
+        if (offset != -1) {
+            offset += search.length;
+
+            end1 = document.cookie.indexOf(";", offset);
+
+            if (end1 == -1)
+            end1 = document.cookie.length;
+            returnvalue=unescape(document.cookie.substring(offset, end1));
+        }
+    }
+    return returnvalue;
+}
+

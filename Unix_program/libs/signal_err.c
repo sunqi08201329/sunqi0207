@@ -1,6 +1,5 @@
 #include "package.h"
 
-#include <signal.h>
 
 //void (*signal(int signo, void (*handler)(int))(int));
 //use sigaction(2) instead

@@ -1,0 +1,11 @@
+function merge_variable_length_records
+{
+# set -x
+while read RECORDFILENAME
+do
+
+sed s/$/${FD}$(basename $RECORDFILENAME 2>/dev/null)/g $RECORDFILENAME >> $MERGERECORDFILE
+
+done  < $RECORDFILELIST
+}
+

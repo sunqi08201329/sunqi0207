@@ -1,0 +1,9 @@
+get_real_mem ()
+{
+# Query the system for the total real memory
+
+echo "$(bootinfo -r)KB"
+
+# lsattr -El sys0 -a realmem | awk '{print $2}' #  Works too
+}
+

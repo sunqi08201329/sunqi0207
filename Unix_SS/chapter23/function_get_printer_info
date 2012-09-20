@@ -1,0 +1,7 @@
+get_printer_info ()
+{
+# Wide listing of all defined printers
+
+lpstat -W | tail +3
+}
+

@@ -1,0 +1,5 @@
+print_sys_config ()
+{
+prtconf
+}
+

@@ -1,0 +1,30 @@
+chk_create_dir ()
+{
+# This function is used to add a new Dirvish "bank" to
+# the Dirvish backup server, which should be this machine
+
+D=$1 # Directory name to add
+
+if [ ! -d $D ]  # Check if the directory already exists
+then
+    echo -e "\n$D Directory Does Not Exist...Create $D Directory? (y/n): \c"
+    read ANS
+    case $ANS in
+    y|Y) echo -e "\nCreating $D Directory..."
+         mkdir -p $D
+         if (( $? == 0 ))
+         then
+             echo -e "\n$D Directory Created"
+         else
+             echo -e "\n$D Directory Creation Failed...See Administrator..."
+         fi
+         ;;
+    n|N) echo -e "\nSkipping Creating the $D Directory"
+         echo -e "\nWARNING: Until the $D Directory is Created Dirvish Cannot use this Bank\n"
+         ;;
+      *) echo -e "\nInvalid Input..."
+         ;;
+    esac
+fi
+}
+

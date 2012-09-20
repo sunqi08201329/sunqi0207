@@ -1,0 +1,7 @@
+get_installed_filesets ()
+{
+# Listing of all installed LPP filesets (system installed)
+
+lslpp -L
+}
+

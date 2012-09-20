@@ -1,0 +1,35 @@
+#!/usr/local/bin/expect -f
+
+set force_conservative 0 ;# set to 1 to force conservative mode even if
+                         ;# script wasn.t run conservatively originally
+if {$force_conservative} {
+        set send_slow {1 .1}
+        proc send {ignore arg} {
+                sleep .1
+                exp_send -s -- $arg
+        }
+}
+
+set chassis [lindex $argv 0]
+set blade [lindex $argv 1]
+set timeout -1
+spawn -noecho telnet $chassis
+log_user 0
+match_max 100000
+expect "username: "
+send -- "prodmgr\r"
+expect -exact "prodmgr\r
+password: "
+send -- "Abc1234\r"
+expect ">"
+send -- "console -f $blade\r"
+send -- "\r"
+expect "ok"
+send -- "boot net - install\r"
+log_user 1
+expect ""
+send -- "logout\r"
+send_user "\r\n"
+exit
+expect eof
+

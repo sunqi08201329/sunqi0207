@@ -1,0 +1,12 @@
+startup_event_script ()
+{
+# Put anything that you want to execute WHEN, or AS, the
+# monitored process STARTS in this function
+
+:    # No-OP - Needed as a placeholder for an empty function
+     # Comment Out the Above colon, ':'
+
+STARTUP_RC=$?
+return $STARTUP_RC
+}
+

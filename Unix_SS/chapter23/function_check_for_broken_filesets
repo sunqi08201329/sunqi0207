@@ -1,0 +1,7 @@
+check_for_broken_filesets ()
+{
+# Check the system for broken filesets
+
+lppchk -vm3 2>&1
+}
+

@@ -1,0 +1,13 @@
+#!/usr/bin/bash
+#
+# SCRIPT: findslot
+# PURPOSE: This script is used to locate a blade server
+# within the specified SUN blade chassis.
+#
+
+CHAS=$1
+HOST=$2
+
+SLOT=`/usr/local/bin/showplatform.exp $CHAS \
+      | /usr/bin/grep $HOST | cut -f 1 -d " "`
+echo $SLOT

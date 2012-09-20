@@ -1,0 +1,17 @@
+elapsed_time ()
+{
+# This function is intended for Bash shell scripts
+
+SEC=$1
+
+(( SEC < 60 )) && echo -e "[Elasped time: \
+$SEC seconds]\c"
+
+(( SEC >= 60  &&  SEC < 3600 )) && echo -e \
+"[Elasped time: $(( SEC / 60 )) min $(( SEC % 60 )) sec]\c"
+
+(( SEC > 3600 )) && echo -e "[Elasped time: \
+$(( SEC / 3600 )) hr $(( (SEC % 3600) / 60 )) min \
+$(( (SEC % 3600) % 60 )) sec]\c"
+}
+

@@ -1,0 +1,12 @@
+get_fs_stats ()
+{
+# Save the file system statistics
+
+df -k
+echo "\n"
+mount
+echo "\n"
+lsfs
+echo "\n"
+}
+

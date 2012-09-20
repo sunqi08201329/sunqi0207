@@ -1,0 +1,19 @@
+check_root_user ()
+{
+case $(uname) in
+SunOS) if [[ $LOGNAME != root ]]
+       then
+           echo -e "\n\n\tERROR: Only the root User can Execute this Program..."
+           echo -e "\n\n\t...EXITING...\n"
+           exit 1
+       fi
+       ;;
+    *) if [[ $(whoami) != root ]]
+       then
+          echo -e "\n\n\tERROR: Only the root User can Execute this Program..."
+          echo -e "\n\n\t...EXITING...\n"
+          exit 1
+       fi
+esac
+}
+

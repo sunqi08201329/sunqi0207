@@ -1,0 +1,7 @@
+function load_LINUX_FS_data
+{
+
+   df -k | tail -n +2 | egrep -v "/cdrom"\
+         | awk '{print $1, $2, $4, $5, $6}' > $WORKFILE
+}
+
